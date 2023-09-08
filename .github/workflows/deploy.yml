@@ -20,7 +20,6 @@ jobs:
 
       # (3) Gradlew에 실행 권한 부여
       - name: Grant execute permission for gradlew
-        working-directory: .
         run: chmod +x gradlew
 
       # (4) 프로젝트 빌드
