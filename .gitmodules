@@ -1,0 +1,3 @@
+[submodule "ConnectingChips-Back-Data"]
+	path = ConnectingChips-Back-Data
+	url = https://github.com/ConnectingChips/ConnectingChips-Back-Data.git
