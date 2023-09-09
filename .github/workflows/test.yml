@@ -20,7 +20,7 @@ jobs:
       - name: Set yml file
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./src/main/resources/application*.yml
+          files: ./src/main/resources/application.yml
 
       # Gradle wrapper 파일 실행 권한주기
       - name: Grant execute permission for gradlew
