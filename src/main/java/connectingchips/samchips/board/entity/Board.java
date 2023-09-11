@@ -21,7 +21,8 @@ public class Board {
     @NotNull
     private String image;
 
-    @OneToOne(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne
+    @JoinColumn(name ="mind_id")
     private Mind mindId;
 
     @CreatedDate
