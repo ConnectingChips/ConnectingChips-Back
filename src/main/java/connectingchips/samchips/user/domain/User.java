@@ -1,6 +1,8 @@
 package connectingchips.samchips.user.domain;
 
+import connectingchips.samchips.audit.Auditable;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "\"user\"")
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +38,7 @@ public class User {
     @Column(name = "refresh_token")
     private String refreshToken;  //리프레쉬 토큰
 
+    @Builder
     public User(String accountId, String password, String nickname, String email, String profileImage, Role roles, String refreshToken) {
         this.accountId = accountId;
         this.password = password;
