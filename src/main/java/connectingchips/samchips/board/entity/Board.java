@@ -21,9 +21,6 @@ public class Board {
     @NotNull
     private String image;
 
-    @ManyToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private User userId;
-
     @OneToOne(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Mind mindId;
 
