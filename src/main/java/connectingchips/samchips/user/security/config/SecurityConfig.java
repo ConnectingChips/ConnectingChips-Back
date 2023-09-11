@@ -33,7 +33,10 @@ public class SecurityConfig {
                         new AntPathRequestMatcher("/h2/**"),
                         new AntPathRequestMatcher("/h2-console/**"),
                         new AntPathRequestMatcher("/swagger-ui/**"),
-                        new AntPathRequestMatcher("/error")
+                        new AntPathRequestMatcher("/error"),
+                        // 일단 모든 API 허용되게 설정
+                        new AntPathRequestMatcher("/**")
+
                 ).permitAll()
                 .anyRequest().authenticated()
         );

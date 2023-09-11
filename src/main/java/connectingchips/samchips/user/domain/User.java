@@ -39,13 +39,16 @@ public class User extends Auditable {
     private String refreshToken;  //리프레쉬 토큰
 
     @Builder
-    public User(String accountId, String password, String nickname, String email, String profileImage, Role roles, String refreshToken) {
+    public User(String accountId, String password, String nickname, String email) {
         this.accountId = accountId;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
-        this.profileImage = profileImage;
-        this.roles = roles;
-        this.refreshToken = refreshToken;
+        this.profileImage = "default";
+        this.roles = Role.ROLE_USER;
+    }
+
+    public void editInfo(String nickname){
+        this.nickname = nickname;
     }
 }
