@@ -11,7 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # (1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # private repository에 접근하기 위해서 Git 계정의 token 값이 필요하다.
+          token: ${{ secrets.GIT_TOKEN }}
+          # submodules: true로 설정해주어야 프로젝트에 포함된 submodule코드까지 받아온다.
+          submodules: true
+
       # (2) JDK 17 세팅
       - name: Set up JDK 17
         uses: actions/setup-java@v3
