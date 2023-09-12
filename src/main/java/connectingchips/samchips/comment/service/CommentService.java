@@ -3,6 +3,7 @@ package connectingchips.samchips.comment.service;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.comment.dto.CommentRequestDto;
 import connectingchips.samchips.comment.dto.CommentResponseDto;
+import connectingchips.samchips.comment.dto.ReplyResponseDto;
 import connectingchips.samchips.comment.entity.Comment;
 import connectingchips.samchips.comment.repository.CommentRepository;
 import connectingchips.samchips.user.domain.User;
@@ -38,4 +39,9 @@ public class CommentService {
         commentRepository.deleteById(commentId);
     }
 
+    public ReplyResponseDto createReply(ReplyResponseDto replyResponseDto) {
+    }
+
+    public void deleteReply(Long replyId) {
+    }
 }

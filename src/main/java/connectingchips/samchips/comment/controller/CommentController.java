@@ -2,11 +2,11 @@ package connectingchips.samchips.comment.controller;
 
 import connectingchips.samchips.comment.dto.CommentRequestDto;
 import connectingchips.samchips.comment.dto.CommentResponseDto;
+import connectingchips.samchips.comment.dto.ReplyResponseDto;
 import connectingchips.samchips.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,14 +28,14 @@ public class CommentController {
     }
 
     @PostMapping("/replies")
-    private ResponseEntity<CommentResponseDto> createReply(@RequestBody CommentRequestDto commentReqDto) {
-        CommentResponseDto comment = commentService.createComment(commentReqDto);
-        return ResponseEntity.ok(comment);
+    private ResponseEntity<ReplyResponseDto> createReply(@RequestBody ReplyResponseDto replyResponseDto) {
+        ReplyResponseDto reply = commentService.createReply(replyResponseDto);
+        return ResponseEntity.ok(reply);
     }
 
     @DeleteMapping("/replies/{replyId}")
     private ResponseEntity<Void> deleteReply(@PathVariable Long replyId){
-        commentService.deleteComment(replyId);
+        commentService.deleteReply(replyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
