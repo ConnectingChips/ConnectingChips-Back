@@ -5,6 +5,7 @@ import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "Likes")
 public class Like {
 
     @Id
