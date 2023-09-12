@@ -1,5 +1,7 @@
 package connectingchips.samchips.comment.controller;
 
+import connectingchips.samchips.comment.dto.CommentRequestDto;
+import connectingchips.samchips.comment.dto.CommentResponseDto;
 import connectingchips.samchips.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +16,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comments")
-    private ResponseEntity<Void> createComment(@RequestBody CommentRequestDto commentReqDto) {
+    private ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentReqDto) {
         CommentResponseDto comment = commentService.createComment(commentReqDto);
         return ResponseEntity.ok(comment);
     }
