@@ -6,7 +6,7 @@ import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 
 @Entity
-public class comment extends Auditable {
+public class Comment extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
