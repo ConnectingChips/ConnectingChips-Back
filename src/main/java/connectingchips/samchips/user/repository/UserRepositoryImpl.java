@@ -1,10 +1,8 @@
 package connectingchips.samchips.user.repository;
 
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
