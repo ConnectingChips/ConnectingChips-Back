@@ -1,7 +1,29 @@
 package connectingchips.samchips.comment.controller;
 
+import connectingchips.samchips.comment.service.CommentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class CommentController {
+
+    private final CommentService commentService;
+
+    @PostMapping("/comments")
+    private ResponseEntity<Void> createComment(@RequestBody CommentRequestDto commentReqDto) {
+        CommentResponseDto comment = commentService.createComment(commentReqDto);
+        return ResponseEntity.ok(comment);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    private ResponseEntity<Void> deleteComment(@PathVariable Long commentId){
+        commentService.deleteComment(commentId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 }
