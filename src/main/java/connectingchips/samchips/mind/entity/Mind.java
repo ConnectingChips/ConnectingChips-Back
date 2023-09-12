@@ -5,11 +5,14 @@ import connectingchips.samchips.mindtype.entity.MindType;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+@Getter
 @Entity
 public class Mind {
 
