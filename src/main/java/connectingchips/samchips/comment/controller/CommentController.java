@@ -26,4 +26,10 @@ public class CommentController {
         commentService.deleteComment(commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/replies")
+    private ResponseEntity<CommentResponseDto> createReply(@RequestBody CommentRequestDto commentReqDto) {
+        CommentResponseDto comment = commentService.createComment(commentReqDto);
+        return ResponseEntity.ok(comment);
+    }
 }

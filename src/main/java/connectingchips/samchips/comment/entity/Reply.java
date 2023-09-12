@@ -1,7 +1,6 @@
 package connectingchips.samchips.comment.entity;
 
 import connectingchips.samchips.audit.Auditable;
-import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -9,15 +8,15 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class Comment extends Auditable {
+public class Reply extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -27,8 +26,8 @@ public class Comment extends Auditable {
     private String content;
 
     @Builder
-    public Comment(Board board, User user, String content) {
-        this.board = board;
+    public Reply(Comment comment, User user, String content) {
+        this.comment = comment;
         this.user = user;
         this.content = content;
     }

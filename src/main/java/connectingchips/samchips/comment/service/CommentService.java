@@ -18,7 +18,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    //private final BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public CommentResponseDto createComment(CommentRequestDto commentReqDto) {
@@ -37,4 +37,5 @@ public class CommentService {
 
         commentRepository.deleteById(commentId);
     }
+
 }
