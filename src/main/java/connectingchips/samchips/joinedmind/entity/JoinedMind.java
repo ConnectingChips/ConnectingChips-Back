@@ -4,12 +4,12 @@ import connectingchips.samchips.audit.Auditable;
 import connectingchips.samchips.mind.entity.Mind;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 
 @Entity
+@Getter
 public class JoinedMind extends Auditable {
 
     @Id
