@@ -26,6 +26,4 @@ public class CommentController {
         commentService.deleteComment(commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }

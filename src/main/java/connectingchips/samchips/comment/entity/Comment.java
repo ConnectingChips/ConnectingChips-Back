@@ -4,6 +4,7 @@ import connectingchips.samchips.audit.Auditable;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 
 @Entity
 public class Comment extends Auditable {
@@ -23,4 +24,11 @@ public class Comment extends Auditable {
 
     @Column(name = "content")
     private String content;
+
+    @Builder
+    public Comment(Board board, User user, String content) {
+        this.board = board;
+        this.user = user;
+        this.content = content;
+    }
 }
