@@ -1,6 +1,7 @@
 package connectingchips.samchips.board.entity;
 
 import connectingchips.samchips.mind.entity.Mind;
+import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,6 +25,10 @@ public class Board {
     @ManyToOne
     @JoinColumn(name ="mind_id")
     private Mind mindId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @CreatedDate
     @NotNull
