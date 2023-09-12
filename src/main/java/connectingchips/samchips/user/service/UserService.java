@@ -5,6 +5,7 @@ import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void signup(UserRequestDto.Signup signupDto){
@@ -20,7 +22,16 @@ public class UserService {
             throw new IllegalArgumentException("이미 가입되어 있는 유저입니다.");
         }
 
-        userRepository.save(signupDto.toEntity());
+        String encodedPassword = passwordEncoder.encode(signupDto.getPassword());
+
+        User user = User.builder()
+                .accountId(signupDto.getAccountId())
+                .password(encodedPassword)
+                .nickname(signupDto.getNickname())
+                .email(signupDto.getEmail())
+                .build();
+
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
