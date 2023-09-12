@@ -2,6 +2,7 @@ package connectingchips.samchips.mind.entity;
 
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.mindtype.entity.MindType;
+import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotNull;
@@ -44,7 +45,11 @@ public class Mind {
     private JoinedMind joinedMind;
 
     @ManyToOne
-    @JoinColumn(name = "MIND_TYPE_ID")
+    @JoinColumn(name = "mind_type_id")
     private MindType mindType;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
