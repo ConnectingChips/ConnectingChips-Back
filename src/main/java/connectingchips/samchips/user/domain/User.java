@@ -1,10 +1,14 @@
 package connectingchips.samchips.user.domain;
 
 import connectingchips.samchips.audit.Auditable;
+import connectingchips.samchips.mind.entity.Mind;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,6 +41,10 @@ public class User extends Auditable {
 
     @Column(name = "refresh_token")
     private String refreshToken;  //리프레쉬 토큰
+
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Mind> joinedMinds = new ArrayList<>();
+
 
     @Builder
     public User(String accountId, String password, String nickname, String email) {
