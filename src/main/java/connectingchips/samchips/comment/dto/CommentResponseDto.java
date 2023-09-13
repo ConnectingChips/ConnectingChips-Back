@@ -22,18 +22,18 @@ public class CommentResponseDto {
     private String createDate;
 
     /* Entity -> Dto*/
-    public CommentResponseDto (User user, Board board, Comment comment){
-        this.id = comment.getId();
-        this.boardId = board.getId;
-        this.userId = user.getId();
-        this.nickname = user.getNickname();
-        this.content = comment.getContent();
-        this.profileImage = user.getProfileImage();
-        // 09월 07일 14:2
-        StringBuilder sb = new StringBuilder();
-        sb.append(comment.getCreatedAt().getMonth()).append("월 ")
-                        .append(comment.getCreatedAt().getDayOfMonth()).append("일 ")
-                        .append(comment.getCreatedAt().getHour()).append(":").append(comment.getCreatedAt().getMinute());
-        this.createDate = sb.toString();
-    }
+//    public CommentResponseDto (User user, Board board, Comment comment){
+//        this.id = comment.getId();
+//        this.boardId = board.getId;
+//        this.userId = user.getId();
+//        this.nickname = user.getNickname();
+//        this.content = comment.getContent();
+//        this.profileImage = user.getProfileImage();
+//        // 09월 07일 14:2
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(comment.getCreatedAt().getMonth()).append("월 ")
+//                        .append(comment.getCreatedAt().getDayOfMonth()).append("일 ")
+//                        .append(comment.getCreatedAt().getHour()).append(":").append(comment.getCreatedAt().getMinute());
+//        this.createDate = sb.toString();
+//    }
 }

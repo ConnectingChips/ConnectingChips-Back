@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Reply extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "reply_id")
     private Long id;
 
     @ManyToOne
