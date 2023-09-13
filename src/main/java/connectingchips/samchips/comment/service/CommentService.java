@@ -23,7 +23,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final ReplyRepository replyRepository;
-    //private final BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public CommentResponseDto createComment(CommentRequestDto commentReqDto) {
@@ -49,11 +49,9 @@ public class CommentService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         Comment comment = commentRepository.findById(replyRequestDto.getCommentId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다"));
-
         Reply reply = replyRepository.save(replyRequestDto.toEntity(comment, user));
-        ReplyResponseDto replyResponseDto =
 
-        return
+        return new ReplyResponseDto(user, comment, reply);
     }
 
     public void deleteReply(Long replyId) {
