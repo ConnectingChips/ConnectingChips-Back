@@ -8,10 +8,9 @@ import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
 public class BoardController {
@@ -23,6 +22,7 @@ public class BoardController {
 
         return DataResponse.of();
     }
+
     /* 게시글 작성자 여부 */
     @GetMapping("/{board_id}/authentication")
     private DataResponse<UserEditDto> getBoardUser(@PathVariable Long mindId){
