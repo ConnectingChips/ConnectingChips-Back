@@ -2,6 +2,8 @@ package connectingchips.samchips.user.security.config;
 
 import connectingchips.samchips.user.jwt.JwtSecurityConfig;
 import connectingchips.samchips.user.jwt.TokenProvider;
+import connectingchips.samchips.user.jwt.handler.JwtAccessDeniedHandler;
+import connectingchips.samchips.user.jwt.handler.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -34,6 +38,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         
         http.csrf(csrf -> csrf.disable());
+
+        http.exceptionHandling((exceptionHanding) ->
+                exceptionHanding.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler));
 
         // 세션을 사용하지 않기 때문에 STATELESS로 설정
         http.sessionManagement((sessionManagement) ->
