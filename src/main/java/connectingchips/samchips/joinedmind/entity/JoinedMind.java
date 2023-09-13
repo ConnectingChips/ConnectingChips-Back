@@ -14,22 +14,27 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class JoinedMind extends Auditable {
+    private final Integer FIRST_COUNT = 0;
+    private final Integer FIRST_JOINING = 1;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long joinedMindId;
+    private Long joinedMindId;
 
     @NotNull
-    private int count;
+    private Integer count = FIRST_COUNT;
 
     @NotNull
-    private int isJoining;
+    private Integer isJoining = FIRST_JOINING;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
+    @PrimaryKeyJoinColumn(name = "mind_id")
     private Mind mind;
 
     //TO-DO -> MEMBER ENTITY 구현 시 참여한 유저 PK 구현
     @ManyToOne
+    @PrimaryKeyJoinColumn(name = "user_id")
     private User user;
 
     @Builder
@@ -38,5 +43,9 @@ public class JoinedMind extends Auditable {
         this.isJoining = isJoining;
         this.mind = mind;
         this.user = user;
+    }
+
+    public void setIsJoining(Integer isJoining) {
+        this.isJoining = isJoining;
     }
 }

@@ -19,7 +19,7 @@ public class MindType extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mindTypeId;
+    private Long mindTypeId;
     //parentId 확인후 수정 예정
     private String name;
 
