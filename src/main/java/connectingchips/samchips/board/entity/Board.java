@@ -5,8 +5,12 @@ import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
+@NoArgsConstructor
 public class Board extends Auditable {
 
     @Id
