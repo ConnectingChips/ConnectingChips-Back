@@ -5,6 +5,9 @@ import connectingchips.samchips.comment.dto.CommentResponseDto;
 import connectingchips.samchips.comment.dto.ReplyRequestDto;
 import connectingchips.samchips.comment.dto.ReplyResponseDto;
 import connectingchips.samchips.comment.service.CommentService;
+import connectingchips.samchips.commons.dto.BasicResponse;
+import connectingchips.samchips.commons.dto.DataResponse;
+import jakarta.persistence.Basic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,26 +20,26 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comments")
-    private ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentReqDto) {
+    private DataResponse<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentReqDto) {
         CommentResponseDto comment = commentService.createComment(commentReqDto);
-        return ResponseEntity.ok(comment);
+        return DataResponse.of(HttpStatus.CREATED, comment);
     }
 
     @DeleteMapping("/comments/{commentId}")
-    private ResponseEntity<Void> deleteComment(@PathVariable Long commentId){
+    private BasicResponse deleteComment(@PathVariable Long commentId){
         commentService.deleteComment(commentId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return BasicResponse.of(HttpStatus.OK);
     }
 
     @PostMapping("/replies")
-    private ResponseEntity<ReplyResponseDto> createReply(@RequestBody ReplyRequestDto replyRequestDto) {
+    private DataResponse<ReplyResponseDto> createReply(@RequestBody ReplyRequestDto replyRequestDto) {
         ReplyResponseDto reply = commentService.createReply(replyRequestDto);
-        return ResponseEntity.ok(reply);
+        return DataResponse.of(HttpStatus.CREATED, reply);
     }
 
     @DeleteMapping("/replies/{replyId}")
-    private ResponseEntity<Void> deleteReply(@PathVariable Long replyId){
+    private BasicResponse deleteReply(@PathVariable Long replyId){
         commentService.deleteReply(replyId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return BasicResponse.of(HttpStatus.OK);
     }
 }
