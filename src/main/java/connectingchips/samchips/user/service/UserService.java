@@ -53,7 +53,7 @@ public class UserService {
     @Transactional
     public void deleteByUserId(Long userId){
         if(!userRepository.existsById(userId)){
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+            throw new IllegalArgumentException("존재하지 않는 userId입니다.");
         }
 
         userRepository.deleteById(userId);

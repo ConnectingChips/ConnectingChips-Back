@@ -5,17 +5,18 @@ import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
-import connectingchips.samchips.user.jwt.JwtFilter;
 import connectingchips.samchips.user.service.AuthService;
 import connectingchips.samchips.user.service.UserService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
@@ -40,9 +41,16 @@ public class UserController {
     @GetMapping("/{userId}")
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse<UserResponseDto.Info> findByUserId(@PathVariable Long userId){
-        UserResponseDto.Info result = userService.findByUserId(userId);
+        UserResponseDto.Info info = userService.findByUserId(userId);
 
-        return DataResponse.of(result);
+        return DataResponse.of(info);
+    }
+
+    @GetMapping("/reissue")
+    public DataResponse<AuthResponseDto.Token> reissue(@RequestParam @NotBlank String refreshToken){
+        AuthResponseDto.Token token = authService.reissueAccessToken(refreshToken);
+
+        return DataResponse.of(token);
     }
 
     @PutMapping("/{userId}")
