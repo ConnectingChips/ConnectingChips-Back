@@ -61,6 +61,10 @@ public class User extends Auditable {
         this.nickname = nickname;
     }
 
+    public void editRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
+    }
+
     public void editJoinedMinds(List<JoinedMind> joinedMinds) {
         this.joinedMinds = joinedMinds;
     }
