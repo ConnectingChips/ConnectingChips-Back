@@ -1,5 +1,7 @@
 package connectingchips.samchips.user.controller;
 
+import connectingchips.samchips.commons.dto.BasicResponse;
+import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
@@ -22,41 +24,38 @@ public class UserController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<Void> signup(@RequestBody UserRequestDto.Signup signupDto){
+    public ResponseEntity<BasicResponse> signup(@RequestBody UserRequestDto.Signup signupDto){
         userService.signup(signupDto);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(BasicResponse.of(HttpStatus.CREATED) ,HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto.Token> login(@RequestBody UserRequestDto.Login loginDto){
+    public DataResponse<AuthResponseDto.Token> login(@RequestBody UserRequestDto.Login loginDto){
         AuthResponseDto.Token token = authService.login(loginDto);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + token.getToken());
-
-        return new ResponseEntity<>(token, httpHeaders, HttpStatus.OK);
+        return DataResponse.of(token);
     }
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<UserResponseDto.Info> findByUserId(@PathVariable Long userId){
+    public DataResponse<UserResponseDto.Info> findByUserId(@PathVariable Long userId){
         UserResponseDto.Info result = userService.findByUserId(userId);
 
-        return ResponseEntity.ok(result);
+        return DataResponse.of(result);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Void> deleteByUserId(@PathVariable Long userId, @RequestBody UserRequestDto.Edit editDto){
+    public BasicResponse deleteByUserId(@PathVariable Long userId, @RequestBody UserRequestDto.Edit editDto){
         userService.editInfo(userId, editDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return BasicResponse.of(HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteByUserId(@PathVariable Long userId){
+    public BasicResponse deleteByUserId(@PathVariable Long userId){
         userService.deleteByUserId(userId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return BasicResponse.of(HttpStatus.OK);
     }
 }
