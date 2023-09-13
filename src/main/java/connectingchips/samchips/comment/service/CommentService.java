@@ -1,6 +1,7 @@
 package connectingchips.samchips.comment.service;
 
 import connectingchips.samchips.board.entity.Board;
+import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.comment.dto.CommentRequestDto;
 import connectingchips.samchips.comment.dto.CommentResponseDto;
 import connectingchips.samchips.comment.dto.ReplyRequestDto;
@@ -23,18 +24,18 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final ReplyRepository replyRepository;
-//    private final BoardRepository boardRepository;
-//
-//    @Transactional
-//    public CommentResponseDto createComment(CommentRequestDto commentReqDto) {
-//        User user = userRepository.findById(commentReqDto.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-//        Board board = boardRepository.findById(commentReqDto.getBoardId())
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다"));
-//
-//        Comment comment = commentRepository.save(commentReqDto.toEntity(board, user));
-//        return new CommentResponseDto(user, board, comment);
-//    }
+    private final BoardRepository boardRepository;
+
+    @Transactional
+    public CommentResponseDto createComment(CommentRequestDto commentReqDto) {
+        User user = userRepository.findById(commentReqDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        Board board = boardRepository.findById(commentReqDto.getBoardId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다"));
+
+        Comment comment = commentRepository.save(commentReqDto.toEntity(board, user));
+        return new CommentResponseDto(user, board, comment);
+    }
     @Transactional
     public void deleteComment(Long commentId) {
         commentRepository.findById(commentId)
