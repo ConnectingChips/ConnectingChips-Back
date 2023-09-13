@@ -27,9 +27,10 @@ public class AuthService {
         // authenticate 메소드가 실행이 될 때 CustomUserDetailsService의 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        // authentication 객체로 accessToken 생성
-        String accessToken = tokenProvider.createToken(authentication);
+        // authentication 객체로 token 생성
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        return new AuthResponseDto.Token(accessToken);
+        return new AuthResponseDto.Token(accessToken, refreshToken);
     }
 }

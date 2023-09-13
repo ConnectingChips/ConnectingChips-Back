@@ -3,6 +3,7 @@ package connectingchips.samchips.user.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,13 +24,19 @@ public class TokenProvider {
 
     protected static final String AUTHORITIES_KEY = "auth";
 
-    private final String secret;
-    private final long tokenValidityInMilliseconds;
+    @Value("${jwt.secret}")
+    private String secret;
+    @Value("${jwt.access-token-expiration-millis}")
+    private long accessTokenExpirationMillis;
+    @Value("${jwt.refresh-token-expiration-millis}")
+    private long refreshTokenExpirationMillis;
     private Key key;
 
-    public TokenProvider(String secret, long tokenValidityInSeconds) {
-        this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+    // Bean 등록후 Key SecretKey HS256 decode
+    @PostConstruct
+    public void init(){
+        accessTokenExpirationMillis *= 1000;
+        refreshTokenExpirationMillis *= 1000;
 
         // 시크릿 값을 decode해서 키 변수에 할당
         byte[] keyBytes = Decoders.BASE64.decode(secret);
@@ -37,13 +44,32 @@ public class TokenProvider {
     }
 
     // 엑세스 토큰 생성
-    public String createToken(Authentication authentication) {
+    public String createAccessToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
+        Date validity = new Date(now + accessTokenExpirationMillis);
+
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
+                // signature 에 들어갈 secret값 사용할 암호화 알고리즘
+                .signWith(key, SignatureAlgorithm.HS256)
+                // set Expire Time 해당 옵션 안넣으면 expire안함
+                .setExpiration(validity)
+                .compact();
+    }
+
+    // 리프레쉬 토큰 생성
+    public String createRefreshToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+        Date validity = new Date(now + refreshTokenExpirationMillis);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())

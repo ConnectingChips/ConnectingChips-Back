@@ -9,6 +9,7 @@ public class AuthResponseDto {
     @AllArgsConstructor
     public static class Token{
 
-        private String token;
+        private String accessToken;
+        private String refreshToken;
     }
 }
