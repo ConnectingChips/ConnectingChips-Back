@@ -2,8 +2,8 @@ package connectingchips.samchips.user.controller;
 
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
-import connectingchips.samchips.user.domain.CurrentUser;
-import connectingchips.samchips.user.domain.UserAdapter;
+import connectingchips.samchips.user.domain.LoginUser;
+import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
@@ -14,9 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,12 +42,12 @@ public class UserController {
 
     @GetMapping()
     @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse<UserResponseDto.Info> getLoginUser(@AuthenticationPrincipal UserAdapter currentUser){
+    public DataResponse<UserResponseDto.Info> getLoginUser(@LoginUser User loginUser){
         UserResponseDto.Info info = UserResponseDto.Info.builder()
-                .userId(currentUser.getUser().getId())
-                .nickname(currentUser.getUser().getNickname())
-                .profileImage(currentUser.getUser().getProfileImage())
-                .roles(currentUser.getUser().getRoles())
+                .userId(loginUser.getId())
+                .nickname(loginUser.getNickname())
+                .profileImage(loginUser.getProfileImage())
+                .roles(loginUser.getRoles())
                 .build();
 
         return DataResponse.of(info);
