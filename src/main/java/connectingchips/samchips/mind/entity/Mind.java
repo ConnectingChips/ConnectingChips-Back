@@ -6,7 +6,9 @@ import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.List;
 
 @Getter
 @Entity
+@Setter
+@NoArgsConstructor
 public class Mind {
 
     @Id
@@ -52,4 +56,15 @@ public class Mind {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder
+    public Mind(String name, String introduce, String writeFormat, String backgroundImage, String exampleImage, JoinedMind joinedMind, MindType mindType, User user) {
+        this.name = name;
+        this.introduce = introduce;
+        this.writeFormat = writeFormat;
+        this.backgroundImage = backgroundImage;
+        this.exampleImage = exampleImage;
+        this.joinedMind = joinedMind;
+        this.mindType = mindType;
+        this.user = user;
+    }
 }

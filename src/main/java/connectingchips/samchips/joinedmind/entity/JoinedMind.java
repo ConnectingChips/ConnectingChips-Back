@@ -5,11 +5,14 @@ import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class JoinedMind extends Auditable {
 
     @Id
@@ -29,4 +32,11 @@ public class JoinedMind extends Auditable {
     @ManyToOne
     private User user;
 
+    @Builder
+    public JoinedMind(int count, int isJoining, Mind mind, User user) {
+        this.count = count;
+        this.isJoining = isJoining;
+        this.mind = mind;
+        this.user = user;
+    }
 }
