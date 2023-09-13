@@ -5,15 +5,17 @@ import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class Comment extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "board_id")

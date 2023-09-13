@@ -13,6 +13,7 @@ public class CommentRequestDto {
     private Long boardId;
     private String content;
 
+    /* Dto -> Entity */
     public Comment toEntity(Board board, User user){
         return Comment.builder()
                 .board(board)

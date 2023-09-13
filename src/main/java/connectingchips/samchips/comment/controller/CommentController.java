@@ -2,6 +2,7 @@ package connectingchips.samchips.comment.controller;
 
 import connectingchips.samchips.comment.dto.CommentRequestDto;
 import connectingchips.samchips.comment.dto.CommentResponseDto;
+import connectingchips.samchips.comment.dto.ReplyRequestDto;
 import connectingchips.samchips.comment.dto.ReplyResponseDto;
 import connectingchips.samchips.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,8 @@ public class CommentController {
     }
 
     @PostMapping("/replies")
-    private ResponseEntity<ReplyResponseDto> createReply(@RequestBody ReplyResponseDto replyResponseDto) {
-        ReplyResponseDto reply = commentService.createReply(replyResponseDto);
+    private ResponseEntity<ReplyResponseDto> createReply(@RequestBody ReplyRequestDto replyRequestDto) {
+        ReplyResponseDto reply = commentService.createReply(replyRequestDto);
         return ResponseEntity.ok(reply);
     }
 
