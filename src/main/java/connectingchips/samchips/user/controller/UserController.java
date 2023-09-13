@@ -2,6 +2,8 @@ package connectingchips.samchips.user.controller;
 
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
+import connectingchips.samchips.user.domain.LoginUser;
+import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
@@ -38,10 +40,15 @@ public class UserController {
         return DataResponse.of(token);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping()
     @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse<UserResponseDto.Info> findByUserId(@PathVariable Long userId){
-        UserResponseDto.Info info = userService.findByUserId(userId);
+    public DataResponse<UserResponseDto.Info> getLoginUser(@LoginUser User loginUser){
+        UserResponseDto.Info info = UserResponseDto.Info.builder()
+                .userId(loginUser.getId())
+                .nickname(loginUser.getNickname())
+                .profileImage(loginUser.getProfileImage())
+                .roles(loginUser.getRoles())
+                .build();
 
         return DataResponse.of(info);
     }

@@ -1,9 +1,11 @@
 package connectingchips.samchips.user.jwt;
 
+import connectingchips.samchips.user.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -20,7 +23,10 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 public class TokenProvider {
+
+    private final CustomUserDetailsService userDetailsService;
 
     protected static final String AUTHORITIES_KEY = "auth";
 
@@ -95,9 +101,9 @@ public class TokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
     }
 
     // 토큰 유효성 검사
