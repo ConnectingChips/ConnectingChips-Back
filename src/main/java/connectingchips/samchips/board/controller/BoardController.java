@@ -2,6 +2,7 @@ package connectingchips.samchips.board.controller;
 
 import connectingchips.samchips.board.dto.BoardRequestDto;
 import connectingchips.samchips.board.dto.BoardResponseDto;
+import connectingchips.samchips.board.dto.UserEditDto;
 import connectingchips.samchips.board.service.BoardService;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
@@ -18,14 +19,15 @@ public class BoardController {
 
     /* 게시글 리스트 반환 */
     @GetMapping("/{mind_id}")
-    private BasicResponse getBoard(@PathVariable Long mindId){
+    private DataResponse<?> getBoard(@PathVariable Long mindId){
 
-        return BasicResponse.of(HttpStatus.OK);
+        return DataResponse.of();
     }
     /* 게시글 작성자 여부 */
     @GetMapping("/{board_id}/authentication")
-    private BasicResponse getBoardUser(@PathVariable Long mindId){
-        return BasicResponse.of(HttpStatus.OK);
+    private DataResponse<UserEditDto> getBoardUser(@PathVariable Long mindId){
+
+        return DataResponse.of();
     }
 
     /* 게시글 작성 */
