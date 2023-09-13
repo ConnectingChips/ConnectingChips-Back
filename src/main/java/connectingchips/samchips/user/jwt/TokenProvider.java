@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
 public class TokenProvider {
 
     protected static final String AUTHORITIES_KEY = "auth";
@@ -28,8 +27,7 @@ public class TokenProvider {
     private final long tokenValidityInMilliseconds;
     private Key key;
 
-    public TokenProvider(@Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-validity-in-seconds}") long tokenValidityInSeconds) {
+    public TokenProvider(String secret, long tokenValidityInSeconds) {
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
 
