@@ -1,6 +1,7 @@
 package connectingchips.samchips.user.domain;
 
 import connectingchips.samchips.audit.Auditable;
+import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.mind.entity.Mind;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -43,7 +44,7 @@ public class User extends Auditable {
     private String refreshToken;  //리프레쉬 토큰
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Mind> joinedMinds = new ArrayList<>();
+    private List<JoinedMind> joinedMinds = new ArrayList<>();
 
 
     @Builder
@@ -58,5 +59,9 @@ public class User extends Auditable {
 
     public void editInfo(String nickname){
         this.nickname = nickname;
+    }
+
+    public void editJoinedMinds(List<JoinedMind> joinedMinds) {
+        this.joinedMinds = joinedMinds;
     }
 }

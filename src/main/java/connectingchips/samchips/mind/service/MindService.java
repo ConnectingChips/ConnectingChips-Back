@@ -1,5 +1,6 @@
 package connectingchips.samchips.mind.service;
 
+import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.joinedmind.service.JoinedMindService;
 import connectingchips.samchips.mind.dto.service.FindMindOutput;
 import connectingchips.samchips.mind.entity.Mind;
@@ -15,19 +16,19 @@ import java.util.Optional;
 public class MindService {
 
     private final MindRepository mindRepository;
-    private final JoinedMindService joinedMindService;
+    private final JoinedMindRepository joinedMindRepository;
 
 
     public FindMindOutput findMind(long mindId) {
         return FindMindOutput
-                .of(findVerifiedMind(mindId), joinedMindService.countJoinedMindUser(mindId));
+                .of(findVerifiedMind(mindId), joinedMindRepository.countJoinedMindUser(mindId));
         //한번할때마다 너무 큰 연산이 필요한거 같음 Mind에 카운트 수를 두는게 나아보임
     }
 
     public List<FindMindOutput> findMinds() {
         return mindRepository.findAll()
                 .stream()
-                .map(a -> FindMindOutput.of(a, joinedMindService.countJoinedMindUser(a.getMindId())))
+                .map(a -> FindMindOutput.of(a, joinedMindRepository.countJoinedMindUser(a.getMindId())))
                 .toList();
     }
 
