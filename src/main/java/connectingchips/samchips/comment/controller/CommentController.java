@@ -16,11 +16,11 @@ public class CommentController {
 
     private final CommentService commentService;
 
-//    @PostMapping("/comments")
-//    private ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentReqDto) {
-//        CommentResponseDto comment = commentService.createComment(commentReqDto);
-//        return ResponseEntity.ok(comment);
-//    }
+    @PostMapping("/comments")
+    private ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentReqDto) {
+        CommentResponseDto comment = commentService.createComment(commentReqDto);
+        return ResponseEntity.ok(comment);
+    }
 
     @DeleteMapping("/comments/{commentId}")
     private ResponseEntity<Void> deleteComment(@PathVariable Long commentId){
