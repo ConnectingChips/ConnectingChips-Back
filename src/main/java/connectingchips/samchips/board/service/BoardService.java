@@ -30,11 +30,6 @@ public class BoardService {
         } else return new BoardResponseDto.CanEdit(false);
     }
 
-    /**
-     *     private Long mindId;
-     *     private String content;
-     *     private String image;
-     */
     @Transactional
     public void createBoard(BoardRequestDto boardRequestDto) {
         Mind mind = mindRepository.getReferenceById(boardRequestDto.getMindId());
@@ -48,8 +43,8 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto) {
-    }
+//    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto) {
+//    }
 
     @Transactional
     public void deleteBoard(Long boardId) {

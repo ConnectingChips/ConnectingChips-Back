@@ -31,22 +31,22 @@ public class BoardController {
     }
 
     /* 게시글 작성 */
-    @PostMapping("/")
+    @PostMapping
     private BasicResponse createBoard(@RequestBody BoardRequestDto boardRequestDto) {
         boardService.createBoard(boardRequestDto);
         return BasicResponse.of(HttpStatus.OK);
     }
 
     /* 게시글 수정 */
-    @PutMapping("/{board_id}")
-    private DataResponse<BoardResponseDto> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
-        BoardResponseDto boardResponseDto = boardService.updateBoard(boardRequestDto);
-        return DataResponse.of(boardResponseDto);
-    }
+//    @PutMapping("/{board_id}")
+//    private DataResponse<BoardResponseDto> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
+//        BoardResponseDto boardResponseDto = boardService.updateBoard(boardRequestDto);
+//        return DataResponse.of(boardResponseDto);
+//    }
 
     /* 게시글 삭제 */
     @DeleteMapping("/{board_id}")
-    private BasicResponse deleteBoard(@PathVariable Long boardId){
+    private BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId){
         boardService.deleteBoard(boardId);
         return BasicResponse.of(HttpStatus.OK);
     }
