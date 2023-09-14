@@ -24,8 +24,18 @@ public class BoardController {
     }
 
     /* 게시글 작성자 여부 */
-    @GetMapping("/{board_id}/{user_id}")
-    private DataResponse<BoardResponseDto.CanEdit> getBoardUser(@PathVariable Long boardId, Long userId){
+
+    /**
+     * @GetMapping({"board", "board?page={page}&listSize={listSize}"})
+     * 	public String getBoardList(Model model
+     * 			, @RequestParam(value = "page", required = false, defaultValue = "1") int page
+     * 			, @RequestParam(value = "listSize", defaultValue = "10") int listSize
+     * 			) throws Exception {
+     * @return
+     */
+    @GetMapping("/boards/authentication?board_id={board_id}&user_id={user_id} ")
+    private DataResponse<BoardResponseDto.CanEdit> getBoardUser(@RequestParam(value = "board_id") Long boardId,
+                                                                @RequestParam(value = "user_id") Long userId){
         BoardResponseDto.CanEdit canEdit = boardService.isUserEditer(boardId, userId);
         return DataResponse.of(canEdit);
     }
