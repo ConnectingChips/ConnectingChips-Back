@@ -17,4 +17,11 @@ public class UserResponseDto {
         private String profileImage;
         private Role roles;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class CheckId{
+
+        private boolean isUsable;
+    }
 }
