@@ -34,6 +34,7 @@ public class BoardController {
     @PostMapping
     private BasicResponse createBoard(@RequestBody BoardRequestDto boardRequestDto) {
         boardService.createBoard(boardRequestDto);
+
         return BasicResponse.of(HttpStatus.OK);
     }
 
