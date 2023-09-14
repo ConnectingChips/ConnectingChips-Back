@@ -40,4 +40,7 @@ public class Board extends Auditable {
         this.user = user;
     }
 
+    public void editContent(String content) {
+        this.content = content;
+    }
 }

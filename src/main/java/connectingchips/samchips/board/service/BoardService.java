@@ -7,6 +7,7 @@ import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
+import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +43,22 @@ public class BoardService {
                 .build();
         boardRepository.save(board);
     }
+    @Transactional
+    public void editInfo(Long userId, UserRequestDto.Edit editDto){
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId입니다."));
 
-//    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto) {
-//    }
+        findUser.editInfo(editDto.getNickname());
+    }
+
+    @Transactional
+    public BoardResponseDto.Update updateBoard(Long boardId, BoardRequestDto boardRequestDto) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재 하지 않는 게시물입니다"));
+        board.editContent(boardRequestDto.getContent());
+
+        return new BoardResponseDto.Update(boardId, board.getContent());
+    }
 
     @Transactional
     public void deleteBoard(Long boardId) {
