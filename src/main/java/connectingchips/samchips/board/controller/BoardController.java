@@ -19,35 +19,35 @@ public class BoardController {
     /* 게시글 리스트 반환 */
     @GetMapping("/{mind_id}")
     private DataResponse<?> getBoard(@PathVariable Long mindId){
-
+        boardService.readBoardList(mindId);
         return DataResponse.of();
     }
 
     /* 게시글 작성자 여부 */
     @GetMapping("/{board_id}/authentication")
-    private DataResponse<UserEditDto> getBoardUser(@PathVariable Long mindId){
-
+    private DataResponse<UserEditDto> getBoardUser(@PathVariable Long boardId){
+        UserEditDto userEditDto = boardService.isUserEdit(boardId);
         return DataResponse.of();
     }
 
     /* 게시글 작성 */
     @PostMapping("/")
-    private DataResponse<BoardResponseDto> createBoard(@RequestBody BoardRequestDto boardRequestDto) {
-        BoardResponseDto boardResponseDto = new BoardResponseDto();
-        return DataResponse.of(boardResponseDto);
+    private BasicResponse createBoard(@RequestBody BoardRequestDto boardRequestDto) {
+        boardService.createBoard(boardRequestDto);
+        return BasicResponse.of(HttpStatus.OK);
     }
 
     /* 게시글 수정 */
     @PutMapping("/{board_id}")
-    private BasicResponse updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
-
-        return BasicResponse.of(HttpStatus.OK);
+    private DataResponse<BoardResponseDto> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
+        BoardResponseDto boardResponseDto = boardService.updateBoard(boardRequestDto);
+        return DataResponse.of(boardResponseDto);
     }
 
     /* 게시글 삭제 */
     @DeleteMapping("/{board_id}")
-    private BasicResponse deleteComment(@PathVariable Long commentId){
-
+    private BasicResponse deleteBoard(@PathVariable Long boardId){
+        boardService.deleteBoard(boardId);
         return BasicResponse.of(HttpStatus.OK);
     }
 }
