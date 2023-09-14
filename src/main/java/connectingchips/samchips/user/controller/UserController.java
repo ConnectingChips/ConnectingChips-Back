@@ -40,7 +40,7 @@ public class UserController {
         return DataResponse.of(token);
     }
 
-    @GetMapping()
+    @GetMapping
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse<UserResponseDto.Info> getLoginUser(@LoginUser User loginUser){
         UserResponseDto.Info info = UserResponseDto.Info.builder()
@@ -60,16 +60,25 @@ public class UserController {
         return DataResponse.of(token);
     }
 
-    @PutMapping("/{userId}")
-    public BasicResponse deleteByUserId(@PathVariable Long userId, @RequestBody UserRequestDto.Edit editDto){
-        userService.editInfo(userId, editDto);
+    @PutMapping("/logout")
+    public BasicResponse logout(@LoginUser User loginUser){
+        authService.logout(loginUser.getId());
 
         return BasicResponse.of(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{userId}")
-    public BasicResponse deleteByUserId(@PathVariable Long userId){
-        userService.deleteByUserId(userId);
+    @PutMapping
+    @PreAuthorize("hasAnyRole('USER')")
+    public BasicResponse editUserInfo(@RequestBody UserRequestDto.Edit editDto, @LoginUser User loginUser){
+        userService.editInfo(loginUser.getId(), editDto);
+
+        return BasicResponse.of(HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasAnyRole('USER')")
+    public BasicResponse deleteUser(@LoginUser User loginUser){
+        userService.deleteByUserId(loginUser.getId());
 
         return BasicResponse.of(HttpStatus.OK);
     }

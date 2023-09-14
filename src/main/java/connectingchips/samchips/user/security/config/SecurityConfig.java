@@ -4,6 +4,7 @@ import connectingchips.samchips.user.jwt.JwtSecurityConfig;
 import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.jwt.handler.JwtAccessDeniedHandler;
 import connectingchips.samchips.user.jwt.handler.JwtAuthenticationEntryPoint;
+import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
@@ -68,7 +70,7 @@ public class SecurityConfig {
                 )
         ));
 
-        http.apply(new JwtSecurityConfig(tokenProvider)); // JwtSecurityConfig 적용
+        http.apply(new JwtSecurityConfig(tokenProvider, userRepository)); // JwtSecurityConfig 적용
 
         return http.build();
     }

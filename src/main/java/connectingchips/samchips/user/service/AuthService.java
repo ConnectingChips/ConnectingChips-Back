@@ -40,6 +40,15 @@ public class AuthService {
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }
 
+    @Transactional
+    public void logout(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId입니다."));
+
+        // 로그아웃 시, DB의 token 데이터 초기화
+        user.editRefreshToken(null);
+    }
+
     @Transactional(readOnly = true)
     public AuthResponseDto.Token reissueAccessToken(String refreshToken){
 //        String refreshToken = reissueDto.getRefreshToken();
