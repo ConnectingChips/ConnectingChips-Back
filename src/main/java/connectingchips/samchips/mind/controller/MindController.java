@@ -24,6 +24,11 @@ public class MindController {
         return new ResponseEntity(mind, HttpStatus.OK);
     }
 
+//    @GetMapping("/today-check/{user-id}")
+//    public ResponseEntity todaysAllCheck(@PathVariable("uesr-id") Long userId){
+//        mindService.checkTodayAll(userId)
+//    }
+
     @GetMapping()
     public ResponseEntity getMinds(){
         return new ResponseEntity(mindService.findMinds(), HttpStatus.OK);
