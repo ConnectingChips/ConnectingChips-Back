@@ -4,6 +4,10 @@ import connectingchips.samchips.board.dto.BoardRequestDto;
 import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
+import connectingchips.samchips.mind.entity.Mind;
+import connectingchips.samchips.mind.repository.MindRepository;
+import connectingchips.samchips.user.domain.User;
+import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final MindRepository mindRepository;
+    private final UserRepository userRepository;
     public void readBoardList(Long mindId) {
     }
 
@@ -24,7 +30,17 @@ public class BoardService {
         } else return new BoardResponseDto.CanEdit(false);
     }
 
+    @Transactional
     public void createBoard(BoardRequestDto boardRequestDto) {
+        Mind mind = mindRepository.getReferenceById(boardRequestDto.getMindId());
+        User user = userRepository.getReferenceById(boardRequestDto.getUserId());
+        Board board = Board.builder()
+                .content(boardRequestDto.getContent())
+                .image(boardRequestDto.getImage())
+                .mind(mind)
+                .user(user)
+                .build();
+        boardRepository.save(board);
     }
 
 //    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto) {

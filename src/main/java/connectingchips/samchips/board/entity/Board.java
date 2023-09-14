@@ -5,6 +5,7 @@ import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,10 +26,18 @@ public class Board extends Auditable {
 
     @ManyToOne
     @JoinColumn(name ="mind_id")
-    private Mind mindId;
+    private Mind mind;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Board(String content, String image, Mind mind, User user){
+        this.content = content;
+        this.image = image;
+        this.mind = mind;
+        this.user = user;
+    }
 
 }

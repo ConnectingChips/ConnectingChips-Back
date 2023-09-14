@@ -12,6 +12,7 @@ public class BoardRequestDto {
      *     "image": "인증 이미지"
      */
     private Long mindId;
+    private Long userId;
     private String content;
     private String image;
 
