@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface UserRepositoryCustom {
 
     Optional<UserResponseDto.Info> findByUserId(Long userId);
+
+    boolean existsTokenByAccountId(String accountId);
 }

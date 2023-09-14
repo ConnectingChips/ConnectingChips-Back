@@ -33,4 +33,13 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 
         return Optional.of(result);
     }
+
+    @Override
+    public boolean existsTokenByAccountId(String accountId) {
+        return queryFactory
+                .from(user)
+                .where(user.accountId.eq(accountId)
+                        .and(user.refreshToken.isNotNull()))
+                .fetchOne() != null;
+    }
 }
