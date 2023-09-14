@@ -7,9 +7,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoardResponseDto {
 
-    private Long boardId;
-    private String content;
+    public static class Update{
+        private Long boardId;
+        private String content;
 
+        public Update(Long boardId, String content){
+            this.boardId = boardId;
+            this.content = content;
+        }
+    }
 
     public static class CanEdit {
         private boolean canEdit;
