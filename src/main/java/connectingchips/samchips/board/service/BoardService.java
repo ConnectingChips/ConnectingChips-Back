@@ -2,7 +2,6 @@ package connectingchips.samchips.board.service;
 
 import connectingchips.samchips.board.dto.BoardRequestDto;
 import connectingchips.samchips.board.dto.BoardResponseDto;
-import connectingchips.samchips.board.dto.UserEditDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
 import jakarta.transaction.Transactional;
@@ -28,8 +27,8 @@ public class BoardService {
     public void createBoard(BoardRequestDto boardRequestDto) {
     }
 
-    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto) {
-    }
+//    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto) {
+//    }
 
     @Transactional
     public void deleteBoard(Long boardId) {
