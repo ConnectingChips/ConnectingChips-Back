@@ -42,6 +42,11 @@ public class UserService {
         return findInfo;
     }
 
+    @Transactional(readOnly = true)
+    public boolean checkAccountId(String accountId){
+        return userRepository.existsByAccountId(accountId);
+    }
+
     @Transactional
     public void editInfo(Long userId, UserRequestDto.Edit editDto){
         User findUser = userRepository.findById(userId)

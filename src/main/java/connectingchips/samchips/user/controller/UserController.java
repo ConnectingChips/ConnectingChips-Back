@@ -41,6 +41,14 @@ public class UserController {
         return DataResponse.of(token);
     }
 
+    @GetMapping("/check-id")
+    public DataResponse<UserResponseDto.CheckId> checkAccountId(@RequestParam String accountId){
+        boolean isUsable = !userService.checkAccountId(accountId);
+        UserResponseDto.CheckId checkIdDto = new UserResponseDto.CheckId(isUsable);
+
+        return DataResponse.of(checkIdDto);
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse<UserResponseDto.Info> getLoginUser(@LoginUser User loginUser){
