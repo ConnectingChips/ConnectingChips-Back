@@ -5,6 +5,7 @@ import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -50,8 +51,8 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public AuthResponseDto.Token reissueAccessToken(String refreshToken){
-//        String refreshToken = reissueDto.getRefreshToken();
+    public AuthResponseDto.Token reissueAccessToken(HttpServletRequest request){
+        String refreshToken = tokenProvider.resolveToken(request);
 
         // 리프레시 토큰 검증
         if(!tokenProvider.validateToken(refreshToken)){

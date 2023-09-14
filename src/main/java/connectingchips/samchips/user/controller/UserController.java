@@ -9,6 +9,7 @@ import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.service.AuthService;
 import connectingchips.samchips.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -54,8 +55,8 @@ public class UserController {
     }
 
     @GetMapping("/reissue")
-    public DataResponse<AuthResponseDto.Token> reissue(@RequestParam @NotBlank String refreshToken){
-        AuthResponseDto.Token token = authService.reissueAccessToken(refreshToken);
+    public DataResponse<AuthResponseDto.Token> reissue(HttpServletRequest request){
+        AuthResponseDto.Token token = authService.reissueAccessToken(request);
 
         return DataResponse.of(token);
     }
