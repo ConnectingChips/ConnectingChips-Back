@@ -38,11 +38,11 @@ public class BoardController {
     }
 
     /* 게시글 수정 */
-//    @PutMapping("/{board_id}")
-//    private DataResponse<BoardResponseDto> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
-//        BoardResponseDto boardResponseDto = boardService.updateBoard(boardRequestDto);
-//        return DataResponse.of(boardResponseDto);
-//    }
+    @PutMapping("/{board_id}")
+    private DataResponse<BoardResponseDto> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
+        BoardResponseDto boardResponseDto = boardService.updateBoard(boardRequestDto);
+        return DataResponse.of(boardResponseDto);
+    }
 
     /* 게시글 삭제 */
     @DeleteMapping("/{board_id}")
