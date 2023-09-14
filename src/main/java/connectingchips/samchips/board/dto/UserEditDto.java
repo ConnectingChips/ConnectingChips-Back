@@ -8,4 +8,8 @@ import lombok.NoArgsConstructor;
 public class UserEditDto {
 
     boolean canEdit;
+
+    public UserEditDto(boolean isUserEditer) {
+        this.canEdit = isUserEditer;
+    }
 }

@@ -9,4 +9,13 @@ public class BoardResponseDto {
 
     private Long boardId;
     private String content;
+
+
+    public static class CanEdit {
+        private boolean canEdit;
+
+        public CanEdit(boolean isUserEditer) {
+            this.canEdit = isUserEditer;
+        }
+    }
 }
