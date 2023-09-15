@@ -19,7 +19,7 @@ public class BoardController {
 
     /* 게시글 리스트 반환 */
     @GetMapping("/{mind_id}")
-    private DataResponse<List<BoardResponseDto.Read>> getMindBoardList(@PathVariable Long mindId){
+    private DataResponse<List<BoardResponseDto.Read>> getMindBoardList(@PathVariable(value = "mind_id") Long mindId){
         List<BoardResponseDto.Read> mindBoardList = boardService.getMindBoardList(mindId);
         return DataResponse.of(mindBoardList);
     }
