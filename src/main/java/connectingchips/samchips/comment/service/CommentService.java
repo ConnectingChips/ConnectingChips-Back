@@ -1,6 +1,5 @@
 package connectingchips.samchips.comment.service;
 
-import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.comment.dto.CommentRequestDto;
@@ -14,12 +13,9 @@ import connectingchips.samchips.comment.repository.ReplyRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
