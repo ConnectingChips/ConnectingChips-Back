@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ReplyResponseDto {
-    private Long id;
+
+    private Long replyId;
     private Long commentId;
     private Long userId;
     private String nickname;
@@ -18,17 +19,17 @@ public class ReplyResponseDto {
     private String createDate;
 
     /* Entity -> Dto*/
-    public ReplyResponseDto(User user, Comment comment, Reply reply){
-        this.id = reply.getId();
-        this.commentId = comment.getId();
-        this.userId = user.getId();
-        this.nickname = user.getNickname();
-        this.profileImage = user.getProfileImage();
+    public ReplyResponseDto(Reply reply){
+        this.replyId = reply.getId();
         this.content = reply.getContent();
+        this.commentId = reply.getComment().getId();
+        this.userId = reply.getUser().getId();
+        this.nickname = reply.getUser().getNickname();
+        this.profileImage = reply.getUser().getProfileImage();
         StringBuilder sb = new StringBuilder();
-        sb.append(comment.getCreatedAt().getMonth()).append("월 ")
-                .append(comment.getCreatedAt().getDayOfMonth()).append("일 ")
-                .append(comment.getCreatedAt().getHour()).append(":").append(comment.getCreatedAt().getMinute());
+        sb.append(reply.getCreatedAt().getMonth()).append("월 ")
+                .append(reply.getCreatedAt().getDayOfMonth()).append("일 ")
+                .append(reply.getCreatedAt().getHour()).append(":").append(reply.getCreatedAt().getMinute());
         this.createDate = sb.toString();
     }
 }
