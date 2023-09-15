@@ -26,7 +26,7 @@ public class JoinedMindService {
 
     public JoinCheckOutPut JoinCheck(Long joinedMindId) {
 
-        return JoinCheckOutPut.of(findVerifiedJoinedMind(joinedMindId).getIsJoining());
+        return JoinCheckOutPut.of(findVerifiedJoinedMind(joinedMindId).getIsJoining() == JOIN);
     }
 
     public void makeMindRelation(Long mindId, Long userId) {

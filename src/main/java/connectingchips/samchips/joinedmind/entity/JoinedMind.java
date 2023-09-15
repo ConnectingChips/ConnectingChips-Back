@@ -37,6 +37,7 @@ public class JoinedMind extends Auditable {
     @PrimaryKeyJoinColumn(name = "user_id")
     private User user;
 
+
     @Builder
     public JoinedMind(int count, int isJoining, Mind mind, User user) {
         this.count = count;
