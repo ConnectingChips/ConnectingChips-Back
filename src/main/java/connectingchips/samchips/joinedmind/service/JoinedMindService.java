@@ -1,6 +1,6 @@
 package connectingchips.samchips.joinedmind.service;
 
-import connectingchips.samchips.joinedmind.dto.service.JoinCheckOutPut;
+import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.entity.Mind;
@@ -9,6 +9,7 @@ import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +24,12 @@ public class JoinedMindService {
     private final UserRepository userRepository;
     private final MindRepository mindRepository;
 
+    @Transactional
+    public JoinCheckResponse JoinCheck(Long joinedMindId) {
 
-    public JoinCheckOutPut JoinCheck(Long joinedMindId) {
-
-        return JoinCheckOutPut.of(findVerifiedJoinedMind(joinedMindId).getIsJoining());
+        return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getIsJoining() == JOIN);
     }
-
+    @Transactional
     public void makeMindRelation(Long mindId, Long userId) {
         Mind mind = findVerifiedMind(mindId);
         User user = findVerifiedUser(userId);
@@ -39,7 +40,7 @@ public class JoinedMindService {
                 .build();
         joinedMindRepository.save(joinedMind);
     }
-
+    @Transactional
     public void reMindRelation(Long joinedMindId, Long userId) {
         User user = findVerifiedUser(userId);
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
@@ -49,7 +50,7 @@ public class JoinedMindService {
         user.editJoinedMinds(joinedMinds);
         userRepository.save(user);
     }
-
+    @Transactional
     public void exitMindRelation(Long joinedMindId, Long userId) {
         JoinedMind joinedMind = findVerifiedJoinedMind(joinedMindId);
         User user = findVerifiedUser(userId);
@@ -62,9 +63,10 @@ public class JoinedMindService {
     }
 
     private static void checkAlreadyJoined(Long mindId, User user) {
-        Optional<JoinedMind> first = user.getJoinedMinds().stream().filter(jm -> jm.getMind().getMindId().equals(mindId))
+        Optional<JoinedMind> first = user.getJoinedMinds().stream()
+                .filter(jm -> jm.getMind().getMindId().equals(mindId) && jm.getIsJoining().equals(JOIN))
                 .findFirst();
-        if(first.isPresent()) throw new RuntimeException("이미 가입한 작심입니다.");
+        if(first.isPresent()) throw new RuntimeException("이미 참여하고 있는 작심입니다.");
     }
     private Mind findVerifiedMind(Long mindId) {
         Optional<Mind> findMindById = mindRepository.findById(mindId);

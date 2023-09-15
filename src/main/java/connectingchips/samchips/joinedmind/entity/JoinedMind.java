@@ -28,6 +28,9 @@ public class JoinedMind extends Auditable {
     @NotNull
     private Integer isJoining = FIRST_JOINING;
 
+    @NotNull
+    private Boolean todayWrite = false;
+
     @OneToOne
     @PrimaryKeyJoinColumn(name = "mind_id")
     private Mind mind;
@@ -38,14 +41,16 @@ public class JoinedMind extends Auditable {
     private User user;
 
     @Builder
-    public JoinedMind(int count, int isJoining, Mind mind, User user) {
+    public JoinedMind(Integer count, Integer isJoining, Mind mind, User user) {
         this.count = count;
         this.isJoining = isJoining;
         this.mind = mind;
         this.user = user;
     }
 
-    public void setIsJoining(Integer isJoining) {
+
+    public JoinedMind setIsJoining(Integer isJoining) {
         this.isJoining = isJoining;
+        return this;
     }
 }

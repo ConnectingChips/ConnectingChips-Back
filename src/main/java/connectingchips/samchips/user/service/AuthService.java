@@ -5,6 +5,8 @@ import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -50,9 +52,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public AuthResponseDto.Token reissueAccessToken(String refreshToken){
-//        String refreshToken = reissueDto.getRefreshToken();
-
+    public AuthResponseDto.AccessToken reissueAccessToken(String refreshToken){
         // 리프레시 토큰 검증
         if(!tokenProvider.validateToken(refreshToken)){
             throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
@@ -70,6 +70,6 @@ public class AuthService {
         // 리프레시 토큰에 담긴 값을 그대로 액세스 토큰 생성에 활용한다.
         String accessToken = tokenProvider.createAccessToken(authentication);
 
-        return new AuthResponseDto.Token(accessToken, refreshToken);
+        return new AuthResponseDto.AccessToken(accessToken);
     }
 }

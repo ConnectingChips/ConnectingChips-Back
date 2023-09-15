@@ -9,6 +9,9 @@ import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.service.AuthService;
 import connectingchips.samchips.user.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,10 +37,28 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public DataResponse<AuthResponseDto.Token> login(@RequestBody UserRequestDto.Login loginDto){
+    public DataResponse<AuthResponseDto.AccessToken> login(@RequestBody UserRequestDto.Login loginDto, HttpServletResponse response){
         AuthResponseDto.Token token = authService.login(loginDto);
 
-        return DataResponse.of(token);
+        AuthResponseDto.AccessToken accessToken = new AuthResponseDto.AccessToken(token.getAccessToken());
+
+        Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60);
+
+        response.addCookie(cookie);
+
+        return DataResponse.of(accessToken);
+    }
+
+    @GetMapping("/check-id")
+    public DataResponse<UserResponseDto.CheckId> checkAccountId(@RequestParam String accountId){
+        boolean isUsable = !userService.checkAccountId(accountId);
+        UserResponseDto.CheckId checkIdDto = new UserResponseDto.CheckId(isUsable);
+
+        return DataResponse.of(checkIdDto);
     }
 
     @GetMapping
@@ -54,15 +75,23 @@ public class UserController {
     }
 
     @GetMapping("/reissue")
-    public DataResponse<AuthResponseDto.Token> reissue(@RequestParam @NotBlank String refreshToken){
-        AuthResponseDto.Token token = authService.reissueAccessToken(refreshToken);
+    public DataResponse<AuthResponseDto.AccessToken> reissue(@CookieValue("refreshToken") String refreshToken){
+        AuthResponseDto.AccessToken accessToken = authService.reissueAccessToken(refreshToken);
 
-        return DataResponse.of(token);
+        return DataResponse.of(accessToken);
     }
 
     @PutMapping("/logout")
-    public BasicResponse logout(@LoginUser User loginUser){
+    @PreAuthorize("hasAnyRole('USER')")
+    public BasicResponse logout(@LoginUser User loginUser, HttpServletResponse response){
         authService.logout(loginUser.getId());
+
+        // 로그아웃 시에 refreshToken을 가지고 있는 cookie 제거
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
 
         return BasicResponse.of(HttpStatus.OK);
     }
