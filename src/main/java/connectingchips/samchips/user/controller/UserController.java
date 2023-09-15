@@ -83,8 +83,15 @@ public class UserController {
 
     @PutMapping("/logout")
     @PreAuthorize("hasAnyRole('USER')")
-    public BasicResponse logout(@LoginUser User loginUser){
+    public BasicResponse logout(@LoginUser User loginUser, HttpServletResponse response){
         authService.logout(loginUser.getId());
+
+        // 로그아웃 시에 refreshToken을 가지고 있는 cookie 제거
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
 
         return BasicResponse.of(HttpStatus.OK);
     }
