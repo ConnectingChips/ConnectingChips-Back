@@ -4,6 +4,9 @@ import connectingchips.samchips.board.dto.BoardRequestDto;
 import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
+import connectingchips.samchips.comment.dto.CommentResponseDto;
+import connectingchips.samchips.comment.entity.Comment;
+import connectingchips.samchips.comment.repository.CommentRepository;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
@@ -13,6 +16,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -20,7 +27,11 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MindRepository mindRepository;
     private final UserRepository userRepository;
-    public void readBoardList(Long mindId) {
+
+
+    public List<BoardResponseDto.Read> getBoardList(Long mindId) {
+        List<Board> boards = boardRepository.findAllByMindId(mindId);
+        return boards.stream().map(board -> new BoardResponseDto.Read(board)).collect(Collectors.toList());
     }
 
     public BoardResponseDto.CanEdit isUserEditer(Long boardId, Long userId) {
@@ -43,14 +54,6 @@ public class BoardService {
                 .build();
         boardRepository.save(board);
     }
-    @Transactional
-    public void editInfo(Long userId, UserRequestDto.Edit editDto){
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId입니다."));
-
-        findUser.editInfo(editDto.getNickname());
-    }
-
     @Transactional
     public BoardResponseDto.Update updateBoard(Long boardId, BoardRequestDto boardRequestDto) {
         Board board = boardRepository.findById(boardId)
