@@ -32,7 +32,7 @@ public class JoinedMind extends Auditable {
     @PrimaryKeyJoinColumn(name = "mind_id")
     private Mind mind;
 
-    //TO-DO -> MEMBER ENTITY 구현 시 참여한 유저 PK 구현
+    //TO-DO -> MEMBER ENTITY 구현 시 참여한 유저 PK 구
     @ManyToOne
     @PrimaryKeyJoinColumn(name = "user_id")
     private User user;
