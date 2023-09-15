@@ -1,6 +1,11 @@
 package connectingchips.samchips.mind.service;
 
+import connectingchips.samchips.board.entity.Board;
+import connectingchips.samchips.board.repository.BoardRepository;
+import connectingchips.samchips.joinedmind.dto.service.JoinCheckOutPut;
+import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
+import connectingchips.samchips.mind.dto.controller.CreateMindInput;
 import connectingchips.samchips.mind.dto.service.CheckAllMindOutput;
 import connectingchips.samchips.mind.dto.service.FindMindOutput;
 import connectingchips.samchips.mind.entity.Mind;
@@ -10,7 +15,12 @@ import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -20,6 +30,7 @@ public class MindService {
     private final MindRepository mindRepository;
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
 
 
     public FindMindOutput findMind(long mindId) {
@@ -43,10 +54,11 @@ public class MindService {
     }
 
 //    public List<CheckAllMindOutput> checkTodayAll(Long userId) {
-//        User user = findVerifiedUser(userId);
-//        user.getJoinedMinds().stream().map(a-> new CheckAllMindOutput(a.getJoinedMindId(),))
-//        user -> .getboard-> board에서 데이터를 역순으로해서 순차적으로 조회하면서 오늘작성한 모든 board가 가지고 있는 mindId값으로
-//         JoinedMindId를 찾아서 반환하는 값을 true로 반환
+//        List<Board> userBoard = boardRepository.findAllByCreatedAtAndUserId(Timestamp.valueOf(LocalDateTime.now()), userId);
+//        userBoard.stream().
+//
+//        //해당 유저-> 참여한 작심-> 작심 id랑
+//                //board -> 작심 id 비교
 //    }
 
 
@@ -55,4 +67,43 @@ public class MindService {
         return findUserById.orElseThrow(() ->
                 new RuntimeException("존재하지 않는 유저 번호입니다."));
     }
+    private Board findVerifiedBoard(Long boardId) {
+        Optional<Board> byId = boardRepository.findById(boardId);
+        return byId.orElseThrow(() ->
+                new RuntimeException("존재하지 않는 게시판 번호입니다."));
+    }
+
+    public JoinCheckOutPut checkToday(Long joinedMindId) {
+        return JoinCheckOutPut.of(findVerifiedJoinedMind(joinedMindId).getTodayWrite());
+    }
+
+    public List<CheckAllMindOutput> checkTodayAll(Long userId) {
+        return findVerifiedUser(userId)
+                .getJoinedMinds().stream()
+                .map(joinedMind ->
+                        CheckAllMindOutput.builder()
+                                .joinedMindId(joinedMind.getJoinedMindId())
+                                .isDoneToday(joinedMind.getTodayWrite()).build()).toList();
+    }
+
+    private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
+        Optional<JoinedMind> findJoinedMindById = joinedMindRepository.findById(joinedMindId);
+        return findJoinedMindById.orElseThrow(() ->
+                new RuntimeException("존재하지 않는 참여한 작심 번호입니다."));
+    }
+
+    public void createMind(CreateMindInput createMindInput) {
+        mindRepository.save(Mind.builder()
+                .name(createMindInput.getName())
+                .introduce(createMindInput.getIntroduce())
+                .backgroundImage(createMindInput.getBackgroundImage())
+                .writeFormat(createMindInput.getWriteFormat())
+                .exampleImage(createMindInput.getExampleImage())
+                .build());
+    }
+
+    public void deleteMind(Long mindId) {
+        mindRepository.delete(findVerifiedMind(mindId));
+    }
+
 }
