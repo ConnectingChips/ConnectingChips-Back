@@ -48,6 +48,7 @@ public class BoardResponseDto {
         private String image;
         private Long userId;
         private String nickname;
+        private String profileImage;
         private String createDate;
 
         public Read(Board board) {
@@ -57,15 +58,14 @@ public class BoardResponseDto {
 
             this.userId = board.getUser().getId();
             this.nickname = board.getUser().getNickname();
+            this.profileImage = board.getUser().getProfileImage();
 
             StringBuilder sb = new StringBuilder();
             sb.append(board.getCreatedAt().getDayOfYear()).append("년 ")
                     .append(board.getCreatedAt().getMonth()).append("월 ")
                     .append(board.getCreatedAt().getDayOfMonth()).append("일");
             this.createDate = sb.toString();
-
         }
-
     }
 
     public static class Update{
