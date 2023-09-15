@@ -24,15 +24,14 @@ public class MindController {
         return new ResponseEntity(mind, HttpStatus.OK);
     }
 
-//    @GetMapping("/today-check/{user-id}")
-//    public ResponseEntity todaysAllCheck(@PathVariable("uesr-id") Long userId){
-//        mindService.checkTodayAll(userId)
+    @GetMapping("/today-check/{user-id}")
+    public ResponseEntity todaysAllCheck(@PathVariable("uesr-id") Long userId){
+        return new ResponseEntity(mindService.checkTodayAll(userId),HttpStatus.OK);
 
-//    }
-@GetMapping("/today-check/{joined-mind-id}/{user-id}")
-public ResponseEntity todayCheck(@PathVariable("user-id")Long userId,
-                                 @PathVariable("joined-mind-id")Long joinedMindId){
-    return new ResponseEntity(mindService.checkToday(userId, joinedMindId), HttpStatus.OK);
+    }
+@GetMapping("/today-check/{joined-mind-id}")
+public ResponseEntity todayCheck(@PathVariable("joined-mind-id")Long joinedMindId){
+    return new ResponseEntity(mindService.checkToday(joinedMindId), HttpStatus.OK);
 }
 
     @GetMapping()

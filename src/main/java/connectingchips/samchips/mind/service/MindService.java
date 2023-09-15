@@ -73,12 +73,17 @@ public class MindService {
                 new RuntimeException("존재하지 않는 게시판 번호입니다."));
     }
 
-    public JoinCheckOutPut checkToday(Long userId, Long joinedMindId) {
-        JoinedMind verifiedJoinedMind = findVerifiedJoinedMind(joinedMindId);
-        Optional<Board> findBoard = boardRepository.findAllByCreatedAt_DayOfMonthAndUser(LocalDateTime.now().getDayOfMonth(), findVerifiedUser(userId))
-                .stream().filter(a -> Objects.equals(a.getMind().getMindId(), verifiedJoinedMind.getMind().getMindId()))
-                .findFirst();
-        return JoinCheckOutPut.of(findBoard.isPresent());
+    public JoinCheckOutPut checkToday(Long joinedMindId) {
+        return JoinCheckOutPut.of(findVerifiedJoinedMind(joinedMindId).getTodayWrite());
+    }
+
+    public List<CheckAllMindOutput> checkTodayAll(Long userId) {
+        return findVerifiedUser(userId)
+                .getJoinedMinds().stream()
+                .map(joinedMind ->
+                        CheckAllMindOutput.builder()
+                                .joinedMindId(joinedMind.getJoinedMindId())
+                                .isDoneToday(joinedMind.getTodayWrite()).build()).toList();
     }
 
     private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
@@ -100,4 +105,5 @@ public class MindService {
     public void deleteMind(Long mindId) {
         mindRepository.delete(findVerifiedMind(mindId));
     }
+
 }
