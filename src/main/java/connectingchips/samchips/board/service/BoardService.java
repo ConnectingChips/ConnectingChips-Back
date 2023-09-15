@@ -38,7 +38,8 @@ public class BoardService {
         List<BoardResponseDto.Read> boardList = getBoardList(mindId);
 
         for(BoardResponseDto.Read board : boardList) {
-            int commentCount = (int) commentRepository.countByBoardId(board.getBoardId());
+            Board tempBoard = boardRepository.findById(board.getBoardId()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+            int commentCount = (int) commentRepository.countByBoard(tempBoard);
             List<CommentResponseDto.Read> commentList = getCommentList(board.getBoardId());
             board.editRead(commentCount, commentList);
 
@@ -51,11 +52,13 @@ public class BoardService {
     }
 
     public List<BoardResponseDto.Read> getBoardList(Long mindId) {
-        List<Board> boards = boardRepository.findAllByMindId(mindId);
+        Mind mind = mindRepository.findById(mindId).orElseThrow(() -> new IllegalArgumentException("작심이 존재하지 않습니다"));
+        List<Board> boards = boardRepository.findAllByMind(mind);
         return boards.stream().map(board -> new BoardResponseDto.Read(board)).collect(Collectors.toList());
     }
     public List<CommentResponseDto.Read> getCommentList(Long boardId){
-        List<Comment> comments = commentRepository.findAllByBoardId(boardId);
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다"));
+        List<Comment> comments = commentRepository.findAllByBoard(board);
         return comments.stream().map(comment -> new CommentResponseDto.Read(comment)).collect(Collectors.toList());
     }
 
