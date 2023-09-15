@@ -5,8 +5,12 @@ import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.comment.dto.CommentResponseDto;
+import connectingchips.samchips.comment.dto.ReplyResponseDto;
 import connectingchips.samchips.comment.entity.Comment;
+import connectingchips.samchips.comment.entity.Reply;
 import connectingchips.samchips.comment.repository.CommentRepository;
+import connectingchips.samchips.comment.repository.ReplyRepository;
+import connectingchips.samchips.comment.service.CommentService;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
@@ -16,7 +20,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,11 +31,37 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MindRepository mindRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final ReplyRepository replyRepository;
 
+    public  List<BoardResponseDto.Read> getMindBoardList(Long mindId){
+        List<BoardResponseDto.Read> boardList = getBoardList(mindId);
+
+        for(BoardResponseDto.Read board : boardList) {
+            int commentCount = (int) commentRepository.countByBoardId(board.getBoardId());
+            List<CommentResponseDto.Read> commentList = getCommentList(board.getBoardId());
+            board.editRead(commentCount, commentList);
+
+            for(CommentResponseDto.Read comment : commentList) {
+                List<ReplyResponseDto> replyList = getReplyList(comment.getCommentId());
+                comment.editRead(replyList);
+            }
+        }
+        return boardList;
+    }
 
     public List<BoardResponseDto.Read> getBoardList(Long mindId) {
         List<Board> boards = boardRepository.findAllByMindId(mindId);
         return boards.stream().map(board -> new BoardResponseDto.Read(board)).collect(Collectors.toList());
+    }
+    public List<CommentResponseDto.Read> getCommentList(Long boardId){
+        List<Comment> comments = commentRepository.findAllByBoardId(boardId);
+        return comments.stream().map(comment -> new CommentResponseDto.Read(comment)).collect(Collectors.toList());
+    }
+
+    public List<ReplyResponseDto> getReplyList(Long commentId) {
+        List<Reply> replies = replyRepository.findAllByCommentId(commentId);
+        return replies.stream().map(reply -> new ReplyResponseDto(reply)).collect(Collectors.toList());
     }
 
     public BoardResponseDto.CanEdit isUserEditer(Long boardId, Long userId) {

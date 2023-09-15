@@ -14,12 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class CommentResponseDto {
-
-    public static class ReturnList {
-        private int commentCount;
-        private List<Comment> commentList;
-    }
-
+    @Getter
     public static class Read {
         private Long commentId;
         private Long boardId;
@@ -28,6 +23,7 @@ public class CommentResponseDto {
         private String content;
         private String profileImage;
         private String createDate;
+        private List<ReplyResponseDto> commentList;
 
         /* Entity -> Dto*/
         public Read (Comment comment){
@@ -37,12 +33,16 @@ public class CommentResponseDto {
             this.userId = comment.getUser().getId();
             this.nickname = comment.getUser().getNickname();
             this.profileImage = comment.getUser().getProfileImage();
-            // 09월 07일 14:2
             StringBuilder sb = new StringBuilder();
             sb.append(comment.getCreatedAt().getMonth()).append("월 ")
                     .append(comment.getCreatedAt().getDayOfMonth()).append("일 ")
                     .append(comment.getCreatedAt().getHour()).append(":").append(comment.getCreatedAt().getMinute());
             this.createDate = sb.toString();
+            this.commentList = null;
+        }
+
+        public void editRead(List<ReplyResponseDto> commentList) {
+            this.commentList = commentList;
         }
     }
 }

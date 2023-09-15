@@ -30,15 +30,6 @@ public class CommentService {
     private final ReplyRepository replyRepository;
     private final BoardRepository boardRepository;
 
-    public List<CommentResponseDto.Read> getCommentList(Long boardId){
-        List<Comment> comments = commentRepository.findAllByBoardId(boardId);
-        return comments.stream().map(comment -> new CommentResponseDto.Read(comment)).collect(Collectors.toList());
-    }
-
-    public List<ReplyResponseDto> getReplyList(Long commentId) {
-        List<Reply> replies = replyRepository.findAllByCommentId(commentId);
-        return replies.stream().map(reply -> new ReplyResponseDto(reply)).collect(Collectors.toList());
-    }
     @Transactional
     public CommentResponseDto.Read createComment(CommentRequestDto commentReqDto) {
         User user = userRepository.findById(commentReqDto.getUserId())
