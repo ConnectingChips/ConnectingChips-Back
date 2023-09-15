@@ -1,7 +1,11 @@
 package connectingchips.samchips.board.dto;
 
+import connectingchips.samchips.board.entity.Board;
+import connectingchips.samchips.comment.entity.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -39,6 +43,28 @@ public class BoardResponseDto {
      *                             },
      */
     public static class Read{
+        private Long boardId;
+        private String content;
+        private String image;
+        private Long userId;
+        private String nickname;
+        private String createDate;
+
+        public Read(Board board) {
+            this.boardId = board.getBoardId();
+            this.content = board.getContent();
+            this.image = board.getImage();
+
+            this.userId = board.getUser().getId();
+            this.nickname = board.getUser().getNickname();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(board.getCreatedAt().getDayOfYear()).append("년 ")
+                    .append(board.getCreatedAt().getMonth()).append("월 ")
+                    .append(board.getCreatedAt().getDayOfMonth()).append("일");
+            this.createDate = sb.toString();
+
+        }
 
     }
 
