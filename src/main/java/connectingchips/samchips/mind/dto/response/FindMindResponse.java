@@ -1,4 +1,4 @@
-package connectingchips.samchips.mind.dto.service;
+package connectingchips.samchips.mind.dto.response;
 
 import connectingchips.samchips.mind.entity.Mind;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class FindMindOutput {
+public class FindMindResponse {
 
     private final Long mindId;
     private final String mindType;
@@ -17,8 +17,8 @@ public class FindMindOutput {
     private final Integer canJoin;
     private final String backgroundImage;
 
-    public static FindMindOutput of(final Mind mind, final Integer joinedMindPeopleCount){
-        return new FindMindOutput(
+    public static FindMindResponse of(final Mind mind, final Integer joinedMindPeopleCount){
+        return new FindMindResponse(
                 mind.getMindId(),
                 mind.getMindType().getName(),
                 mind.getName(),

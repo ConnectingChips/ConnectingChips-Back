@@ -1,12 +1,11 @@
-package connectingchips.samchips.mind.dto.controller;
+package connectingchips.samchips.mind.dto.request;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CreateMindInput {
+public class CreateMindRequest {
 
     private String name;
     private String introduce;
