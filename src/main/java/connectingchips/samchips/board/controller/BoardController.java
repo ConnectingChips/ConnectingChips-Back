@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
@@ -16,11 +18,11 @@ public class BoardController {
     private final BoardService boardService;
 
     /* 게시글 리스트 반환 */
-//    @GetMapping("/{mind_id}")
-//    private DataResponse<?> getBoard(@PathVariable Long mindId){
-//        boardService.readBoardList(mindId);
-//        return DataResponse.of();
-//    }
+    @GetMapping("/{mind_id}")
+    private DataResponse<List<BoardResponseDto.Read>> getMindBoardList(@PathVariable(value = "mind_id") Long mindId){
+        List<BoardResponseDto.Read> mindBoardList = boardService.getMindBoardList(mindId);
+        return DataResponse.of(mindBoardList);
+    }
 
     /* 게시글 작성자 여부 */
     @GetMapping("/boards/authentication?board_id={board_id}&user_id={user_id} ")

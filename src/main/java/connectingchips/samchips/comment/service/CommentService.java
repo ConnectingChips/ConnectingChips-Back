@@ -13,9 +13,9 @@ import connectingchips.samchips.comment.repository.ReplyRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,20 +27,20 @@ public class CommentService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public CommentResponseDto createComment(CommentRequestDto commentReqDto) {
+    public CommentResponseDto.Read createComment(CommentRequestDto commentReqDto) {
         User user = userRepository.findById(commentReqDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         Board board = boardRepository.findById(commentReqDto.getBoardId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다"));
 
         Comment comment = commentRepository.save(commentReqDto.toEntity(board, user));
-        return new CommentResponseDto(user, board, comment);
+        return new CommentResponseDto.Read(comment);
     }
+
     @Transactional
     public void deleteComment(Long commentId) {
         commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
-
         commentRepository.deleteById(commentId);
     }
 
@@ -51,8 +51,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(replyRequestDto.getCommentId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다"));
         Reply reply = replyRepository.save(replyRequestDto.toEntity(comment, user));
-
-        return new ReplyResponseDto(user, comment, reply);
+        return new ReplyResponseDto(reply);
     }
 
     public void deleteReply(Long replyId) {

@@ -20,8 +20,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comments")
-    private DataResponse<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentReqDto) {
-        CommentResponseDto comment = commentService.createComment(commentReqDto);
+    private DataResponse<CommentResponseDto.Read> createComment(@RequestBody CommentRequestDto commentReqDto) {
+        CommentResponseDto.Read comment = commentService.createComment(commentReqDto);
         return DataResponse.of(HttpStatus.CREATED, comment);
     }
 
