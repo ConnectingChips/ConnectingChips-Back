@@ -2,7 +2,7 @@ package connectingchips.samchips.mind.service;
 
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
-import connectingchips.samchips.joinedmind.dto.service.JoinCheckOutPut;
+import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.dto.controller.CreateMindInput;
@@ -15,12 +15,7 @@ import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -73,8 +68,8 @@ public class MindService {
                 new RuntimeException("존재하지 않는 게시판 번호입니다."));
     }
 
-    public JoinCheckOutPut checkToday(Long joinedMindId) {
-        return JoinCheckOutPut.of(findVerifiedJoinedMind(joinedMindId).getTodayWrite());
+    public JoinCheckResponse checkToday(Long joinedMindId) {
+        return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getTodayWrite());
     }
 
     public List<CheckAllMindOutput> checkTodayAll(Long userId) {
