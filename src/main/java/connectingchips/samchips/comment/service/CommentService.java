@@ -34,6 +34,11 @@ public class CommentService {
         List<Comment> comments = commentRepository.findAllByBoardId(boardId);
         return comments.stream().map(comment -> new CommentResponseDto.Read(comment)).collect(Collectors.toList());
     }
+
+    public List<ReplyResponseDto> getReplyList(Long commentId) {
+        List<Reply> replies = replyRepository.findAllByCommentId(commentId);
+        return replies.stream().map(reply -> new ReplyResponseDto(reply)).collect(Collectors.toList());
+    }
     @Transactional
     public CommentResponseDto.Read createComment(CommentRequestDto commentReqDto) {
         User user = userRepository.findById(commentReqDto.getUserId())
@@ -59,8 +64,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(replyRequestDto.getCommentId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다"));
         Reply reply = replyRepository.save(replyRequestDto.toEntity(comment, user));
-
-        return new ReplyResponseDto(user, comment, reply);
+        return new ReplyResponseDto(reply);
     }
 
     public void deleteReply(Long replyId) {
