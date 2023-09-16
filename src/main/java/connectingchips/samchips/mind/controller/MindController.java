@@ -5,8 +5,11 @@ import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.response.FindMindResponse;
 import connectingchips.samchips.mind.service.MindService;
+import connectingchips.samchips.user.domain.LoginUser;
+import connectingchips.samchips.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -37,6 +40,13 @@ public DataResponse todayCheck(@PathVariable("joined-mind-id")Long joinedMindId)
     @GetMapping()
     public DataResponse getMinds(){
         return DataResponse.of(mindService.findMinds());
+    }
+
+
+    @GetMapping("/exceptMe")
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse getAllMindExceptMe(@LoginUser User loginUser){
+        return DataResponse.of(mindService.findAllMindExceptMe(loginUser));
     }
 
     @PostMapping
