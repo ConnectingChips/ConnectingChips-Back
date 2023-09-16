@@ -1,5 +1,6 @@
 package connectingchips.samchips.user.service;
 
+import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
@@ -29,6 +30,7 @@ public class UserService {
                 .password(encodedPassword)
                 .nickname(signupDto.getNickname())
                 .email(signupDto.getEmail())
+                .socialType(SocialType.SAMCHIPS)
                 .build();
 
         userRepository.save(user);
