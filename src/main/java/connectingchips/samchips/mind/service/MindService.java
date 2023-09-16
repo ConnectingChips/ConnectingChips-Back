@@ -1,5 +1,7 @@
 package connectingchips.samchips.mind.service;
 
+import connectingchips.samchips.exception.BadRequestException;
+import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static connectingchips.samchips.exception.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +47,7 @@ public class MindService {
     public Mind findVerifiedMind(Long mindId) {
         Optional<Mind> findMindById = mindRepository.findById(mindId);
         return findMindById.orElseThrow(() ->
-                new RuntimeException("존재하지 않는 작심 번호입니다."));
+                new BadRequestException(NOT_FOUND_MIND_ID));
     }
 
 
@@ -51,7 +55,7 @@ public class MindService {
     private User findVerifiedUser(Long userId) {
         Optional<User> findUserById = userRepository.findById(userId);
         return findUserById.orElseThrow(() ->
-                new RuntimeException("존재하지 않는 유저 번호입니다."));
+                new BadRequestException(NOT_FOUND_USER_ID));
     }
     @Transactional
     public JoinCheckResponse checkToday(Long joinedMindId) {
@@ -70,7 +74,7 @@ public class MindService {
     private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
         Optional<JoinedMind> findJoinedMindById = joinedMindRepository.findById(joinedMindId);
         return findJoinedMindById.orElseThrow(() ->
-                new RuntimeException("존재하지 않는 참여한 작심 번호입니다."));
+                new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
     }
     @Transactional
     public void createMind(CreateMindRequest createMindRequest) {
