@@ -1,5 +1,6 @@
 package connectingchips.samchips.user.service;
 
+import connectingchips.samchips.exception.BadRequestException;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static connectingchips.samchips.exception.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +22,7 @@ public class UserService {
     @Transactional
     public void signup(UserRequestDto.Signup signupDto){
         if(userRepository.existsByAccountId(signupDto.getAccountId())){
-            throw new IllegalArgumentException("이미 가입되어 있는 유저입니다.");
+            throw new BadRequestException(ALREADY_JOIN_MEMBERSHIP);
         }
 
         String encodedPassword = passwordEncoder.encode(signupDto.getPassword());
@@ -37,7 +40,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDto.Info findByUserId(Long userId){
         UserResponseDto.Info findInfo = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId입니다."));
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
 
         return findInfo;
     }
@@ -50,7 +53,7 @@ public class UserService {
     @Transactional
     public void editInfo(Long userId, UserRequestDto.Edit editDto){
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId입니다."));
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
 
         findUser.editInfo(editDto.getNickname());
     }
@@ -58,7 +61,7 @@ public class UserService {
     @Transactional
     public void deleteByUserId(Long userId){
         if(!userRepository.existsById(userId)){
-            throw new IllegalArgumentException("존재하지 않는 userId입니다.");
+            throw new BadRequestException(NOT_FOUND_USER_ID);
         }
 
         userRepository.deleteById(userId);
