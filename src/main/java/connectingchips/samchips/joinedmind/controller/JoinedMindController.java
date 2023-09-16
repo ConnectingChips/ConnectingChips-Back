@@ -37,4 +37,5 @@ public class JoinedMindController {
         joinedMindService.reMindRelation(joinedMindId,userId);
         return BasicResponse.of(HttpStatus.OK);
     }
+
 }

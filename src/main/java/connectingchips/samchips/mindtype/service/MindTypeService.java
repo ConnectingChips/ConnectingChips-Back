@@ -1,7 +1,7 @@
 package connectingchips.samchips.mindtype.service;
 
-import connectingchips.samchips.mindtype.dto.CreateMindTypeInput;
-import connectingchips.samchips.mindtype.dto.MindTypeOutput;
+import connectingchips.samchips.mindtype.dto.CreateMindTypeRequest;
+import connectingchips.samchips.mindtype.dto.MindTypeResponse;
 import connectingchips.samchips.mindtype.entity.MindType;
 import connectingchips.samchips.mindtype.repository.MindTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +13,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MindTypeService {
     private final MindTypeRepository mindTypeRepository;
-    public void createMindType(CreateMindTypeInput createMindTypeInput) {
+    public void createMindType(CreateMindTypeRequest createMindTypeRequest) {
         mindTypeRepository.save(MindType.builder()
-                .name(createMindTypeInput.getName())
+                .name(createMindTypeRequest.getName())
                 .build());
     }
 
-    public MindTypeOutput findMindType(Long mindTypeId) {
+    public MindTypeResponse findMindType(Long mindTypeId) {
         MindType verifiedMindType = findVerifiedMindType(mindTypeId);
-        return MindTypeOutput.builder()
+        return MindTypeResponse.builder()
                 .mindTypeId(verifiedMindType.getMindTypeId())
                 .name(verifiedMindType.getName())
                 .minds(verifiedMindType.getMinds())
