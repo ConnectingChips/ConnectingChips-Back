@@ -3,8 +3,11 @@ package connectingchips.samchips.joinedmind.controller;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.joinedmind.service.JoinedMindService;
+import connectingchips.samchips.user.domain.LoginUser;
+import connectingchips.samchips.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,22 +23,25 @@ public class JoinedMindController {
     }
 
 
-    @PostMapping("/{mind-id}/{user-id}")
+    @PostMapping("/{mind-id}")
+    @PreAuthorize("hasAnyRole('USER')")
     public BasicResponse joinMind(@PathVariable("mind-id")Long mindId,
-                                  @PathVariable("user-id")Long userId){
-        joinedMindService.makeMindRelation(mindId,userId);
+                                  @LoginUser User loginUser){
+        joinedMindService.makeMindRelation(mindId,loginUser.getId());
         return BasicResponse.of(HttpStatus.CREATED);
     }
-    @PutMapping("/{joined-mind-id}/exit/{user-id}")
+    @PutMapping("/{joined-mind-id}/exit")
+    @PreAuthorize("hasAnyRole('USER')")
     public BasicResponse exitMind(@PathVariable("joined-mind-id")Long joinedMindId,
-                                   @PathVariable("user-id")Long userId){
-        joinedMindService.exitMindRelation(joinedMindId,userId);
+                                  @LoginUser User loginUser){
+        joinedMindService.exitMindRelation(joinedMindId,loginUser.getId());
         return BasicResponse.of(HttpStatus.OK);
     }
     @PutMapping("/{joined-mind-id}/remind/{user-id}")
+    @PreAuthorize("hasAnyRole('USER')")
     public BasicResponse reMind(@PathVariable("joined-mind-id")Long joinedMindId,
-                                   @PathVariable("user-id")Long userId){
-        joinedMindService.reMindRelation(joinedMindId,userId);
+                                @LoginUser User loginUser){
+        joinedMindService.reMindRelation(joinedMindId,loginUser.getId());
         return BasicResponse.of(HttpStatus.OK);
     }
 
