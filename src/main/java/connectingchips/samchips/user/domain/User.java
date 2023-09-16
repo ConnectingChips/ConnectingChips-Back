@@ -4,6 +4,7 @@ import connectingchips.samchips.audit.Auditable;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.mind.entity.Mind;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,41 +20,48 @@ public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "account_id")
-    private String accountId;
+    @NotNull
+    private String accountId;   // 로그인 아이디
 
-    @Column(name = "password")
-    private String password;  // 비밀번호
+    @NotNull
+    private String password;    // 비밀번호
 
-    @Column(name = "nickname")
-    private String nickname;  // 닉네임
+    @NotNull
+    private String nickname;    // 닉네임
 
-    @Column(name = "email")
-    private String email;  //이메일
+    @NotNull
+    private String email;   //이메일
 
-    @Column(name = "profile_image")
+    @NotNull
     private String profileImage;
 
-    @Enumerated(EnumType.STRING)
-    private Role roles;
+    private String gender;  // 성별
 
-    @Column(name = "refresh_token")
+    private String ageRange;    // 연령대
+
+    @Enumerated
+    private SocialType socialType;
+
+    @Enumerated(EnumType.STRING)
+    private Role roles;     // 권한
+
     private String refreshToken;  //리프레쉬 토큰
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
-
     @Builder
-    public User(String accountId, String password, String nickname, String email) {
+    public User(String accountId, String password, String nickname, String email, String gender, String ageRange, SocialType socialType) {
         this.accountId = accountId;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
         this.profileImage = "default";
+        this.gender = gender;
+        this.ageRange = ageRange;
+        this.socialType = socialType;
         this.roles = Role.ROLE_USER;
     }
 
