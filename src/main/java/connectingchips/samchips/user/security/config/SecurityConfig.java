@@ -89,7 +89,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedOrigins(List.of("https://www.would-you-walk.com"));
+        corsConfiguration.setAllowedOrigins(List.of("*")); // 현재는 모든 요청을 받을 수 있게 설정
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "*"));
         corsConfiguration.setExposedHeaders(List.of("Authorization", "Refresh"));
         corsConfiguration.setAllowedMethods(List.of("POST", "GET", "PATCH", "DELETE", "OPTIONS"));
