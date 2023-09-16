@@ -19,6 +19,7 @@ public class JoinedMindController {
         return DataResponse.of(joinedMindService.JoinCheck(joinedMindId));
     }
 
+
     @PostMapping("/{mind-id}/{user-id}")
     public BasicResponse joinMind(@PathVariable("mind-id")Long mindId,
                                   @PathVariable("user-id")Long userId){

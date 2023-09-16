@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -86,4 +87,13 @@ public class MindService {
         mindRepository.delete(findVerifiedMind(mindId));
     }
 
+    public List<FindMindResponse> findAllMindExceptMe(User loginUser) {
+        List<Long> list = loginUser.getJoinedMinds().stream().map(user -> user.getMind().getMindId()).toList();
+        return mindRepository.findAll()
+                .stream()
+                .filter(mind -> !list.contains(mind.getMindId()))
+                .map(mind -> FindMindResponse.of(mind,joinedMindRepository.countJoinedMindUser(mind.getMindId())))
+                .collect(Collectors.toList());
+
+    }
 }
