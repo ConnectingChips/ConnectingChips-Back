@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateMindTypeInput {
+public class CreateMindTypeRequest {
 
     private String name;
 
