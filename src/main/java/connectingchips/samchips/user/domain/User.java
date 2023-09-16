@@ -20,7 +20,7 @@ public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @NotNull
     private String accountId;   // 로그인 아이디
@@ -37,10 +37,8 @@ public class User extends Auditable {
     @NotNull
     private String profileImage;
 
-    @NotNull
     private String gender;  // 성별
 
-    @NotNull
     private String ageRange;    // 연령대
 
     @Enumerated
@@ -55,14 +53,14 @@ public class User extends Auditable {
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @Builder
-    public User(String accountId, String password, String nickname, String email, SocialType socialType) {
+    public User(String accountId, String password, String nickname, String email, String gender, String ageRange, SocialType socialType) {
         this.accountId = accountId;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
         this.profileImage = "default";
-        this.gender = "default";
-        this.ageRange = "default";
+        this.gender = gender;
+        this.ageRange = ageRange;
         this.socialType = socialType;
         this.roles = Role.ROLE_USER;
     }

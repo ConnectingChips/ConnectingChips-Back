@@ -2,12 +2,30 @@ package connectingchips.samchips.user.oauth.kakao.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import connectingchips.samchips.user.domain.SocialType;
+import connectingchips.samchips.user.domain.User;
+
+import java.util.UUID;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record KakaoUserResponse(
         Long id,
         KakaoAccount kakaoAccount
 ) {
+    public User toEntity(){
+        String randomName = UUID.randomUUID().toString();
+        String nickName = "chips_" + randomName.substring(12);
+
+        return User.builder()
+                .accountId(id.toString())
+                .password("kakao" + id)
+                .nickname(nickName)
+                .email(kakaoAccount.email)
+                .gender(kakaoAccount.gender)
+                .ageRange(kakaoAccount.ageRange)
+                .socialType(SocialType.KAKAO)
+                .build();
+    }
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public record KakaoAccount(

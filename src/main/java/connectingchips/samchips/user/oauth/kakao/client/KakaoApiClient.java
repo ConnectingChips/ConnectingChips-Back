@@ -1,6 +1,7 @@
 package connectingchips.samchips.user.oauth.kakao.client;
 
 import connectingchips.samchips.user.oauth.kakao.dto.KakaoToken;
+import connectingchips.samchips.user.oauth.kakao.dto.KakaoUserResponse;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +18,11 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VAL
  */
 public interface KakaoApiClient {
 
+    // AuthCode로 AccessToken 받아오기
     @PostExchange(url = "https://kauth.kakao.com/oauth/token", contentType = APPLICATION_FORM_URLENCODED_VALUE)
     KakaoToken fetchToken(@RequestParam MultiValueMap<String, String> params);
-    
+
+    // AccessToken을 통해 회원 정보 조회
+    @GetExchange("https://kapi.kakao.com/v2/user/me")
+    KakaoUserResponse fetchUser(@RequestHeader(name = AUTHORIZATION) String bearerToken);
 }

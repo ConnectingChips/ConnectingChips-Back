@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.function.UnaryOperator.identity;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 /**
