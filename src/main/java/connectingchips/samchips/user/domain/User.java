@@ -49,7 +49,7 @@ public class User extends Auditable {
 
     private String refreshToken;  //리프레쉬 토큰
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @Builder

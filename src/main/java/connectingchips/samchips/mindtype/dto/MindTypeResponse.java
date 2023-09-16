@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class MindTypeOutput {
+public class MindTypeResponse {
 
     private Long mindTypeId;
     private String name;
@@ -19,7 +19,7 @@ public class MindTypeOutput {
 
 
     @Builder
-    public MindTypeOutput(Long mindTypeId, String name, List<Mind> minds) {
+    public MindTypeResponse(Long mindTypeId, String name, List<Mind> minds) {
         this.mindTypeId = mindTypeId;
         this.name = name;
         this.minds = minds;

@@ -12,6 +12,8 @@ import connectingchips.samchips.comment.entity.Reply;
 import connectingchips.samchips.comment.repository.CommentRepository;
 import connectingchips.samchips.comment.repository.ReplyRepository;
 
+import connectingchips.samchips.exception.BadRequestException;
+import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.Optional;
 
+import static connectingchips.samchips.exception.ExceptionCode.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +51,7 @@ public class BoardService {
         List<BoardResponseDto.Read> boardList = getBoardList(mindId);
 
         for(BoardResponseDto.Read board : boardList) {
-            Board tempBoard = boardRepository.findById(board.getBoardId()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+            Board tempBoard = boardRepository.findById(board.getBoardId()).orElseThrow(()->new BadRequestException(NOT_FOUND_BOARD_ID));
             int commentCount = (int) commentRepository.countByBoard(tempBoard);
             List<CommentResponseDto.Read> commentList = getCommentList(board.getBoardId());
             board.editRead(commentCount, commentList);
@@ -61,12 +65,12 @@ public class BoardService {
     }
 
     public List<BoardResponseDto.Read> getBoardList(Long mindId) {
-        Mind mind = mindRepository.findById(mindId).orElseThrow(() -> new IllegalArgumentException("작심이 존재하지 않습니다"));
+        Mind mind = mindRepository.findById(mindId).orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
         List<Board> boards = boardRepository.findAllByMind(mind);
         return boards.stream().map(board -> new BoardResponseDto.Read(board)).collect(Collectors.toList());
     }
     public List<CommentResponseDto.Read> getCommentList(Long boardId){
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다"));
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
         List<Comment> comments = commentRepository.findAllByBoard(board);
         return comments.stream().map(comment -> new CommentResponseDto.Read(comment)).collect(Collectors.toList());
     }
@@ -78,7 +82,7 @@ public class BoardService {
     
     public BoardResponseDto.CanEdit isUserEditer(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다"));
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
         if(userId == board.getUser().getId()) {
             return new BoardResponseDto.CanEdit(true);
         } else return new BoardResponseDto.CanEdit(false);
@@ -101,8 +105,8 @@ public class BoardService {
     private static JoinedMind checkJoinMind(User user, Mind mind) {
         Optional<JoinedMind> first = user.getJoinedMinds().stream().filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mind.getMindId()))
                 .findFirst();
-        JoinedMind joinedMind = first.orElseThrow(() -> new RuntimeException("작심에 참여하고 있지 않아 글을 쓸 수 없습니다."));
-        if(joinedMind.getTodayWrite()) throw new RuntimeException("오늘 해당 게시글을 작성했습니다");
+        JoinedMind joinedMind = first.orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
+        if(joinedMind.getTodayWrite()) throw new BadRequestException(ALREADY_WRITE_BOARD);
         return joinedMind;
 
     }
@@ -110,7 +114,7 @@ public class BoardService {
     @Transactional
     public BoardResponseDto.Update updateBoard(Long boardId, BoardRequestDto boardRequestDto) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("존재 하지 않는 게시물입니다"));
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
         board.editContent(boardRequestDto.getContent());
 
         return new BoardResponseDto.Update(boardId, board.getContent());

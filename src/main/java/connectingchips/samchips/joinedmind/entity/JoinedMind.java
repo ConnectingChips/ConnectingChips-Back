@@ -23,6 +23,7 @@ public class JoinedMind extends Auditable {
     private Long joinedMindId;
 
     @NotNull
+
     private Integer count = FIRST_COUNT;
 
     @NotNull
@@ -37,13 +38,11 @@ public class JoinedMind extends Auditable {
 
     //TO-DO -> MEMBER ENTITY 구현 시 참여한 유저 PK 구현
     @ManyToOne
-    @PrimaryKeyJoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    public JoinedMind(Integer count, Integer isJoining, Mind mind, User user) {
-        this.count = count;
-        this.isJoining = isJoining;
+    public JoinedMind( Mind mind, User user) {
         this.mind = mind;
         this.user = user;
     }

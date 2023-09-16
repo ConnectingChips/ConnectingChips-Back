@@ -51,8 +51,6 @@ public class TestDataInit {
                 .exampleImage(EXAMPLE_IMAGE)
                 .build();
         JoinedMind joinedMind = JoinedMind.builder()
-                .count(NUMBER)
-                .isJoining(NUMBER)
                 .user(user)
                 .mind(mind)
                 .build();

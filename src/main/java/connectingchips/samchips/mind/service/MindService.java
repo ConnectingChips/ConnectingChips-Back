@@ -1,11 +1,15 @@
 package connectingchips.samchips.mind.service;
 
+import connectingchips.samchips.exception.BadRequestException;
+import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.response.CheckAllMindResponse;
+import connectingchips.samchips.mind.dto.response.CheckMindResponse;
 import connectingchips.samchips.mind.dto.response.FindMindResponse;
+import connectingchips.samchips.mind.dto.response.MyMindResponse;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
@@ -16,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static connectingchips.samchips.exception.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +49,7 @@ public class MindService {
     public Mind findVerifiedMind(Long mindId) {
         Optional<Mind> findMindById = mindRepository.findById(mindId);
         return findMindById.orElseThrow(() ->
-                new RuntimeException("존재하지 않는 작심 번호입니다."));
+                new BadRequestException(NOT_FOUND_MIND_ID));
     }
 
 
@@ -50,11 +57,13 @@ public class MindService {
     private User findVerifiedUser(Long userId) {
         Optional<User> findUserById = userRepository.findById(userId);
         return findUserById.orElseThrow(() ->
-                new RuntimeException("존재하지 않는 유저 번호입니다."));
+                new BadRequestException(NOT_FOUND_USER_ID));
     }
     @Transactional
-    public JoinCheckResponse checkToday(Long joinedMindId) {
-        return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getTodayWrite());
+    public CheckMindResponse checkToday(Long joinedMindId) {
+        return CheckMindResponse.builder()
+                .isDoneToday(findVerifiedJoinedMind(joinedMindId).getTodayWrite())
+                .build();
     }
     @Transactional
     public List<CheckAllMindResponse> checkTodayAll(Long userId) {
@@ -69,7 +78,7 @@ public class MindService {
     private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
         Optional<JoinedMind> findJoinedMindById = joinedMindRepository.findById(joinedMindId);
         return findJoinedMindById.orElseThrow(() ->
-                new RuntimeException("존재하지 않는 참여한 작심 번호입니다."));
+                new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
     }
     @Transactional
     public void createMind(CreateMindRequest createMindRequest) {
@@ -86,4 +95,27 @@ public class MindService {
         mindRepository.delete(findVerifiedMind(mindId));
     }
 
+    public List<FindMindResponse> findAllMindExceptMe(User loginUser) {
+        List<Long> list = loginUser.getJoinedMinds().stream().map(user -> user.getMind().getMindId()).toList();
+        return mindRepository.findAll()
+                .stream()
+                .filter(mind -> !list.contains(mind.getMindId()))
+                .map(mind -> FindMindResponse.of(mind,joinedMindRepository.countJoinedMindUser(mind.getMindId())))
+                .collect(Collectors.toList());
+
+    }
+
+    public List<MyMindResponse> findMyMindList(User loginUser) {
+        return loginUser.getJoinedMinds()
+                .stream()
+                .map(joindMind -> MyMindResponse.builder()
+                        .mindId(joindMind.getMind().getMindId())
+                        .mindTypeName(joindMind.getMind().getMindType().getName())
+                        .isDoneToday(joindMind.getTodayWrite())
+                        .boardCount(joinedMindRepository.countJoinedMindUser(joindMind.getJoinedMindId()))
+                        .count(joindMind.getCount())
+                        .image(joindMind.getMind().getBackgroundImage())
+                        .name(joindMind.getMind().getName()).build())
+                .toList();
+    }
 }
