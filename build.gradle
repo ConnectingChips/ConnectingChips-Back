@@ -29,6 +29,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+	// Http Interface
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	// FOR @ConfigurationProperties
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
