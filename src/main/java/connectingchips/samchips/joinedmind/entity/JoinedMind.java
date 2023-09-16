@@ -23,6 +23,7 @@ public class JoinedMind extends Auditable {
     private Long joinedMindId;
 
     @NotNull
+
     private Integer count = FIRST_COUNT;
 
     @NotNull
@@ -41,9 +42,7 @@ public class JoinedMind extends Auditable {
     private User user;
 
     @Builder
-    public JoinedMind(Integer count, Integer isJoining, Mind mind, User user) {
-        this.count = count;
-        this.isJoining = isJoining;
+    public JoinedMind( Mind mind, User user) {
         this.mind = mind;
         this.user = user;
     }

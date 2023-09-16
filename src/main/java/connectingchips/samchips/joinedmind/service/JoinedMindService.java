@@ -34,9 +34,8 @@ public class JoinedMindService {
         return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getIsJoining() == JOIN);
     }
     @Transactional
-    public void makeMindRelation(Long mindId, Long userId) {
+    public void makeMindRelation(Long mindId, User user) {
         Mind mind = findVerifiedMind(mindId);
-        User user = findVerifiedUser(userId);
         checkAlreadyJoined(mindId, user);
         JoinedMind joinedMind = JoinedMind.builder()
                 .mind(mind)
