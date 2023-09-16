@@ -27,15 +27,16 @@ public class MindController {
         return DataResponse.of(mind);
     }
 
-    @GetMapping("/today-check/{user-id}")
-    public DataResponse todaysAllCheck(@PathVariable("uesr-id") Long userId){
-        return DataResponse.of(mindService.checkTodayAll(userId));
+    @GetMapping("/today-check")
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse todaysAllCheck(@LoginUser User loginUser){
+        return DataResponse.of(mindService.checkTodayAll(loginUser.getId()));
 
     }
-@GetMapping("/today-check/{joined-mind-id}")
-public DataResponse todayCheck(@PathVariable("joined-mind-id")Long joinedMindId){
-    return DataResponse.of(mindService.checkToday(joinedMindId));
-}
+    @GetMapping("/today-check/{joined-mind-id}")
+    public DataResponse todayCheck(@PathVariable("joined-mind-id")Long joinedMindId){
+        return DataResponse.of(mindService.checkToday(joinedMindId));
+    }
 
     @GetMapping()
     public DataResponse getMinds(){
