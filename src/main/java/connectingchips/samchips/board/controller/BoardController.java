@@ -31,7 +31,7 @@ public class BoardController {
     }
 
     /* 게시글 작성자 여부 */
-    @GetMapping("/boards/authentication")
+    @GetMapping("/경")
     private DataResponse<BoardResponseDto.CanEdit> getBoardUser(@RequestParam(value = "board_id") Long boardId,
                                                                 @RequestParam(value = "user_id") Long userId){
         BoardResponseDto.CanEdit canEdit = boardService.isUserEditor(boardId, userId);
