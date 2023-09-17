@@ -61,6 +61,17 @@ public class UserController {
         return DataResponse.of(checkIdDto);
     }
 
+    @GetMapping("/check-login")
+    public DataResponse<UserResponseDto.CheckLogin> checkLogin(@LoginUser User loginUser){
+        boolean isLogin = false;
+        if(loginUser != null){
+            isLogin = true;
+        }
+        UserResponseDto.CheckLogin checkLoginDto = new UserResponseDto.CheckLogin(isLogin);
+
+        return DataResponse.of(checkLoginDto);
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse<UserResponseDto.Info> getLoginUser(@LoginUser User loginUser){
