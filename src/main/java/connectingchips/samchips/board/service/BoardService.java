@@ -80,10 +80,10 @@ public class BoardService {
         return replies.stream().map(reply -> new ReplyResponseDto(reply)).collect(Collectors.toList());
     }
     
-    public BoardResponseDto.CanEdit isUserEditer(Long boardId, Long userId) {
+    public BoardResponseDto.CanEdit isUserEditor(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
-        if(userId == board.getUser().getId()) {
+        if(userId.equals(board.getUser().getId())) {
             return new BoardResponseDto.CanEdit(true);
         } else return new BoardResponseDto.CanEdit(false);
     }
