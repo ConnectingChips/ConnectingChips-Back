@@ -43,6 +43,7 @@ public class TestDataInit {
                 .password(PASSWORD)
                 .email(EMAIL)
                 .build();
+        userRepository.save(user);
         Mind mind = Mind.builder()
                 .name(MINDNAME)
                 .introduce(INTRODUCE)
@@ -61,10 +62,8 @@ public class TestDataInit {
                 .name(NAME)
                 .minds(minds)
                 .build();
-        mind.setJoinedMind(joinedMind);
         mind.setMindType(mindType);
         mind.setUser(user);
-        userRepository.save(user);
         mindTypeRepository.save(mindType);
         mindRepository.save(mind);
         joinedMindRepository.save(joinedMind);

@@ -22,8 +22,10 @@ public class MindController {
 
 
     @GetMapping("/{mind-id}")
-    public DataResponse getMind(@PathVariable("mind-id")Long mindId){
-        FindMindResponse mind = mindService.findMind(mindId);
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse getMind(@PathVariable("mind-id")Long mindId,
+                                @LoginUser User user){
+        FindMindResponse mind = mindService.findMind(mindId,user);
         return DataResponse.of(mind);
     }
 
@@ -39,8 +41,9 @@ public class MindController {
     }
 
     @GetMapping()
-    public DataResponse getMinds(){
-        return DataResponse.of(mindService.findMinds());
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse getMinds(@LoginUser User user){
+        return DataResponse.of(mindService.findMinds(user));
     }
 
 

@@ -90,9 +90,15 @@ public class BoardService {
 
     @Transactional
     public void createBoard(BoardRequestDto boardRequestDto) {
-        Mind mind = mindRepository.getReferenceById(boardRequestDto.getMindId());
-        User user = userRepository.getReferenceById(boardRequestDto.getUserId());
-        joinedMindRepository.save(checkJoinMind(user, mind).setIsJoining(JOINING));
+        Mind mind = mindRepository.
+                findById(boardRequestDto.getMindId())
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
+
+        User user = userRepository.
+                findById(boardRequestDto.getUserId())
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
+        JoinedMind joinedMind = checkJoinMind(user, mind).setIsJoining(JOINING);
+        joinedMindRepository.save(joinedMind);
         Board board = Board.builder()
                 .content(boardRequestDto.getContent())
                 .image(boardRequestDto.getImage())
