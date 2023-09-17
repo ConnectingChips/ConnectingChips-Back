@@ -39,11 +39,17 @@ public class Mind {
 
     @NotNull
     @Column(length = 255)
-    private String backgroundImage;
-
+    private String introImage;
     @NotNull
     @Column(length = 255)
-    private String exampleImage;
+    private String pageImage;
+    @NotNull
+    @Column(length = 255)
+    private String totalListImage;
+    @NotNull
+    @Column(length = 255)
+    private String myListImage;
+
 
     @OneToMany(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
@@ -57,12 +63,14 @@ public class Mind {
     private User user;
 
     @Builder
-    public Mind(String name, String introduce, String writeFormat, String backgroundImage, String exampleImage, MindType mindType, User user) {
+    public Mind(String name, String introduce, String writeFormat, String introImage, String pageImage, String totalListImage, String myListImage, MindType mindType, User user) {
         this.name = name;
         this.introduce = introduce;
         this.writeFormat = writeFormat;
-        this.backgroundImage = backgroundImage;
-        this.exampleImage = exampleImage;
+        this.introImage = introImage;
+        this.pageImage = pageImage;
+        this.totalListImage = totalListImage;
+        this.myListImage = myListImage;
         this.mindType = mindType;
         this.user = user;
     }
