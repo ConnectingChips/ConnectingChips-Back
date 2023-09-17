@@ -45,7 +45,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         
-        http.csrf(csrf -> csrf.disable());
+        http.csrf(csrf -> csrf.disable())
+            .formLogin(formLogin -> formLogin.disable())
+            .httpBasic(httpBasic -> httpBasic.disable());
 
         http.exceptionHandling((exceptionHanding) ->
                 exceptionHanding.authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -89,7 +91,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOriginPattern("*"); // 현재는 모든 요청을 받을 수 있게 설정 코드변경
+        corsConfiguration.addAllowedOriginPattern("*"); // 현재는 모든 요청을 받을 수 있게 설정
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "*"));
         corsConfiguration.setExposedHeaders(List.of("Authorization", "Refresh"));
         corsConfiguration.setAllowedMethods(List.of("POST", "GET", "PATCH", "DELETE", "OPTIONS"));
