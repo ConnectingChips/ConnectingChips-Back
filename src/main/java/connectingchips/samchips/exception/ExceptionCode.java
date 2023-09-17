@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum ExceptionCode {
 
+    INVALID_REQUEST(1000, "올바르지 않은 요청입니다."),
+
     NOT_FOUND_USER_ID(1001, "존재하지 않는 유저 번호입니다."),
     ALREADY_JOIN_MEMBERSHIP(1002, "이미 가입되어 있는 유저입니다."),
 
