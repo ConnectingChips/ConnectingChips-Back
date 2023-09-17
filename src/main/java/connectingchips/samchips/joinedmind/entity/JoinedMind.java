@@ -25,6 +25,7 @@ public class JoinedMind extends Auditable {
     private Long joinedMindId;
 
     @NotNull
+
     private Integer count = FIRST_COUNT;
 
     @NotNull

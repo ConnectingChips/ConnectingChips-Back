@@ -53,6 +53,11 @@ public class MindController {
         return DataResponse.of(mindService.findAllMindExceptMe(loginUser));
     }
 
+    @GetMapping("/my-list")
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse getMyMindList(@LoginUser User loginUser){
+        return DataResponse.of(mindService.findMyMindList(loginUser));
+    }
     @PostMapping
     public BasicResponse postMind(@RequestBody CreateMindRequest createMindRequest){
         mindService.createMind(createMindRequest);
