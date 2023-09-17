@@ -43,6 +43,7 @@ public class TestDataInit {
                 .password(PASSWORD)
                 .email(EMAIL)
                 .build();
+        userRepository.save(user);
         Mind mind = Mind.builder()
                 .name(MINDNAME)
                 .introduce(INTRODUCE)
@@ -51,8 +52,6 @@ public class TestDataInit {
                 .exampleImage(EXAMPLE_IMAGE)
                 .build();
         JoinedMind joinedMind = JoinedMind.builder()
-                .count(NUMBER)
-                .isJoining(NUMBER)
                 .user(user)
                 .mind(mind)
                 .build();
@@ -63,10 +62,8 @@ public class TestDataInit {
                 .name(NAME)
                 .minds(minds)
                 .build();
-        mind.setJoinedMind(joinedMind);
         mind.setMindType(mindType);
         mind.setUser(user);
-        userRepository.save(user);
         mindTypeRepository.save(mindType);
         mindRepository.save(mind);
         joinedMindRepository.save(joinedMind);

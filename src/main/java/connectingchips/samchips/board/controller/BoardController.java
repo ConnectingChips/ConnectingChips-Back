@@ -5,17 +5,23 @@ import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.service.BoardService;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
+import connectingchips.samchips.user.domain.LoginUser;
+import connectingchips.samchips.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/boards")
+@RequiredArgsConstructor
 public class BoardController {
+
+
     private final BoardService boardService;
+
 
     /* 게시글 리스트 반환 */
     @GetMapping("/{mind_id}")

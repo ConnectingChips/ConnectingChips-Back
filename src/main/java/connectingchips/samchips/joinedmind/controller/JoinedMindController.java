@@ -27,7 +27,7 @@ public class JoinedMindController {
     @PreAuthorize("hasAnyRole('USER')")
     public BasicResponse joinMind(@PathVariable("mind-id")Long mindId,
                                   @LoginUser User loginUser){
-        joinedMindService.makeMindRelation(mindId,loginUser.getId());
+        joinedMindService.makeMindRelation(mindId,loginUser);
         return BasicResponse.of(HttpStatus.CREATED);
     }
     @PutMapping("/{joined-mind-id}/exit")

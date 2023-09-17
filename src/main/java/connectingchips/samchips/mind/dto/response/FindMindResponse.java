@@ -17,15 +17,15 @@ public class FindMindResponse {
     private final Integer canJoin;
     private final String backgroundImage;
 
-    public static FindMindResponse of(final Mind mind, final Integer joinedMindPeopleCount){
+    public static FindMindResponse of(final Mind mind,Integer canJoin){
         return new FindMindResponse(
                 mind.getMindId(),
                 mind.getMindType().getName(),
                 mind.getName(),
                 mind.getIntroduce(),
-                joinedMindPeopleCount,
+                mind.getJoinedMinds().size(),
                 mind.getWriteFormat(),
-                mind.getJoinedMind().getIsJoining(), //현재 참여한 작심에서 참가가능 여부를 가져오고있음, 만약 정원에 따른 참가여부라면다른 로직 필요
+                canJoin,
                 mind.getBackgroundImage()
                 );
     }

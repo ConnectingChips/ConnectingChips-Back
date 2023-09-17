@@ -34,14 +34,12 @@ public class JoinedMindService {
         return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getIsJoining() == JOIN);
     }
     @Transactional
-    public void makeMindRelation(Long mindId, Long userId) {
+    public void makeMindRelation(Long mindId, User user) {
         Mind mind = findVerifiedMind(mindId);
-        User user = findVerifiedUser(userId);
         checkAlreadyJoined(mindId, user);
-        JoinedMind joinedMind = JoinedMind.builder()
-                .mind(mind)
-                .user(user)
-                .build();
+        JoinedMind joinedMind = new JoinedMind();
+        joinedMind.setUser(user);
+        joinedMind.setMind(mind);
         joinedMindRepository.save(joinedMind);
     }
     @Transactional
@@ -67,6 +65,7 @@ public class JoinedMindService {
     }
 
     private static void checkAlreadyJoined(Long mindId, User user) {
+        if(user.getJoinedMinds().isEmpty()) return;
         Optional<JoinedMind> first = user.getJoinedMinds().stream()
                 .filter(jm -> jm.getMind().getMindId().equals(mindId) && jm.getIsJoining().equals(JOIN))
                 .findFirst();

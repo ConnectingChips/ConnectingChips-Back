@@ -26,20 +26,32 @@ import static connectingchips.samchips.exception.ExceptionCode.*;
 @RequiredArgsConstructor
 public class MindService {
 
+    public static final int CAN_NOT_JOIN = 0;
+    public static final int CAN_JOIN = 1;
     private final MindRepository mindRepository;
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public FindMindResponse findMind(long mindId) {
+    public FindMindResponse findMind(Long mindId,User user) {
+        Integer canJoin = checkCanJoin(mindId, user);
         return FindMindResponse
-                .of(findVerifiedMind(mindId), joinedMindRepository.countJoinedMindUser(mindId));
+                .of(findVerifiedMind(mindId),canJoin);
     }
+
+    private static Integer checkCanJoin(Long mindId, User user) {
+        Integer canJoin = CAN_NOT_JOIN;
+        if(user.getJoinedMinds().stream()
+                .anyMatch(joinedMind -> joinedMind.getMind().getMindId() == mindId && joinedMind.getIsJoining() == 0))
+            canJoin = CAN_JOIN;
+        return canJoin;
+    }
+
     @Transactional
-    public List<FindMindResponse> findMinds() {
+    public List<FindMindResponse> findMinds(User user) {
         return mindRepository.findAll()
                 .stream()
-                .map(a -> FindMindResponse.of(a, joinedMindRepository.countJoinedMindUser(a.getMindId())))
+                .map(mind -> FindMindResponse.of(mind,checkCanJoin(mind.getMindId(),user)))
                 .toList();
     }
 
@@ -96,7 +108,7 @@ public class MindService {
         return mindRepository.findAll()
                 .stream()
                 .filter(mind -> !list.contains(mind.getMindId()))
-                .map(mind -> FindMindResponse.of(mind,joinedMindRepository.countJoinedMindUser(mind.getMindId())))
+                .map(mind -> FindMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
                 .collect(Collectors.toList());
 
     }

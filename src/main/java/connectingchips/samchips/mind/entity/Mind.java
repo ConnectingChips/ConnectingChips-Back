@@ -45,8 +45,8 @@ public class Mind {
     @Column(length = 255)
     private String exampleImage;
 
-    @OneToOne(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private JoinedMind joinedMind;
+    @OneToMany(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
+    private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "mind_type_id")
@@ -57,13 +57,12 @@ public class Mind {
     private User user;
 
     @Builder
-    public Mind(String name, String introduce, String writeFormat, String backgroundImage, String exampleImage, JoinedMind joinedMind, MindType mindType, User user) {
+    public Mind(String name, String introduce, String writeFormat, String backgroundImage, String exampleImage, MindType mindType, User user) {
         this.name = name;
         this.introduce = introduce;
         this.writeFormat = writeFormat;
         this.backgroundImage = backgroundImage;
         this.exampleImage = exampleImage;
-        this.joinedMind = joinedMind;
         this.mindType = mindType;
         this.user = user;
     }
