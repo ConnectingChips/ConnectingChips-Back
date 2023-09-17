@@ -11,7 +11,7 @@ import lombok.Getter;
 @Builder
 public class ReplyRequestDto {
     private Long userId;
-    private Long CommentId;
+    private Long commentId;
     private String content;
 
     public Reply toEntity(Comment comment, User user){
