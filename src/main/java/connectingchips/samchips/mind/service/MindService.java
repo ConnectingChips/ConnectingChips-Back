@@ -1,5 +1,6 @@
 package connectingchips.samchips.mind.service;
 
+import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.exception.BadRequestException;
 import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
@@ -8,11 +9,13 @@ import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.response.CheckAllMindResponse;
 import connectingchips.samchips.mind.dto.response.FindMindResponse;
+import connectingchips.samchips.mind.dto.response.MyMindResponse;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,7 @@ public class MindService {
     private final MindRepository mindRepository;
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public FindMindResponse findMind(Long mindId,User user) {
@@ -120,5 +124,20 @@ public class MindService {
                 .map(mind -> FindMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
                 .collect(Collectors.toList());
 
+    }
+
+    public List<MyMindResponse> findMyJoinedMindList(User loginUser) {
+        return loginUser.getJoinedMinds()
+                .stream()
+                .map(joinedMind -> MyMindResponse.builder()
+                        .mindId(joinedMind.getMind().getMindId())
+                        .mindTypeName(joinedMind.getMind().getMindType().getName())
+                        .name(joinedMind.getMind().getName())
+                        .isDoneToday(joinedMind.getTodayWrite())
+                        .image(joinedMind.getMind().getBackgroundImage())
+                        .boardCount(boardRepository.findBoardCountByUserAndMind(loginUser, joinedMind.getMind()))
+                        .count(joinedMind.getCount())
+                        .build())
+                .toList();
     }
 }

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JoinCheckResponse {
 
-    private final Boolean isJoining;
+    private final Boolean isDoneToday;
 
     public static JoinCheckResponse of(boolean isJoining){
         return new JoinCheckResponse(isJoining);
