@@ -42,7 +42,7 @@ public class JoinedMindController {
     public BasicResponse reMind(@PathVariable("joined-mind-id")Long joinedMindId,
                                 @LoginUser User loginUser){
         joinedMindService.reMindRelation(joinedMindId,loginUser.getId());
-        return BasicResponse.of(HttpStatus.OK);
+        return BasicResponse.of(HttpStatus.OK); //
     }
 
 }
