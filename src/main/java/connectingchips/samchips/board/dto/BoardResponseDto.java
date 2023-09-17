@@ -2,7 +2,7 @@ package connectingchips.samchips.board.dto;
 
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.comment.dto.CommentResponseDto;
-import connectingchips.samchips.comment.entity.Comment;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -47,21 +47,16 @@ public class BoardResponseDto {
         }
     }
 
+    @Getter
+    @AllArgsConstructor
     public static class Update{
         private Long boardId;
         private String content;
-
-        public Update(Long boardId, String content){
-            this.boardId = boardId;
-            this.content = content;
-        }
     }
 
+    @Getter
+    @AllArgsConstructor
     public static class CanEdit {
         private boolean canEdit;
-
-        public CanEdit(boolean isUserEditer) {
-            this.canEdit = isUserEditer;
-        }
     }
 }
