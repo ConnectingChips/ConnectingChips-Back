@@ -31,10 +31,10 @@ public class BoardController {
     }
 
     /* 게시글 작성자 여부 */
-    @GetMapping("/boards/authentication?board_id={board_id}&user_id={user_id} ")
+    @GetMapping("/경")
     private DataResponse<BoardResponseDto.CanEdit> getBoardUser(@RequestParam(value = "board_id") Long boardId,
                                                                 @RequestParam(value = "user_id") Long userId){
-        BoardResponseDto.CanEdit canEdit = boardService.isUserEditer(boardId, userId);
+        BoardResponseDto.CanEdit canEdit = boardService.isUserEditor(boardId, userId);
         return DataResponse.of(canEdit);
     }
 
