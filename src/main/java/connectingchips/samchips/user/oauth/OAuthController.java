@@ -32,13 +32,13 @@ public class OAuthController {
 
     @PostMapping("/login")
     public DataResponse<AuthResponseDto.AccessToken> socialLogin(@RequestBody OAuthRequestDto.Login loginDto, HttpServletResponse response){
+        System.out.println("socialLogin");
         AuthResponseDto.Token token = oAuthService.socialLogin(loginDto);
-
         AuthResponseDto.AccessToken accessToken = new AuthResponseDto.AccessToken(token.getAccessToken());
 
         Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+//        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60);
 

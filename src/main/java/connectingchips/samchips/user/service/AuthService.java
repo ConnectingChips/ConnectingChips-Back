@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public AuthResponseDto.Token login(UserRequestDto.Login loginDto){
@@ -38,6 +40,39 @@ public class AuthService {
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
         user.editRefreshToken(refreshToken);
+
+        return new AuthResponseDto.Token(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public AuthResponseDto.Token authenticateSocial(User user){
+
+        User findUser = userRepository.findByAccountId(user.getAccountId()).orElse(null);
+
+        if(findUser == null){
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            User createUser = User.builder()
+                    .accountId(user.getAccountId())
+                    .password(encodedPassword)
+                    .nickname(user.getNickname())
+                    .email(user.getEmail())
+                    .gender(user.getGender())
+                    .ageRange(user.getAgeRange())
+                    .socialType(user.getSocialType())
+                    .build();
+
+            findUser = userRepository.save(createUser);
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(user.getAccountId(), user.getPassword());
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+
+        findUser.editRefreshToken(refreshToken);
 
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }

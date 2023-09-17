@@ -65,6 +65,10 @@ public class User extends Auditable {
         this.roles = Role.ROLE_USER;
     }
 
+    public void setPassword(String password){
+        this.password = password;
+    }
+
     public void editInfo(String nickname){
         this.nickname = nickname;
     }
