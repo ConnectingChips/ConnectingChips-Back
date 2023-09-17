@@ -1,11 +1,15 @@
 package connectingchips.samchips.user.oauth;
 
 import connectingchips.samchips.commons.dto.BasicResponse;
+import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.user.domain.SocialType;
+import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.oauth.dto.OAuthRequestDto;
 import jakarta.persistence.Basic;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.DataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +31,19 @@ public class OAuthController {
     }
 
     @PostMapping("/login")
-    public BasicResponse socialLogin(@RequestBody OAuthRequestDto.Login loginDto){
-        oAuthService.socialLogin(loginDto);
+    public DataResponse<AuthResponseDto.AccessToken> socialLogin(@RequestBody OAuthRequestDto.Login loginDto, HttpServletResponse response){
+        AuthResponseDto.Token token = oAuthService.socialLogin(loginDto);
 
-        return BasicResponse.of(HttpStatus.OK);
+        AuthResponseDto.AccessToken accessToken = new AuthResponseDto.AccessToken(token.getAccessToken());
+
+        Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60);
+
+        response.addCookie(cookie);
+
+        return DataResponse.of(accessToken);
     }
 }
