@@ -22,6 +22,13 @@ public class UserResponseDto {
     @AllArgsConstructor
     public static class CheckId{
 
-        private boolean isUsable;
+        private Boolean isUsable;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class CheckLogin{
+
+        private Boolean isLogin;
     }
 }
