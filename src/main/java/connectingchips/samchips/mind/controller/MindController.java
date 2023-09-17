@@ -46,18 +46,16 @@ public class MindController {
         return DataResponse.of(mindService.findMinds(user));
     }
 
-
+    @GetMapping("/notLogin")
+    public DataResponse getMinds(){
+        return DataResponse.of(mindService.findAllMinds());
+    }
     @GetMapping("/exceptMe")
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse getAllMindExceptMe(@LoginUser User loginUser){
         return DataResponse.of(mindService.findAllMindExceptMe(loginUser));
     }
 
-    @GetMapping("/my-list")
-    @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse getMyMindList(@LoginUser User loginUser){
-        return DataResponse.of(mindService.findMyMindList(loginUser));
-    }
     @PostMapping
     public BasicResponse postMind(@RequestBody CreateMindRequest createMindRequest){
         mindService.createMind(createMindRequest);
@@ -72,3 +70,4 @@ public class MindController {
     }
 
 }
+

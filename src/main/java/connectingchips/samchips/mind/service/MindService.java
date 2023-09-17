@@ -7,9 +7,7 @@ import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.response.CheckAllMindResponse;
-import connectingchips.samchips.mind.dto.response.CheckMindResponse;
 import connectingchips.samchips.mind.dto.response.FindMindResponse;
-import connectingchips.samchips.mind.dto.response.MyMindResponse;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
@@ -58,6 +56,13 @@ public class MindService {
     }
 
     @Transactional
+    public List<FindMindResponse> findAllMinds(){
+        return mindRepository.findAll()
+                .stream()
+                .map(FindMindResponse::of)
+                .toList();
+    }
+    @Transactional
     public Mind findVerifiedMind(Long mindId) {
         Optional<Mind> findMindById = mindRepository.findById(mindId);
         return findMindById.orElseThrow(() ->
@@ -72,10 +77,8 @@ public class MindService {
                 new BadRequestException(NOT_FOUND_USER_ID));
     }
     @Transactional
-    public CheckMindResponse checkToday(Long joinedMindId) {
-        return CheckMindResponse.builder()
-                .isDoneToday(findVerifiedJoinedMind(joinedMindId).getTodayWrite())
-                .build();
+    public JoinCheckResponse checkToday(Long joinedMindId) {
+        return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getTodayWrite());
     }
     @Transactional
     public List<CheckAllMindResponse> checkTodayAll(Long userId) {
@@ -103,10 +106,12 @@ public class MindService {
                 .build());
     }
 
+    @Transactional
     public void deleteMind(Long mindId) {
         mindRepository.delete(findVerifiedMind(mindId));
     }
 
+    @Transactional
     public List<FindMindResponse> findAllMindExceptMe(User loginUser) {
         List<Long> list = loginUser.getJoinedMinds().stream().map(user -> user.getMind().getMindId()).toList();
         return mindRepository.findAll()
@@ -115,19 +120,5 @@ public class MindService {
                 .map(mind -> FindMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
                 .collect(Collectors.toList());
 
-    }
-
-    public List<MyMindResponse> findMyMindList(User loginUser) {
-        return loginUser.getJoinedMinds()
-                .stream()
-                .map(joindMind -> MyMindResponse.builder()
-                        .mindId(joindMind.getMind().getMindId())
-                        .mindTypeName(joindMind.getMind().getMindType().getName())
-                        .isDoneToday(joindMind.getTodayWrite())
-                        .boardCount(joinedMindRepository.countJoinedMindUser(joindMind.getJoinedMindId()))
-                        .count(joindMind.getCount())
-                        .image(joindMind.getMind().getBackgroundImage())
-                        .name(joindMind.getMind().getName()).build())
-                .toList();
     }
 }
