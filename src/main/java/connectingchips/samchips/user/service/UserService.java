@@ -1,5 +1,6 @@
 package connectingchips.samchips.user.service;
 
+import connectingchips.samchips.exception.RestApiException;
 import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.exception.BadRequestException;
 import connectingchips.samchips.user.domain.User;
@@ -23,7 +24,7 @@ public class UserService {
     @Transactional
     public void signup(UserRequestDto.Signup signupDto){
         if(userRepository.existsByAccountId(signupDto.getAccountId())){
-            throw new BadRequestException(ALREADY_JOIN_MEMBERSHIP);
+            throw new RestApiException(ALREADY_JOIN_MEMBERSHIP);
         }
 
         String encodedPassword = passwordEncoder.encode(signupDto.getPassword());
@@ -42,7 +43,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDto.Info findByUserId(Long userId){
         UserResponseDto.Info findInfo = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         return findInfo;
     }
@@ -55,7 +56,7 @@ public class UserService {
     @Transactional
     public void editInfo(Long userId, UserRequestDto.Edit editDto){
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         findUser.editInfo(editDto.getNickname());
     }
@@ -63,7 +64,7 @@ public class UserService {
     @Transactional
     public void deleteByUserId(Long userId){
         if(!userRepository.existsById(userId)){
-            throw new BadRequestException(NOT_FOUND_USER_ID);
+            throw new RestApiException(NOT_FOUND_USER);
         }
 
         userRepository.deleteById(userId);

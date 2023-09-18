@@ -1,10 +1,12 @@
 package connectingchips.samchips.user.jwt;
 
+import connectingchips.samchips.exception.RestApiException;
 import connectingchips.samchips.user.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
@@ -24,7 +24,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static connectingchips.samchips.user.jwt.JwtFilter.AUTHORIZATION_HEADER;
+import static connectingchips.samchips.exception.AuthErrorCode.*;
+import static connectingchips.samchips.user.jwt.filter.JwtAuthenticationFilter.AUTHORIZATION_HEADER;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -126,14 +127,17 @@ public class TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+            log.info("유효하지 않은 JWT 서명입니다.");
+            throw new RestApiException(INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
+            throw new RestApiException(EXPIRED_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.info("지원하지 않는 JWT 토큰입니다.");
+            throw new RestApiException(UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            log.info("잘못된 JWT 토큰입니다.");
+            throw new RestApiException(ILLEGAL_ARGUMENT_TOKEN);
         }
-        return false;
     }
 }

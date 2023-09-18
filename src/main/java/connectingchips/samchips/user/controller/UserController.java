@@ -12,6 +12,7 @@ import connectingchips.samchips.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,14 +31,14 @@ public class UserController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<BasicResponse> signup(@RequestBody UserRequestDto.Signup signupDto){
+    public ResponseEntity<BasicResponse> signup(@RequestBody @Valid UserRequestDto.Signup signupDto){
         userService.signup(signupDto);
 
         return new ResponseEntity<>(BasicResponse.of(HttpStatus.CREATED) ,HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public DataResponse<AuthResponseDto.AccessToken> login(@RequestBody UserRequestDto.Login loginDto, HttpServletResponse response){
+    public DataResponse<AuthResponseDto.AccessToken> login(@RequestBody @Valid UserRequestDto.Login loginDto, HttpServletResponse response){
         AuthResponseDto.Token token = authService.login(loginDto);
 
         AuthResponseDto.AccessToken accessToken = new AuthResponseDto.AccessToken(token.getAccessToken());
@@ -54,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping("/check-id")
-    public DataResponse<UserResponseDto.CheckId> checkAccountId(@RequestParam String accountId){
+    public DataResponse<UserResponseDto.CheckId> checkAccountId(@RequestParam @NotBlank String accountId){
         boolean isUsable = !userService.checkAccountId(accountId);
         UserResponseDto.CheckId checkIdDto = new UserResponseDto.CheckId(isUsable);
 
@@ -109,7 +110,7 @@ public class UserController {
 
     @PutMapping
     @PreAuthorize("hasAnyRole('USER')")
-    public BasicResponse editUserInfo(@RequestBody UserRequestDto.Edit editDto, @LoginUser User loginUser){
+    public BasicResponse editUserInfo(@RequestBody @Valid UserRequestDto.Edit editDto, @LoginUser User loginUser){
         userService.editInfo(loginUser.getId(), editDto);
 
         return BasicResponse.of(HttpStatus.OK);

@@ -76,7 +76,7 @@ public class MindService {
     }
     private User findVerifiedUserByAccount(String accountId) {
         Optional<User> byAccountId = userRepository.findByAccountId(accountId);
-        User user = byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));// 버그 새로 추가하고 낫파운드 유저어카운트만들기
+        User user = byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));// 버그 새로 추가하고 낫파운드 유저어카운트만들기
         return user;
     }
 
@@ -117,7 +117,7 @@ public class MindService {
     private User findVerifiedUser(Long userId) {
         Optional<User> findUserById = userRepository.findById(userId);
         return findUserById.orElseThrow(() ->
-                new BadRequestException(NOT_FOUND_USER_ID));
+                new BadRequestException(NOT_FOUND_USER));
     }
     @Transactional
     public JoinCheckResponse checkToday(Long joinedMindId) {

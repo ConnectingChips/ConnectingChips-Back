@@ -12,7 +12,7 @@ public enum CommonErrorCode implements ErrorCode{
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "올바르지 않은 요청입니다."),
 
     // 404 NOT_FOUND 잘못된 리소스 접근
-    NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "존재하지 않는 유저 번호입니다."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
     NOT_FOUND_MIND_ID(HttpStatus.NOT_FOUND, "존재하지 않는 작심 번호입니다."),
     NOT_JOIN_MIND(HttpStatus.NOT_FOUND,"작심에 참여하고 있지 않아 글을 쓸 수 없습니다."),
     NOT_FOUND_JOINED_MIND_ID(HttpStatus.NOT_FOUND, "존재하지 않는 참여한 작심 번호입니다."),
