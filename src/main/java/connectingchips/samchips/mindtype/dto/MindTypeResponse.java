@@ -1,27 +1,26 @@
 package connectingchips.samchips.mindtype.dto;
 
 import connectingchips.samchips.mind.entity.Mind;
+import connectingchips.samchips.mindtype.entity.MindType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 
 @Getter
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class MindTypeResponse {
 
-    private Long mindTypeId;
-    private String name;
-
-    private List<Mind> minds;
+    private final Long mindTypeId;
+    private final String name;
 
 
-    @Builder
-    public MindTypeResponse(Long mindTypeId, String name, List<Mind> minds) {
-        this.mindTypeId = mindTypeId;
-        this.name = name;
-        this.minds = minds;
+
+    public static MindTypeResponse of(MindType mindType) {
+        return new MindTypeResponse(mindType.getMindTypeId(),
+                mindType.getName());
     }
 }

@@ -3,6 +3,7 @@ package connectingchips.samchips.mind.controller;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
+import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.FindIntroMindResponse;
 import connectingchips.samchips.mind.dto.response.FindTotalMindResponse;
 import connectingchips.samchips.mind.service.MindService;
@@ -104,10 +105,15 @@ public class MindController {
 
 
     @PostMapping
-    public BasicResponse postMind(@RequestBody CreateMindRequest createMindRequest){
-        mindService.createMind(createMindRequest);
+    public DataResponse postMind(@RequestBody CreateMindRequest createMindRequest){
 
-        return BasicResponse.of(HttpStatus.CREATED);
+        return DataResponse.of(HttpStatus.CREATED,mindService.createMind(createMindRequest));
+    }
+
+    @PutMapping("/{mind-id}")
+    public DataResponse putMind(@PathVariable("mind-id") Long mindId,
+            @RequestBody UpdateMindRequest updateMindRequest){
+        return DataResponse.of(mindService.updateMind(mindId,updateMindRequest));
     }
     @DeleteMapping("/{mind-id}")
     public BasicResponse deleteMind(@PathVariable("mind-id")Long mindId){
