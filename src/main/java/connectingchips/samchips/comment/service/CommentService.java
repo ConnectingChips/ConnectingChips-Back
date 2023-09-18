@@ -11,14 +11,13 @@ import connectingchips.samchips.comment.entity.Reply;
 import connectingchips.samchips.comment.repository.CommentRepository;
 import connectingchips.samchips.comment.repository.ReplyRepository;
 import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static connectingchips.samchips.exception.ExceptionCode.*;
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 
 @Service
