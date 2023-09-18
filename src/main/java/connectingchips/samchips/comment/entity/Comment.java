@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -27,6 +30,9 @@ public class Comment extends Auditable {
 
     @Column(name = "content")
     private String content;
+
+    @OneToMany(mappedBy = "comment", orphanRemoval = true)
+    private List<Reply> replies = new ArrayList<>();
 
     @Builder
     public Comment(Board board, User user, String content) {
