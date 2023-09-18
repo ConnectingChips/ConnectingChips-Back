@@ -3,30 +3,85 @@ package connectingchips.samchips.mind.controller;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
-import connectingchips.samchips.mind.dto.response.FindMindResponse;
+import connectingchips.samchips.mind.dto.response.FindIntroMindResponse;
+import connectingchips.samchips.mind.dto.response.FindTotalMindResponse;
 import connectingchips.samchips.mind.service.MindService;
 import connectingchips.samchips.user.domain.LoginUser;
 import connectingchips.samchips.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
 
 
 @RestController
 @RequestMapping("/minds")
 @RequiredArgsConstructor
+@Slf4j
 public class MindController {
 
+    public static final String ANONYMOUS_USER = "anonymousUser";
     private final MindService mindService;
 
 
     @GetMapping("/{mind-id}")
-    @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse getMind(@PathVariable("mind-id")Long mindId,
-                                @LoginUser User user){
-        FindMindResponse mind = mindService.findMind(mindId,user);
+    public DataResponse getMind(@PathVariable("mind-id")Long mindId){
+        FindIntroMindResponse mind = mindService.findMind(mindId);
         return DataResponse.of(mind);
+    }
+
+    @GetMapping("/intro/{mind-id}")
+    public DataResponse getIntroMind(@PathVariable("mind-id")Long mindId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        FindIntroMindResponse mind;
+        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
+            mind = mindService.findIntroMindNotAccountId(mindId);
+        else
+            mind = mindService.findIntroMindByAccountId(mindId,makeAccountId(auth));
+        return DataResponse.of(mind);
+    }
+
+      @GetMapping("/page/{mind-id}")
+      @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse getPageMind(@PathVariable("mind-id")Long mindId,
+                                    @LoginUser User user){
+        return DataResponse.of(mindService.findPageMind(mindId,user));
+    }
+    @GetMapping("/minds")
+    public DataResponse getTotalMind(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<FindTotalMindResponse> minds;
+        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
+            minds = mindService.findTotalMindNotAccountId();
+        else
+            minds = mindService.findTotalMindByAccountId(makeAccountId(auth));
+        return DataResponse.of(minds);
+    }
+
+    @GetMapping("/except-me")
+    public DataResponse getAllMindExceptMe(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<FindTotalMindResponse> minds;
+        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
+            minds = mindService.findAllMindExceptMe(makeAccountId(auth));
+        else minds = mindService.findAllMindExceptMe();
+        return DataResponse.of(minds);
+    }
+    @GetMapping("/except-me/{mind-type-name}")
+    public DataResponse getAllMindExceptMeByMindType(@PathVariable("mind-type-name")Long mindTypeId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<FindTotalMindResponse> minds;
+        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
+            minds = mindService.findAllMindExceptMeByMindType(makeAccountId(auth),mindTypeId);
+        else minds = mindService.findAllMindExceptMeByMindType(mindTypeId);
+
+        return DataResponse.of(minds);
     }
 
     @GetMapping("/today-check")
@@ -36,8 +91,21 @@ public class MindController {
 
     }
     @GetMapping("/today-check/{joined-mind-id}")
+    @PreAuthorize("hasAnyRole('USER')")
     public DataResponse todayCheck(@PathVariable("joined-mind-id")Long joinedMindId){
         return DataResponse.of(mindService.checkToday(joinedMindId));
+    }
+
+    @GetMapping("/my-list")
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse getMyJoinMindList(@LoginUser User loginUser){
+        return DataResponse.of(mindService.findMyJoinMindList(loginUser));
+    }
+
+    @GetMapping("/my-joined-mind-list")
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse getMyJoinedMindList(@LoginUser User loginUser){
+        return DataResponse.of(mindService.findMyJoinedMindList(loginUser));
     }
 
     @GetMapping()
@@ -46,33 +114,36 @@ public class MindController {
         return DataResponse.of(mindService.findMinds(user));
     }
 
-    @GetMapping("/not-login")
-    public DataResponse getMinds(){
-        return DataResponse.of(mindService.findAllMinds());
-    }
-    @GetMapping("/except-me")
-    @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse getAllMindExceptMe(@LoginUser User loginUser){
-        return DataResponse.of(mindService.findAllMindExceptMe(loginUser));
-    }
-
-    @GetMapping("/my-list")
-    @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse getMyMindList(@LoginUser User loginUser){
-        return DataResponse.of(mindService.findMyJoinedMindList(loginUser));
-    }
     @PostMapping
     public BasicResponse postMind(@RequestBody CreateMindRequest createMindRequest){
         mindService.createMind(createMindRequest);
 
         return BasicResponse.of(HttpStatus.CREATED);
     }
-
     @DeleteMapping("/{mind-id}")
     public BasicResponse deleteMind(@PathVariable("mind-id")Long mindId){
         mindService.deleteMind(mindId);
         return BasicResponse.of(HttpStatus.OK);
     }
 
+
+    private static String makeAccountId(Authentication auth) {
+        String string = auth.getPrincipal().toString();
+        Integer start = 0;
+        Integer end = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == '=') {
+                start = i+1;
+                break;
+            }
+        }
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == ',') {
+                end = i;
+                break;
+            }
+        }
+        return string.substring(start, end);
+    }
 }
 

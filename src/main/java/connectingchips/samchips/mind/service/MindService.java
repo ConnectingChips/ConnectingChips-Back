@@ -2,24 +2,21 @@ package connectingchips.samchips.mind.service;
 
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
-import connectingchips.samchips.mind.dto.response.CheckAllMindResponse;
-import connectingchips.samchips.mind.dto.response.FindMindResponse;
-import connectingchips.samchips.mind.dto.response.MyMindResponse;
+import connectingchips.samchips.mind.dto.response.*;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,7 +26,8 @@ import static connectingchips.samchips.exception.ExceptionCode.*;
 @RequiredArgsConstructor
 public class MindService {
 
-    public static final int CAN_NOT_JOIN = 0;
+    public static final int ANONYMOUS_USER = -1;
+    public static final int NOT_JOIN = 0;
     public static final int CAN_JOIN = 1;
     private final MindRepository mindRepository;
     private final JoinedMindRepository joinedMindRepository;
@@ -37,33 +35,74 @@ public class MindService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public FindMindResponse findMind(Long mindId,User user) {
+    public FindIntroMindResponse findMind(Long mindId) {
+        User user = findVerifiedUser(1L);
         Integer canJoin = checkCanJoin(mindId, user);
-        return FindMindResponse
+        return FindIntroMindResponse
                 .of(findVerifiedMind(mindId),canJoin);
     }
+    @Transactional
+    public FindIntroMindResponse findIntroMindNotAccountId(Long mindId) {
+        return FindIntroMindResponse
+                .of(findVerifiedMind(mindId),ANONYMOUS_USER);
+    }
+    @Transactional
+    public FindIntroMindResponse findIntroMindByAccountId(Long mindId, String accountId) {
+        User user = findVerifiedUserByAccount(accountId);
+
+        return FindIntroMindResponse
+                .of(findVerifiedMind(mindId),checkCanJoin(mindId, user));
+    }
+    @Transactional
+    public FindPageMindResponse findPageMind(Long mindId, User user) {
+        Mind verifiedMind = findVerifiedMind(mindId);
+        return user.getJoinedMinds()
+                .stream()
+                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId)).findFirst()
+                .map(joinedMind -> FindPageMindResponse.of(verifiedMind, joinedMind.getTodayWrite(), joinedMind.getCount()))
+                .orElse(FindPageMindResponse.of(verifiedMind, false, NOT_JOIN));
+    }
+
+    @Transactional
+    public List<FindTotalMindResponse> findTotalMindNotAccountId(){
+        return mindRepository.findAll().stream().map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER)).toList();
+    }
+    @Transactional
+    public List<FindTotalMindResponse> findTotalMindByAccountId(String accountId){
+        return mindRepository.findAll().stream()
+                .map(mind -> FindTotalMindResponse
+                        .of(mind, checkCanJoin(mind.getMindId(), findVerifiedUserByAccount(accountId))))
+                        .toList();
+    }
+    private User findVerifiedUserByAccount(String accountId) {
+        Optional<User> byAccountId = userRepository.findByAccountId(accountId);
+        User user = byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));// 버그 새로 추가하고 낫파운드 유저어카운트만들기
+        return user;
+    }
+
+
 
     private static Integer checkCanJoin(Long mindId, User user) {
-        Integer canJoin = CAN_NOT_JOIN;
+        Integer canJoin = NOT_JOIN;
         if(user.getJoinedMinds().stream()
-                .anyMatch(joinedMind -> joinedMind.getMind().getMindId() == mindId && joinedMind.getIsJoining() == 0))
+                .anyMatch(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining() == NOT_JOIN))
             canJoin = CAN_JOIN;
         return canJoin;
     }
 
     @Transactional
-    public List<FindMindResponse> findMinds(User user) {
+    public List<FindIntroMindResponse> findMinds(User user) {
         return mindRepository.findAll()
                 .stream()
-                .map(mind -> FindMindResponse.of(mind,checkCanJoin(mind.getMindId(),user)))
+                .map(mind -> FindIntroMindResponse.of(mind,checkCanJoin(mind.getMindId(),user)))
                 .toList();
     }
 
     @Transactional
-    public List<FindMindResponse> findAllMinds(){
+    public List<FindIntroMindResponse> findAllMinds(){
         return mindRepository.findAll()
                 .stream()
-                .map(FindMindResponse::of)
+                .map(FindIntroMindResponse::of)
                 .toList();
     }
     @Transactional
@@ -104,9 +143,11 @@ public class MindService {
         mindRepository.save(Mind.builder()
                 .name(createMindRequest.getName())
                 .introduce(createMindRequest.getIntroduce())
-                .backgroundImage(createMindRequest.getBackgroundImage())
+                .introImage(createMindRequest.getIntroImage())
                 .writeFormat(createMindRequest.getWriteFormat())
-                .exampleImage(createMindRequest.getExampleImage())
+                .pageImage(createMindRequest.getPageImage())
+                .myListImage(createMindRequest.getMyListImage())
+                .totalListImage(createMindRequest.getTotalListImage())
                 .build());
     }
 
@@ -116,28 +157,57 @@ public class MindService {
     }
 
     @Transactional
-    public List<FindMindResponse> findAllMindExceptMe(User loginUser) {
+    public List<FindTotalMindResponse> findAllMindExceptMe(String accountId) {
+        User loginUser = findVerifiedUserByAccount(accountId);
         List<Long> list = loginUser.getJoinedMinds().stream().map(user -> user.getMind().getMindId()).toList();
         return mindRepository.findAll()
                 .stream()
                 .filter(mind -> !list.contains(mind.getMindId()))
-                .map(mind -> FindMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
+                .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
                 .collect(Collectors.toList());
-
+    }
+    @Transactional
+    public List<FindTotalMindResponse> findAllMindExceptMe() {
+        return mindRepository.findAll()
+                .stream()
+                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER))
+                .toList();
     }
 
-    public List<MyMindResponse> findMyJoinedMindList(User loginUser) {
+    public List<FindTotalMindResponse> findAllMindExceptMeByMindType(String accountId,Long mindTypeId) {
+        User loginUser = findVerifiedUserByAccount(accountId);
+        return mindRepository.findAll()
+                .stream()
+                .filter(mind -> Objects.equals(mind.getMindType().getMindTypeId(), mindTypeId))
+                .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
+                .toList();
+
+    }
+    public List<FindTotalMindResponse> findAllMindExceptMeByMindType(Long mindTypeId) {
+        return mindRepository.findAll()
+                .stream()
+                .filter(mind -> Objects.equals(mind.getMindType().getMindTypeId(), mindTypeId))
+                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER))
+                .toList();
+    }
+
+
+    public List<MyMindResponse> findMyJoinMindList(User loginUser) {
         return loginUser.getJoinedMinds()
                 .stream()
-                .map(joinedMind -> MyMindResponse.builder()
-                        .mindId(joinedMind.getMind().getMindId())
-                        .mindTypeName(joinedMind.getMind().getMindType().getName())
-                        .name(joinedMind.getMind().getName())
-                        .isDoneToday(joinedMind.getTodayWrite())
-                        .image(joinedMind.getMind().getBackgroundImage())
-                        .boardCount(boardRepository.findBoardCountByUserAndMind(loginUser, joinedMind.getMind()))
-                        .count(joinedMind.getCount())
-                        .build())
+                .map(joinedMind ->
+                        MyMindResponse.of(joinedMind.getMind(),
+                                joinedMind.getCount(),
+                                boardRepository.findBoardCountByUserAndMind(loginUser,joinedMind.getMind()),
+                                joinedMind.getTodayWrite()))
+                .toList();
+    }
+
+    public List<MyJoinedMindResponse> findMyJoinedMindList(User loginUser) {
+        return loginUser.getJoinedMinds()
+                .stream()
+                .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
+                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(), joinedMind.getIsJoining()))
                 .toList();
     }
 }
