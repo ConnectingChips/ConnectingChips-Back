@@ -5,13 +5,12 @@ import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.service.BoardService;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
-import connectingchips.samchips.user.domain.LoginUser;
-import connectingchips.samchips.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -40,8 +39,8 @@ public class BoardController {
 
     /* 게시글 작성 */
     @PostMapping
-    private BasicResponse createBoard(@RequestBody BoardRequestDto boardRequestDto) {
-        boardService.createBoard(boardRequestDto);
+    private BasicResponse createBoard(@RequestPart MultipartFile file,@RequestPart BoardRequestDto boardRequestDto) throws IOException {
+        boardService.createBoard(file, boardRequestDto);
 
         return BasicResponse.of(HttpStatus.OK);
     }
