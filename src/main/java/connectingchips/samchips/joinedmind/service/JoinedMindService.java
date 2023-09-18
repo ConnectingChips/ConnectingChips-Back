@@ -36,11 +36,22 @@ public class JoinedMindService {
     public void makeMindRelation(Long mindId, User user) {
         Mind mind = findVerifiedMind(mindId);
         checkAlreadyJoined(mindId, user);
+        checkJoinMindCountMax(user);
         JoinedMind joinedMind = new JoinedMind();
         joinedMind.setUser(user);
         joinedMind.setMind(mind);
         joinedMindRepository.save(joinedMind);
     }
+
+    private static void checkJoinMindCountMax(User user) {
+        if(user.getJoinedMinds().
+                stream()
+                .filter(joinedMind -> joinedMind.getIsJoining() == JOIN)
+                .toList().size() >= 3){
+            throw new BadRequestException(INVALID_REQUEST);
+        }
+    }
+
     @Transactional
     public void reMindRelation(Long joinedMindId, Long userId) {
         User user = findVerifiedUser(userId);

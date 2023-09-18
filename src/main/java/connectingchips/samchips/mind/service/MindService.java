@@ -6,12 +6,15 @@ import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
+import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.*;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
+import connectingchips.samchips.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,7 @@ public class MindService {
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final CustomBeanUtils<Mind> beanUtils;
 
     @Transactional
     public FindIntroMindResponse findMind(Long mindId) {
@@ -76,7 +80,7 @@ public class MindService {
     }
     private User findVerifiedUserByAccount(String accountId) {
         Optional<User> byAccountId = userRepository.findByAccountId(accountId);
-        User user = byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));// 버그 새로 추가하고 낫파운드 유저어카운트만들기
+        User user = byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
         return user;
     }
 
@@ -139,8 +143,9 @@ public class MindService {
                 new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
     }
     @Transactional
-    public void createMind(CreateMindRequest createMindRequest) {
-        mindRepository.save(Mind.builder()
+    public MindResponse createMind(CreateMindRequest createMindRequest) {
+
+        return MindResponse.of(mindRepository.save(Mind.builder()
                 .name(createMindRequest.getName())
                 .introduce(createMindRequest.getIntroduce())
                 .introImage(createMindRequest.getIntroImage())
@@ -148,7 +153,7 @@ public class MindService {
                 .pageImage(createMindRequest.getPageImage())
                 .myListImage(createMindRequest.getMyListImage())
                 .totalListImage(createMindRequest.getTotalListImage())
-                .build());
+                .build()));
     }
 
     @Transactional
@@ -209,5 +214,20 @@ public class MindService {
                 .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
                 .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(), joinedMind.getIsJoining()))
                 .toList();
+    }
+
+    @Transactional
+    public MindResponse updateMind(Long mindId,UpdateMindRequest updateMindRequest) {
+        Mind verifiedMind = findVerifiedMind(mindId);
+        return MindResponse.of(beanUtils.copyNonNullProperties(
+                Mind.builder()
+                        .name(updateMindRequest.getName())
+                        .introduce(updateMindRequest.getIntroduce())
+                        .writeFormat(updateMindRequest.getWriteFormat())
+                        .introImage(updateMindRequest.getIntroImage())
+                        .pageImage(updateMindRequest.getPageImage())
+                        .totalListImage(updateMindRequest.getTotalListImage())
+                        .myListImage(updateMindRequest.getMyListImage())
+                        .build(), verifiedMind));
     }
 }

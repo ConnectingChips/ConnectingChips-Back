@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CreateMindRequest {
+public class UpdateMindRequest {
 
     private  String name;
     private  String introduce;
