@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+import static connectingchips.samchips.exception.AuthErrorCode.FORBIDDEN;
+
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
@@ -26,7 +28,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         // 필요한 권한이 없이 접근하려 할때 403
-        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.FORBIDDEN.value(), "FORBIDDEN");
+        ErrorResponse errorResponse = ErrorResponse.of(FORBIDDEN);
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);

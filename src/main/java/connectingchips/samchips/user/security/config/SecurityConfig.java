@@ -2,13 +2,12 @@ package connectingchips.samchips.user.security.config;
 
 import connectingchips.samchips.user.jwt.JwtSecurityConfig;
 import connectingchips.samchips.user.jwt.TokenProvider;
+import connectingchips.samchips.user.jwt.filter.JwtExceptionFilter;
 import connectingchips.samchips.user.jwt.handler.JwtAccessDeniedHandler;
-import connectingchips.samchips.user.jwt.handler.JwtAuthenticationEntryPoint;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.user.security.CustomAuthenticationProvider;
 import connectingchips.samchips.user.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,9 +16,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,8 +27,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -41,8 +36,8 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final CustomUserDetailsService userDetailsService;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider(){
@@ -70,8 +65,7 @@ public class SecurityConfig {
             .httpBasic(httpBasic -> httpBasic.disable());
 
         http.exceptionHandling((exceptionHanding) ->
-                exceptionHanding.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                        .accessDeniedHandler(jwtAccessDeniedHandler));
+                exceptionHanding.accessDeniedHandler(jwtAccessDeniedHandler));
 
         // 세션을 사용하지 않기 때문에 STATELESS로 설정
         http.sessionManagement((sessionManagement) ->
@@ -102,7 +96,7 @@ public class SecurityConfig {
                 )
         ));
 
-        http.apply(new JwtSecurityConfig(tokenProvider, userRepository)); // JwtSecurityConfig 적용
+        http.apply(new JwtSecurityConfig(tokenProvider, userRepository, jwtExceptionFilter)); // JwtSecurityConfig 적용
 
         return http.build();
     }

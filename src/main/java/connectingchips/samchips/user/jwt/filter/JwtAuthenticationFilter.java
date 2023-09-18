@@ -1,38 +1,32 @@
-package connectingchips.samchips.user.jwt;
+package connectingchips.samchips.user.jwt.filter;
 
+import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
 
-    /**
-     * 실제 필터링 로직은 doFilter 안에 들어가게 된다. GenericFilterBean을 받아 구현
-     * Dofilter는 토큰의 인증정보를 SecurityContext 안에 저장하는 역할 수행
-     */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String jwt = tokenProvider.resolveToken(httpServletRequest);
-        String requestURI = httpServletRequest.getRequestURI();
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String jwt = tokenProvider.resolveToken(request);
+        String requestURI = request.getRequestURI();
 
         // 유효성 검증
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
