@@ -1,12 +1,11 @@
 package connectingchips.samchips.user.service;
 
+import connectingchips.samchips.exception.RestApiException;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class AuthService {
         // authenticate 메소드가 실행이 될 때 CustomUserDetailsService의 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         User user = userRepository.findByAccountId(authentication.getName())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 accountId입니다."));
+                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         // authentication 객체로 token 생성
         String accessToken = tokenProvider.createAccessToken(authentication);
@@ -80,7 +81,7 @@ public class AuthService {
     @Transactional
     public void logout(Long userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId입니다."));
+                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         // 로그아웃 시, DB의 token 데이터 초기화
         user.editRefreshToken(null);
@@ -96,7 +97,7 @@ public class AuthService {
         // 리프레시 토큰 값을 이용해 사용자를 꺼낸다.
         Authentication authentication = tokenProvider.getAuthentication(refreshToken);
         User user = userRepository.findByAccountId(authentication.getName())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 accountId입니다."));
+                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         if(!user.getRefreshToken().equals(refreshToken)){
             throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");

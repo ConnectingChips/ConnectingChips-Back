@@ -32,7 +32,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto.Read createComment(CommentRequestDto commentReqDto) {
         User user = userRepository.findById(commentReqDto.getUserId())
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
         Board board = boardRepository.findById(commentReqDto.getBoardId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
 
@@ -50,7 +50,7 @@ public class CommentService {
     @Transactional
     public ReplyResponseDto createReply(ReplyRequestDto replyRequestDto) {
         User user = userRepository.findById(replyRequestDto.getUserId())
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
         Comment comment = commentRepository.findById(replyRequestDto.getCommentId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_COMMENT_ID));
         Reply reply = replyRepository.save(replyRequestDto.toEntity(comment, user));

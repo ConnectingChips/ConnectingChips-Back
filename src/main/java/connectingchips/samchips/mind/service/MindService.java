@@ -76,7 +76,7 @@ public class MindService {
     private User findVerifiedUser(Long userId) {
         Optional<User> findUserById = userRepository.findById(userId);
         return findUserById.orElseThrow(() ->
-                new BadRequestException(NOT_FOUND_USER_ID));
+                new BadRequestException(NOT_FOUND_USER));
     }
     @Transactional
     public JoinCheckResponse checkToday(Long joinedMindId) {

@@ -8,14 +8,20 @@ import connectingchips.samchips.user.oauth.dto.OAuthRequestDto;
 import jakarta.persistence.Basic;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.DataException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/oauth")
 public class OAuthController {
@@ -23,7 +29,7 @@ public class OAuthController {
     private final OAuthService oAuthService;
 
     @GetMapping("/{socialType}")
-    public BasicResponse redirectAuthCodeRequestUrl(@PathVariable SocialType socialType, HttpServletResponse response) throws IOException {
+    public BasicResponse redirectAuthCodeRequestUrl(@PathVariable @NotNull SocialType socialType, HttpServletResponse response) throws IOException {
         String redirectUrl = oAuthService.getAuthCodeRequestUrl(socialType);
         response.sendRedirect(redirectUrl);
 
@@ -31,7 +37,7 @@ public class OAuthController {
     }
 
     @PostMapping("/login")
-    public DataResponse<AuthResponseDto.AccessToken> socialLogin(@RequestBody OAuthRequestDto.Login loginDto, HttpServletResponse response){
+    public DataResponse<AuthResponseDto.AccessToken> socialLogin(@RequestBody @Valid OAuthRequestDto.Login loginDto, HttpServletResponse response){
         System.out.println("socialLogin");
         AuthResponseDto.Token token = oAuthService.socialLogin(loginDto);
         AuthResponseDto.AccessToken accessToken = new AuthResponseDto.AccessToken(token.getAccessToken());

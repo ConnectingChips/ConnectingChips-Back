@@ -42,6 +42,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e.getErrorCode());
     }
 
+    @ExceptionHandler(RestApiException.class)
+    public ResponseEntity<ErrorResponse> handleRestApiException(final RestApiException e) {
+        log.warn(e.getMessage(), e);
+
+        return handleExceptionInternal(e.getErrorCode());
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> constraintViolationException(ConstraintViolationException e) {
         log.warn(e.getMessage(), e);

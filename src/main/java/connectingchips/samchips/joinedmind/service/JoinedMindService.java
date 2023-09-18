@@ -79,7 +79,7 @@ public class JoinedMindService {
     private User findVerifiedUser(Long userId) {
         Optional<User> findUserById = userRepository.findById(userId);
         return findUserById.orElseThrow(() ->
-                new BadRequestException(NOT_FOUND_USER_ID));
+                new BadRequestException(NOT_FOUND_USER));
     }
 
     private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
