@@ -53,10 +53,12 @@ public class CommentService {
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
         Comment comment = commentRepository.findById(replyRequestDto.getCommentId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_COMMENT_ID));
+
         Reply reply = replyRepository.save(replyRequestDto.toEntity(comment, user));
         return new ReplyResponseDto(reply);
     }
 
+    @Transactional
     public void deleteReply(Long replyId) {
         commentRepository.findById(replyId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_REPLY_ID));

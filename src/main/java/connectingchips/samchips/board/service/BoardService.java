@@ -1,5 +1,6 @@
 package connectingchips.samchips.board.service;
 
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.dto.BoardRequestDto;
 import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
@@ -23,8 +24,10 @@ import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,7 @@ import static connectingchips.samchips.exception.CommonErrorCode.*;
 public class BoardService {
 
     public static final int JOINING = 1;
+    private final S3Uploader s3Uploader;
     private final BoardRepository boardRepository;
     private final MindRepository mindRepository;
     private final UserRepository userRepository;
@@ -88,7 +92,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void createBoard(BoardRequestDto boardRequestDto) {
+    public void createBoard(MultipartFile file, BoardRequestDto boardRequestDto) throws IOException {
         Mind mind = mindRepository.
                 findById(boardRequestDto.getMindId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
@@ -96,11 +100,20 @@ public class BoardService {
         User user = userRepository.
                 findById(boardRequestDto.getUserId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
+
         JoinedMind joinedMind = checkJoinMind(user, mind).setIsJoining(JOINING);
         joinedMindRepository.save(joinedMind);
+
+        String imageName;
+        if(!file.isEmpty()) {
+            imageName = s3Uploader.upload(file,"images");
+        } else {
+            imageName = "default";
+        }
+
         Board board = Board.builder()
                 .content(boardRequestDto.getContent())
-                .image(boardRequestDto.getImage())
+                .image(imageName)
                 .mind(mind)
                 .user(user)
                 .build();
