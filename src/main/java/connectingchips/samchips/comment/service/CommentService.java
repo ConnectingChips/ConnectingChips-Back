@@ -54,7 +54,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(replyRequestDto.getCommentId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_COMMENT_ID));
 
-        Reply reply = replyRepository.save(replyRequestDto.toEntity(comment, user));
+        Reply reply = replyRepository.save(replyRequestDto.toEntity(comment, user, replyRequestDto.getContent()));
         return new ReplyResponseDto(reply);
     }
 
