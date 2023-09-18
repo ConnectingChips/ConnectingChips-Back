@@ -1,14 +1,9 @@
 package connectingchips.samchips.comment.dto;
 
-import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.comment.entity.Comment;
-import connectingchips.samchips.user.domain.User;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -23,7 +18,7 @@ public class CommentResponseDto {
         private String content;
         private String profileImage;
         private String createDate;
-        private List<ReplyResponseDto> commentList;
+        private List<ReplyResponseDto> replyList;
 
         /* Entity -> Dto*/
         public Read (Comment comment){
@@ -34,15 +29,15 @@ public class CommentResponseDto {
             this.nickname = comment.getUser().getNickname();
             this.profileImage = comment.getUser().getProfileImage();
             StringBuilder sb = new StringBuilder();
-            sb.append(comment.getCreatedAt().getMonth()).append("월 ")
+            sb.append(comment.getCreatedAt().getMonth().getValue()).append("월 ")
                     .append(comment.getCreatedAt().getDayOfMonth()).append("일 ")
                     .append(comment.getCreatedAt().getHour()).append(":").append(comment.getCreatedAt().getMinute());
             this.createDate = sb.toString();
-            this.commentList = null;
+            this.replyList = null;
         }
 
         public void editRead(List<ReplyResponseDto> commentList) {
-            this.commentList = commentList;
+            this.replyList = commentList;
         }
     }
 }
