@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class FindMindResponse {
+public class FindIntroMindResponse {
 
     public static final int NOT_LOGIN = -1;
     private final Long mindId;
@@ -16,10 +16,10 @@ public class FindMindResponse {
     private final Integer userCount;
     private final String writeFormat;
     private final Integer canJoin;
-    private final String backgroundImage;
+    private final String introImage;
 
-    public static FindMindResponse of(final Mind mind,Integer canJoin){
-        return new FindMindResponse(
+    public static FindIntroMindResponse of(final Mind mind, Integer canJoin){
+        return new FindIntroMindResponse(
                 mind.getMindId(),
                 mind.getMindType().getName(),
                 mind.getName(),
@@ -27,11 +27,11 @@ public class FindMindResponse {
                 mind.getJoinedMinds().size(),
                 mind.getWriteFormat(),
                 canJoin,
-                mind.getBackgroundImage()
+                mind.getIntroImage()
                 );
     }
-    public static FindMindResponse of(final Mind mind){
-        return new FindMindResponse(
+    public static FindIntroMindResponse of(final Mind mind){
+        return new FindIntroMindResponse(
                 mind.getMindId(),
                 mind.getMindType().getName(),
                 mind.getName(),
@@ -39,7 +39,7 @@ public class FindMindResponse {
                 mind.getJoinedMinds().size(),
                 mind.getWriteFormat(),
                 NOT_LOGIN,
-                mind.getBackgroundImage()
+                mind.getIntroImage()
                 );
     }
 }

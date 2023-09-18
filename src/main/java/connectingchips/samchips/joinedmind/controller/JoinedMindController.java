@@ -6,13 +6,17 @@ import connectingchips.samchips.joinedmind.service.JoinedMindService;
 import connectingchips.samchips.user.domain.LoginUser;
 import connectingchips.samchips.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/joined-minds")
 @RequiredArgsConstructor
+@Slf4j
 public class JoinedMindController {
 
     private final JoinedMindService joinedMindService;
@@ -23,10 +27,10 @@ public class JoinedMindController {
     }
 
 
+    //httpRequest에서 헤더에 Authentication이 있는지 확인 -> 있을 경우 꺼내서 암호 풀고 로직 적용시킴
+    //없으면 비회원 조회로 있으면 회원조회 방식으로 ㄱㄱ
     @PostMapping("/{mind-id}")
-    @PreAuthorize("hasAnyRole('USER')")
-    public BasicResponse joinMind(@PathVariable("mind-id")Long mindId,
-                                  @LoginUser User loginUser){
+    public BasicResponse joinMind(@PathVariable("mind-id")Long mindId, @LoginUser User loginUser) {
         joinedMindService.makeMindRelation(mindId,loginUser);
         return BasicResponse.of(HttpStatus.CREATED);
     }
