@@ -14,10 +14,11 @@ public class ReplyRequestDto {
     private Long commentId;
     private String content;
 
-    public Reply toEntity(Comment comment, User user){
+    public Reply toEntity(Comment comment, User user, String content){
         return Reply.builder()
                 .comment(comment)
                 .user(user)
+                .content(content)
                 .build();
     }
 }

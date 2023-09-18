@@ -35,7 +35,7 @@ public class BoardResponseDto {
 
             StringBuilder sb = new StringBuilder();
             sb.append(board.getCreatedAt().getDayOfYear()).append("년 ")
-                    .append(board.getCreatedAt().getMonth()).append("월 ")
+                    .append(board.getCreatedAt().getMonth().getValue()).append("월 ")
                     .append(board.getCreatedAt().getDayOfMonth()).append("일");
             this.createDate = sb.toString();
             this.commentCount = 0;

@@ -27,7 +27,8 @@ public class ReplyResponseDto {
         this.nickname = reply.getUser().getNickname();
         this.profileImage = reply.getUser().getProfileImage();
         StringBuilder sb = new StringBuilder();
-        sb.append(reply.getCreatedAt().getMonth()).append("월 ")
+
+        sb.append(reply.getCreatedAt().getMonth().getValue()).append("월 ")
                 .append(reply.getCreatedAt().getDayOfMonth()).append("일 ")
                 .append(reply.getCreatedAt().getHour()).append(":").append(reply.getCreatedAt().getMinute());
         this.createDate = sb.toString();
