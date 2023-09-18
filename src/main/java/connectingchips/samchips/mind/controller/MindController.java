@@ -30,12 +30,6 @@ public class MindController {
     private final MindService mindService;
 
 
-    @GetMapping("/{mind-id}")
-    public DataResponse getMind(@PathVariable("mind-id")Long mindId){
-        FindIntroMindResponse mind = mindService.findMind(mindId);
-        return DataResponse.of(mind);
-    }
-
     @GetMapping("/intro/{mind-id}")
     public DataResponse getIntroMind(@PathVariable("mind-id")Long mindId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -53,7 +47,7 @@ public class MindController {
                                     @LoginUser User user){
         return DataResponse.of(mindService.findPageMind(mindId,user));
     }
-    @GetMapping("/minds")
+    @GetMapping
     public DataResponse getTotalMind(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<FindTotalMindResponse> minds;
@@ -69,8 +63,8 @@ public class MindController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<FindTotalMindResponse> minds;
         if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
-            minds = mindService.findAllMindExceptMe(makeAccountId(auth));
-        else minds = mindService.findAllMindExceptMe();
+            minds = mindService.findAllMindExceptMe();
+        else minds = mindService.findAllMindExceptMe(makeAccountId(auth));
         return DataResponse.of(minds);
     }
     @GetMapping("/except-me/{mind-type-name}")
@@ -78,8 +72,8 @@ public class MindController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<FindTotalMindResponse> minds;
         if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
-            minds = mindService.findAllMindExceptMeByMindType(makeAccountId(auth),mindTypeId);
-        else minds = mindService.findAllMindExceptMeByMindType(mindTypeId);
+            minds = mindService.findAllMindExceptMeByMindType(mindTypeId);
+        else minds = mindService.findAllMindExceptMeByMindType(makeAccountId(auth),mindTypeId);
 
         return DataResponse.of(minds);
     }
@@ -108,11 +102,6 @@ public class MindController {
         return DataResponse.of(mindService.findMyJoinedMindList(loginUser));
     }
 
-    @GetMapping()
-    @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse getMinds(@LoginUser User user){
-        return DataResponse.of(mindService.findMinds(user));
-    }
 
     @PostMapping
     public BasicResponse postMind(@RequestBody CreateMindRequest createMindRequest){
