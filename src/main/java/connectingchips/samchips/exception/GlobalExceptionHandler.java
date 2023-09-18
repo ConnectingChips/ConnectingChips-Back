@@ -1,5 +1,6 @@
 package connectingchips.samchips.exception;
 
+import connectingchips.samchips.commons.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -12,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.Objects;
 
-import static connectingchips.samchips.exception.ExceptionCode.INVALID_REQUEST;
+import static connectingchips.samchips.exception.CommonErrorCode.INVALID_REQUEST;
 
 @RestControllerAdvice
 @Slf4j
@@ -29,15 +30,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final String errMessage = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(INVALID_REQUEST.getCode(), errMessage));
+                .body(ErrorResponse.of(INVALID_REQUEST.getHttpStatus().value(), errMessage));
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ExceptionResponse> handleBadRequestException(final BadRequestException e) {
+    public ResponseEntity<ErrorResponse> handleBadRequestException(final BadRequestException e) {
+        ErrorCode errorCode = e.getErrorCode();
         log.warn(e.getMessage(), e);
 
-        return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(e.getCode(), e.getMessage()));
+        return handleExceptionInternal(errorCode);
     }
 
+    private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ErrorResponse.of(errorCode));
+    }
 }

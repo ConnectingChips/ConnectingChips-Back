@@ -2,7 +2,6 @@ package connectingchips.samchips.mind.service;
 
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
@@ -15,7 +14,6 @@ import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static connectingchips.samchips.exception.ExceptionCode.*;
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

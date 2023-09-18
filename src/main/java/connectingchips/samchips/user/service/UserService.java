@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static connectingchips.samchips.exception.ExceptionCode.*;
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

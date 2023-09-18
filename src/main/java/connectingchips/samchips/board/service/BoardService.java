@@ -13,7 +13,6 @@ import connectingchips.samchips.comment.repository.CommentRepository;
 import connectingchips.samchips.comment.repository.ReplyRepository;
 
 import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.Optional;
 
-import static connectingchips.samchips.exception.ExceptionCode.*;
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 
 @Service

@@ -1,7 +1,6 @@
 package connectingchips.samchips.joinedmind.service;
 
 import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
@@ -16,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static connectingchips.samchips.exception.ExceptionCode.*;
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

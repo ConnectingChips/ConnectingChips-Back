@@ -1,7 +1,6 @@
 package connectingchips.samchips.mindtype.service;
 
 import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.exception.ExceptionCode;
 import connectingchips.samchips.mindtype.dto.CreateMindTypeRequest;
 import connectingchips.samchips.mindtype.dto.MindTypeResponse;
 import connectingchips.samchips.mindtype.entity.MindType;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static connectingchips.samchips.exception.ExceptionCode.*;
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
