@@ -1,4 +1,4 @@
-package connectingchips.samchips.board.service;
+package connectingchips.samchips.board;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -14,10 +14,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
 @Component
-@Service
 public class S3Uploader {
+
+    /**
+     * [코드의 순서]
+     * 1. MultipartFile을 전달
+     * 2. S3에 전달할 수 있도록 MultiPartFile을 File로 전환
+     *      - S3에 Multipartfile 타입은 전송이 안 됨
+     * 3. 전환된 File을 S3에 public 읽기 권한으로 put
+     *      - 외부에서 정적 파일을 읽을 수 있도록 하기 위함
+     * 4. 로컬에 생성된 File 삭제
+     *      - Multipartfile -> File로 전환되면서 로컬에 파일 생성된 것을 삭제
+     * 5. 업로드된 파일의 S3 URL 주소를 반환
+     */
 
     private final AmazonS3Client amazonS3Client;
 
