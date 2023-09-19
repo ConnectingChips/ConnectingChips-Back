@@ -27,8 +27,7 @@ public class JoinedMindController {
     }
 
 
-    //httpRequest에서 헤더에 Authentication이 있는지 확인 -> 있을 경우 꺼내서 암호 풀고 로직 적용시킴
-    //없으면 비회원 조회로 있으면 회원조회 방식으로 ㄱㄱ
+
     @PostMapping("/{mind-id}")
     public BasicResponse joinMind(@PathVariable("mind-id")Long mindId, @LoginUser User loginUser) {
         joinedMindService.makeMindRelation(mindId,loginUser);
