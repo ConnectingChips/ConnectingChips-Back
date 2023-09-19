@@ -58,12 +58,9 @@ public class Mind {
     @JoinColumn(name = "mind_type_id")
     private MindType mindType;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @Builder
-    public Mind(String name, String introduce, String writeFormat, String introImage, String pageImage, String totalListImage, String myListImage, MindType mindType, User user) {
+    public Mind(String name, String introduce, String writeFormat, String introImage, String pageImage, String totalListImage, String myListImage, MindType mindType) {
         this.name = name;
         this.introduce = introduce;
         this.writeFormat = writeFormat;
@@ -72,6 +69,5 @@ public class Mind {
         this.totalListImage = totalListImage;
         this.myListImage = myListImage;
         this.mindType = mindType;
-        this.user = user;
     }
 }

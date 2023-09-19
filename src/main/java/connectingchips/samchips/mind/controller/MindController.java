@@ -115,7 +115,7 @@ public class MindController {
     }
 
 
-    @PostMapping()
+    @PostMapping
     public BasicResponse postMind(
             @RequestPart CreateMindRequest createMindRequest,
                                  @RequestPart MultipartFile introImage,
@@ -127,7 +127,7 @@ public class MindController {
         return DataResponse.of(HttpStatus.CREATED, mindService.createMind(createMindRequest,images));
     }
 
-    @PutMapping("/update/{mind-id}")
+    @PutMapping("/{mind-id}")
     public DataResponse putMind(@PathVariable("mind-id") Long mindId,
                                 @RequestPart UpdateMindRequest updateMindRequest,
                                 @RequestPart MultipartFile introImage,
