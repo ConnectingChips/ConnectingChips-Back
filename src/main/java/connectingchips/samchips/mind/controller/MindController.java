@@ -115,12 +115,14 @@ public class MindController {
     }
 
 
-    @PostMapping
-    public BasicResponse postMind(@RequestPart CreateMindRequest createMindRequest,
+    @PostMapping("{mind-type-id}")
+    public BasicResponse postMind(@PathVariable("mind-type-id")Long mindTypeId,
+            @RequestPart CreateMindRequest createMindRequest,
                                  @RequestPart MultipartFile introImage,
                                  @RequestPart MultipartFile pageImage,
                                  @RequestPart MultipartFile totalListImage,
                                  @RequestPart MultipartFile myListImage) throws IOException {
+        createMindRequest.setMindTypeId(mindTypeId);
         return DataResponse.of(HttpStatus.CREATED, mindService.createMind(createMindRequest, introImage, pageImage, totalListImage, myListImage));
     }
 

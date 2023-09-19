@@ -12,6 +12,8 @@ import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.*;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
+import connectingchips.samchips.mindtype.entity.MindType;
+import connectingchips.samchips.mindtype.repository.MindTypeRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,6 +41,7 @@ public class MindService {
     public static final int NOT_JOIN = 0;
     public static final int CAN_JOIN = 1;
     private final MindRepository mindRepository;
+    private final MindTypeRepository mindTypeRepository;
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
@@ -154,28 +158,18 @@ public class MindService {
                                    MultipartFile pageImage,
                                    MultipartFile totalListImage,
                                    MultipartFile myListImage) throws IOException {
-
-
+        List<String> upload = s3Uploader.upload(List.of(introImage, pageImage, totalListImage, myListImage));
 
         return MindResponse.of(mindRepository.save(Mind.builder()
                 .name(createMindRequest.getName())
                 .introduce(createMindRequest.getIntroduce())
-                .introImage(makeImage(introImage))
+                .introImage(upload.get(0))
                 .writeFormat(createMindRequest.getWriteFormat())
-                .pageImage(makeImage(pageImage))
-                .myListImage(makeImage(myListImage))
-                .totalListImage(makeImage(totalListImage))
+                .pageImage(upload.get(1))
+                .myListImage(upload.get(2))
+                .totalListImage(upload.get(3))
+                .mindType(findVerifiedMindType(createMindRequest.getMindTypeId()))
                 .build()));
-    }
-
-    private String makeImage(MultipartFile introImage) throws IOException {
-        String introImageName;
-        if(!introImage.isEmpty()) {
-            introImageName = s3Uploader.upload(introImage,"introImage");
-        } else {
-            introImageName = "default";
-        }
-        return introImageName;
     }
 
     @Transactional
@@ -234,7 +228,7 @@ public class MindService {
         return loginUser.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
-                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(), joinedMind.getIsJoining()))
+                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(),NOT_JOIN))
                 .toList();
     }
 
@@ -262,5 +256,11 @@ public class MindService {
     @Transactional
     public PageImageResponse findPageMindImage(Long mindId) {
         return PageImageResponse.of(findVerifiedMind(mindId));
+    }
+
+    private MindType findVerifiedMindType(Long mindTypeId) {
+        Optional<MindType> byId = mindTypeRepository.findById(mindTypeId);
+        return byId.orElseThrow(() ->
+                new BadRequestException(NOT_FOUND_MIND_TYPE_ID));
     }
 }

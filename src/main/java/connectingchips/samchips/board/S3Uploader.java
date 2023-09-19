@@ -2,7 +2,9 @@ package connectingchips.samchips.board;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import connectingchips.samchips.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import static connectingchips.samchips.exception.CommonErrorCode.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -72,4 +80,53 @@ public class S3Uploader {
 
         return uploadImageUrl; //업로드된 파일의 S3 URL 주소 반환
     }
+
+    //================================== 추가한 부분=========================
+    public List<String> upload(List<MultipartFile> multipartFile) throws IOException {
+        List<String> imgUrlList = new ArrayList<>();
+        // forEach 구문을 통해 multipartFile로 넘어온 파일들 하나씩 fileNameList에 추가
+        for (int i = 0; i < multipartFile.size(); i++) {
+            String fileName = createFileName(multipartFile.get(i).getOriginalFilename());
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(multipartFile.get(i).getSize());
+            objectMetadata.setContentType(multipartFile.get(i).getContentType());
+            String dirName = "/";
+            if( i== 0) dirName = "/introImage";
+            if( i== 1) dirName = "/pageImage";
+            if( i== 2) dirName = "/totalListImage";
+            if( i== 3) dirName = "/myListImage";
+            try (InputStream inputStream = multipartFile.get(i).getInputStream()) {
+                amazonS3Client.putObject(new PutObjectRequest(bucket+dirName, fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+                imgUrlList.add(amazonS3Client.getUrl(bucket+dirName, fileName).toString());
+            } catch (IOException e) {
+                throw new BadRequestException(INVALID_REQUEST);
+            }
+        }
+        return imgUrlList;
+    }
+
+    private String createFileName(String fileName) {
+        return getFileExtension(fileName);
+    }
+
+    // 파일 유효성 검사
+    private String getFileExtension(String fileName) {
+        if (fileName.length() == 0) {
+            throw new BadRequestException(INVALID_REQUEST);
+        }
+        ArrayList<String> fileValidate = new ArrayList<>();
+        fileValidate.add(".jpg");
+        fileValidate.add(".jpeg");
+        fileValidate.add(".png");
+        fileValidate.add(".JPG");
+        fileValidate.add(".JPEG");
+        fileValidate.add(".PNG");
+        String idxFileName = fileName.substring(fileName.lastIndexOf("."));
+        if (!fileValidate.contains(idxFileName)) {
+            throw new BadRequestException(INVALID_REQUEST);
+        }
+        return fileName.substring(fileName.lastIndexOf("."));
+    }
+
 }
