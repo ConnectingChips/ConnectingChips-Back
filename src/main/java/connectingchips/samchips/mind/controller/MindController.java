@@ -115,20 +115,29 @@ public class MindController {
     }
 
 
-    @PostMapping
-    public BasicResponse postMind(@RequestPart CreateMindRequest createMindRequest,
+    @PostMapping()
+    public BasicResponse postMind(
+            @RequestPart CreateMindRequest createMindRequest,
                                  @RequestPart MultipartFile introImage,
                                  @RequestPart MultipartFile pageImage,
                                  @RequestPart MultipartFile totalListImage,
                                  @RequestPart MultipartFile myListImage) throws IOException {
-        return DataResponse.of(HttpStatus.CREATED, mindService.createMind(createMindRequest, introImage, pageImage, totalListImage, myListImage));
+
+        List<MultipartFile> images = List.of(introImage, pageImage, totalListImage, myListImage);
+        return DataResponse.of(HttpStatus.CREATED, mindService.createMind(createMindRequest,images));
     }
 
-    @PutMapping("/{mind-id}")
+    @PutMapping("/update/{mind-id}")
     public DataResponse putMind(@PathVariable("mind-id") Long mindId,
-            @RequestBody UpdateMindRequest updateMindRequest){
-        return DataResponse.of(mindService.updateMind(mindId,updateMindRequest));
+                                @RequestPart UpdateMindRequest updateMindRequest,
+                                @RequestPart MultipartFile introImage,
+                                @RequestPart MultipartFile pageImage,
+                                @RequestPart MultipartFile totalListImage,
+                                @RequestPart MultipartFile myListImage) throws IOException {
+        List<MultipartFile> images = List.of(introImage, pageImage, totalListImage, myListImage);
+        return DataResponse.of(mindService.updateMind(mindId,updateMindRequest,images));
     }
+
     @DeleteMapping("/{mind-id}")
     public BasicResponse deleteMind(@PathVariable("mind-id")Long mindId){
         mindService.deleteMind(mindId);

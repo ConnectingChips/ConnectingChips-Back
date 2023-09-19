@@ -16,6 +16,7 @@ public class MindResponse {
     private final String pageImage;
     private final String totalListImage;
     private final String myListImage;
+    private final String mindTypeName;
 
     public static MindResponse of(Mind mind){
         return new MindResponse(
@@ -26,7 +27,8 @@ public class MindResponse {
                 mind.getIntroImage(),
                 mind.getPageImage(),
                 mind.getTotalListImage(),
-                mind.getMyListImage()
+                mind.getMyListImage(),
+                mind.getMindType().getName()
         );
     }
 }

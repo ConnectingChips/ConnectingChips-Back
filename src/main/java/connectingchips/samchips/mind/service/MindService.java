@@ -12,6 +12,8 @@ import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.*;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
+import connectingchips.samchips.mindtype.entity.MindType;
+import connectingchips.samchips.mindtype.repository.MindTypeRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,7 +40,12 @@ public class MindService {
     public static final int ANONYMOUS_USER = -1;
     public static final int NOT_JOIN = 0;
     public static final int CAN_JOIN = 1;
+    public static final int FIRST_IMAGE_NUM = 0;
+    public static final int SECOND_IMAGE_NUM = 1;
+    public static final int THIRD_IMAGE_NUM = 2;
+    public static final int FOURTH_IMAGE_NUM = 3;
     private final MindRepository mindRepository;
+    private final MindTypeRepository mindTypeRepository;
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
@@ -150,39 +158,44 @@ public class MindService {
     }
     @Transactional
     public MindResponse createMind(CreateMindRequest createMindRequest,
-                                   MultipartFile introImage,
-                                   MultipartFile pageImage,
-                                   MultipartFile totalListImage,
-                                   MultipartFile myListImage) throws IOException {
-
-
+                                   List<MultipartFile> images) throws IOException {
+        List<String> upload = s3Uploader.upload(images);
 
         return MindResponse.of(mindRepository.save(Mind.builder()
                 .name(createMindRequest.getName())
                 .introduce(createMindRequest.getIntroduce())
-                .introImage(makeImage(introImage))
+                .introImage(upload.get(FIRST_IMAGE_NUM))
                 .writeFormat(createMindRequest.getWriteFormat())
-                .pageImage(makeImage(pageImage))
-                .myListImage(makeImage(myListImage))
-                .totalListImage(makeImage(totalListImage))
+                .pageImage(upload.get(SECOND_IMAGE_NUM))
+                .myListImage(upload.get(THIRD_IMAGE_NUM))
+                .totalListImage(upload.get(FOURTH_IMAGE_NUM))
+                .mindType(findVerifiedMindType(createMindRequest.getMindTypeId()))
                 .build()));
     }
 
-    private String makeImage(MultipartFile introImage) throws IOException {
-        String introImageName;
-        if(!introImage.isEmpty()) {
-            introImageName = s3Uploader.upload(introImage,"introImage");
-        } else {
-            introImageName = "default";
-        }
-        return introImageName;
+    @Transactional
+    public MindResponse updateMind(Long mindId,
+                                   UpdateMindRequest updateMindRequest,
+                                   List<MultipartFile> images) throws IOException {
+        Mind verifiedMind = findVerifiedMind(mindId);
+        List<String> upload = s3Uploader.upload(images);
+        return MindResponse.of(beanUtils.copyNonNullProperties(
+                Mind.builder()
+                        .name(updateMindRequest.getName())
+                        .introduce(updateMindRequest.getIntroduce())
+                        .writeFormat(updateMindRequest.getWriteFormat())
+                        .introImage(upload.get(FIRST_IMAGE_NUM))
+                        .pageImage(upload.get(SECOND_IMAGE_NUM))
+                        .totalListImage(upload.get(THIRD_IMAGE_NUM))
+                        .myListImage(upload.get(FOURTH_IMAGE_NUM))
+                        .mindType(findVerifiedMindType(updateMindRequest.getMindTypeId()))
+                        .build(), verifiedMind));
     }
 
     @Transactional
     public void deleteMind(Long mindId) {
         mindRepository.delete(findVerifiedMind(mindId));
     }
-
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMe(String accountId) {
         User loginUser = findVerifiedUserByAccount(accountId);
@@ -193,6 +206,7 @@ public class MindService {
                 .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
                 .collect(Collectors.toList());
     }
+
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMe() {
         return mindRepository.findAll()
@@ -200,7 +214,6 @@ public class MindService {
                 .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER))
                 .toList();
     }
-
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(String accountId,Long mindTypeId) {
         User loginUser = findVerifiedUserByAccount(accountId);
         return mindRepository.findAll()
@@ -210,6 +223,7 @@ public class MindService {
                 .toList();
 
     }
+
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(Long mindTypeId) {
         return mindRepository.findAll()
                 .stream()
@@ -234,23 +248,8 @@ public class MindService {
         return loginUser.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
-                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(), joinedMind.getIsJoining()))
+                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(),NOT_JOIN))
                 .toList();
-    }
-
-    @Transactional
-    public MindResponse updateMind(Long mindId,UpdateMindRequest updateMindRequest) {
-        Mind verifiedMind = findVerifiedMind(mindId);
-        return MindResponse.of(beanUtils.copyNonNullProperties(
-                Mind.builder()
-                        .name(updateMindRequest.getName())
-                        .introduce(updateMindRequest.getIntroduce())
-                        .writeFormat(updateMindRequest.getWriteFormat())
-                        .introImage(updateMindRequest.getIntroImage())
-                        .pageImage(updateMindRequest.getPageImage())
-                        .totalListImage(updateMindRequest.getTotalListImage())
-                        .myListImage(updateMindRequest.getMyListImage())
-                        .build(), verifiedMind));
     }
 
 
@@ -262,5 +261,11 @@ public class MindService {
     @Transactional
     public PageImageResponse findPageMindImage(Long mindId) {
         return PageImageResponse.of(findVerifiedMind(mindId));
+    }
+
+    private MindType findVerifiedMindType(Long mindTypeId) {
+        Optional<MindType> byId = mindTypeRepository.findById(mindTypeId);
+        return byId.orElseThrow(() ->
+                new BadRequestException(NOT_FOUND_MIND_TYPE_ID));
     }
 }
