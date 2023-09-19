@@ -1,10 +1,12 @@
 package connectingchips.samchips.mind.service;
 
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.exception.BadRequestException;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
+
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.*;
@@ -18,7 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,6 +42,7 @@ public class MindService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final CustomBeanUtils<Mind> beanUtils;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public FindIntroMindResponse findMind(Long mindId) {
@@ -144,17 +149,33 @@ public class MindService {
                 new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
     }
     @Transactional
-    public MindResponse createMind(CreateMindRequest createMindRequest) {
+    public MindResponse createMind(CreateMindRequest createMindRequest,
+                                   MultipartFile introImage,
+                                   MultipartFile pageImage,
+                                   MultipartFile totalListImage,
+                                   MultipartFile myListImage) throws IOException {
+
+
 
         return MindResponse.of(mindRepository.save(Mind.builder()
                 .name(createMindRequest.getName())
                 .introduce(createMindRequest.getIntroduce())
-                .introImage(createMindRequest.getIntroImage())
+                .introImage(makeImage(introImage))
                 .writeFormat(createMindRequest.getWriteFormat())
-                .pageImage(createMindRequest.getPageImage())
-                .myListImage(createMindRequest.getMyListImage())
-                .totalListImage(createMindRequest.getTotalListImage())
+                .pageImage(makeImage(pageImage))
+                .myListImage(makeImage(myListImage))
+                .totalListImage(makeImage(totalListImage))
                 .build()));
+    }
+
+    private String makeImage(MultipartFile introImage) throws IOException {
+        String introImageName;
+        if(!introImage.isEmpty()) {
+            introImageName = s3Uploader.upload(introImage,"introImage");
+        } else {
+            introImageName = "default";
+        }
+        return introImageName;
     }
 
     @Transactional
@@ -233,4 +254,13 @@ public class MindService {
     }
 
 
+    @Transactional
+    public IntroImageResponse findIntroMindImage(Long mindId) {
+        return IntroImageResponse.of(findVerifiedMind(mindId));
+    }
+
+    @Transactional
+    public PageImageResponse findPageMindImage(Long mindId) {
+        return PageImageResponse.of(findVerifiedMind(mindId));
+    }
 }

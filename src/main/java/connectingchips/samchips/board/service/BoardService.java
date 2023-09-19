@@ -91,6 +91,16 @@ public class BoardService {
         } else return new BoardResponseDto.CanEdit(false);
     }
 
+    public String getImageURL(MultipartFile file, String dirName) throws IOException {
+        String imageURL;
+        if(!file.isEmpty()) {
+            imageURL = s3Uploader.upload(file,dirName);
+        } else {
+            imageURL = "default";
+        }
+        return imageURL;
+    }
+
     @Transactional
     public void createBoard(MultipartFile file, BoardRequestDto boardRequestDto) throws IOException {
         Mind mind = mindRepository.
@@ -104,16 +114,9 @@ public class BoardService {
         JoinedMind joinedMind = checkJoinMind(user, mind).setIsJoining(JOINING);
         joinedMindRepository.save(joinedMind);
 
-        String imageName;
-        if(!file.isEmpty()) {
-            imageName = s3Uploader.upload(file,"images");
-        } else {
-            imageName = "default";
-        }
-
         Board board = Board.builder()
                 .content(boardRequestDto.getContent())
-                .image(imageName)
+                .image(getImageURL(file, "/board"))
                 .mind(mind)
                 .user(user)
                 .build();

@@ -16,7 +16,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,12 +43,21 @@ public class MindController {
             mind = mindService.findIntroMindByAccountId(mindId,makeAccountId(auth));
         return DataResponse.of(mind);
     }
+    @GetMapping("/intro/{mind-id}/image")
+    public DataResponse getIntroMindImage(@PathVariable("mind-id")Long mindId){
+
+        return DataResponse.of(mindService.findIntroMindImage(mindId));
+    }
 
       @GetMapping("/page/{mind-id}")
       @PreAuthorize("hasAnyRole('USER')")
     public DataResponse getPageMind(@PathVariable("mind-id")Long mindId,
                                     @LoginUser User user){
         return DataResponse.of(mindService.findPageMind(mindId,user));
+    }
+    @GetMapping("/page/{mind-id}/image")
+    public DataResponse getPageMindImage(@PathVariable("mind-id")Long mindId){
+        return DataResponse.of(mindService.findPageMindImage(mindId));
     }
     @GetMapping
     public DataResponse getTotalMind(){
@@ -105,9 +116,12 @@ public class MindController {
 
 
     @PostMapping
-    public DataResponse postMind(@RequestBody CreateMindRequest createMindRequest){
-
-        return DataResponse.of(HttpStatus.CREATED,mindService.createMind(createMindRequest));
+    public BasicResponse postMind(@RequestPart CreateMindRequest createMindRequest,
+                                 @RequestPart MultipartFile introImage,
+                                 @RequestPart MultipartFile pageImage,
+                                 @RequestPart MultipartFile totalListImage,
+                                 @RequestPart MultipartFile myListImage) throws IOException {
+        return DataResponse.of(HttpStatus.CREATED, mindService.createMind(createMindRequest, introImage, pageImage, totalListImage, myListImage));
     }
 
     @PutMapping("/{mind-id}")
