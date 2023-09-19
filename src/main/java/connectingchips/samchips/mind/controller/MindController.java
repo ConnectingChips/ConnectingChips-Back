@@ -59,16 +59,16 @@ public class MindController {
     public DataResponse getPageMindImage(@PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.findPageMindImage(mindId));
     }
-    @GetMapping
-    public DataResponse getTotalMind(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<FindTotalMindResponse> minds;
-        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
-            minds = mindService.findTotalMindNotAccountId();
-        else
-            minds = mindService.findTotalMindByAccountId(makeAccountId(auth));
-        return DataResponse.of(minds);
-    }
+//    @GetMapping /except-me와 동작방식이 유사하나 혹시 몰라서 남겨둠
+//    public DataResponse getTotalMind(){
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        List<FindTotalMindResponse> minds;
+//        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
+//            minds = mindService.findTotalMindNotAccountId();
+//        else
+//            minds = mindService.findTotalMindByAccountId(makeAccountId(auth));
+//        return DataResponse.of(minds);
+//    }
 
     @GetMapping("/except-me")
     public DataResponse getAllMindExceptMe(){
@@ -129,7 +129,7 @@ public class MindController {
 
     @PutMapping("/{mind-id}")
     public DataResponse putMind(@PathVariable("mind-id") Long mindId,
-                                @RequestPart UpdateMindRequest updateMindRequest,
+                                @RequestPart(required = false) UpdateMindRequest updateMindRequest,
                                 @RequestPart MultipartFile introImage,
                                 @RequestPart MultipartFile pageImage,
                                 @RequestPart MultipartFile totalListImage,

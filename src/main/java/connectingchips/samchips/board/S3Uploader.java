@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import connectingchips.samchips.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import static connectingchips.samchips.exception.CommonErrorCode.INVALID_REQUEST
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3Uploader {
     /**
      * [코드의 순서]
@@ -86,7 +88,7 @@ public class S3Uploader {
         List<String> imgUrlList = new ArrayList<>();
         // forEach 구문을 통해 multipartFile로 넘어온 파일들 하나씩 fileNameList에 추가
         for (int i = 0; i < multipartFile.size(); i++) {
-            String fileName = createFileName(multipartFile.get(i).getOriginalFilename());
+
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(multipartFile.get(i).getSize());
             objectMetadata.setContentType(multipartFile.get(i).getContentType());
@@ -96,9 +98,9 @@ public class S3Uploader {
             if( i== 2) dirName = "/totalListImage";
             if( i== 3) dirName = "/myListImage";
             try (InputStream inputStream = multipartFile.get(i).getInputStream()) {
-                amazonS3Client.putObject(new PutObjectRequest(bucket+dirName, fileName, inputStream, objectMetadata)
+                amazonS3Client.putObject(new PutObjectRequest(bucket+dirName, multipartFile.get(i).getOriginalFilename(), inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(amazonS3Client.getUrl(bucket+dirName, fileName).toString());
+                imgUrlList.add(amazonS3Client.getUrl(bucket+dirName,multipartFile.get(i).getOriginalFilename()).toString());
             } catch (IOException e) {
                 throw new BadRequestException(INVALID_REQUEST);
             }
