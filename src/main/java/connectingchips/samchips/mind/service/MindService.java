@@ -40,6 +40,10 @@ public class MindService {
     public static final int ANONYMOUS_USER = -1;
     public static final int NOT_JOIN = 0;
     public static final int CAN_JOIN = 1;
+    public static final int FIRST_IMAGE_NUM = 0;
+    public static final int SECOND_IMAGE_NUM = 1;
+    public static final int THIRD_IMAGE_NUM = 2;
+    public static final int FOURTH_IMAGE_NUM = 3;
     private final MindRepository mindRepository;
     private final MindTypeRepository mindTypeRepository;
     private final JoinedMindRepository joinedMindRepository;
@@ -154,29 +158,44 @@ public class MindService {
     }
     @Transactional
     public MindResponse createMind(CreateMindRequest createMindRequest,
-                                   MultipartFile introImage,
-                                   MultipartFile pageImage,
-                                   MultipartFile totalListImage,
-                                   MultipartFile myListImage) throws IOException {
-        List<String> upload = s3Uploader.upload(List.of(introImage, pageImage, totalListImage, myListImage));
+                                   List<MultipartFile> images) throws IOException {
+        List<String> upload = s3Uploader.upload(images);
 
         return MindResponse.of(mindRepository.save(Mind.builder()
                 .name(createMindRequest.getName())
                 .introduce(createMindRequest.getIntroduce())
-                .introImage(upload.get(0))
+                .introImage(upload.get(FIRST_IMAGE_NUM))
                 .writeFormat(createMindRequest.getWriteFormat())
-                .pageImage(upload.get(1))
-                .myListImage(upload.get(2))
-                .totalListImage(upload.get(3))
+                .pageImage(upload.get(SECOND_IMAGE_NUM))
+                .myListImage(upload.get(THIRD_IMAGE_NUM))
+                .totalListImage(upload.get(FOURTH_IMAGE_NUM))
                 .mindType(findVerifiedMindType(createMindRequest.getMindTypeId()))
                 .build()));
+    }
+
+    @Transactional
+    public MindResponse updateMind(Long mindId,
+                                   UpdateMindRequest updateMindRequest,
+                                   List<MultipartFile> images) throws IOException {
+        Mind verifiedMind = findVerifiedMind(mindId);
+        List<String> upload = s3Uploader.upload(images);
+        return MindResponse.of(beanUtils.copyNonNullProperties(
+                Mind.builder()
+                        .name(updateMindRequest.getName())
+                        .introduce(updateMindRequest.getIntroduce())
+                        .writeFormat(updateMindRequest.getWriteFormat())
+                        .introImage(upload.get(FIRST_IMAGE_NUM))
+                        .pageImage(upload.get(SECOND_IMAGE_NUM))
+                        .totalListImage(upload.get(THIRD_IMAGE_NUM))
+                        .myListImage(upload.get(FOURTH_IMAGE_NUM))
+                        .mindType(findVerifiedMindType(updateMindRequest.getMindTypeId()))
+                        .build(), verifiedMind));
     }
 
     @Transactional
     public void deleteMind(Long mindId) {
         mindRepository.delete(findVerifiedMind(mindId));
     }
-
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMe(String accountId) {
         User loginUser = findVerifiedUserByAccount(accountId);
@@ -187,6 +206,7 @@ public class MindService {
                 .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
                 .collect(Collectors.toList());
     }
+
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMe() {
         return mindRepository.findAll()
@@ -194,7 +214,6 @@ public class MindService {
                 .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER))
                 .toList();
     }
-
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(String accountId,Long mindTypeId) {
         User loginUser = findVerifiedUserByAccount(accountId);
         return mindRepository.findAll()
@@ -204,6 +223,7 @@ public class MindService {
                 .toList();
 
     }
+
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(Long mindTypeId) {
         return mindRepository.findAll()
                 .stream()
@@ -230,21 +250,6 @@ public class MindService {
                 .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
                 .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(),NOT_JOIN))
                 .toList();
-    }
-
-    @Transactional
-    public MindResponse updateMind(Long mindId,UpdateMindRequest updateMindRequest) {
-        Mind verifiedMind = findVerifiedMind(mindId);
-        return MindResponse.of(beanUtils.copyNonNullProperties(
-                Mind.builder()
-                        .name(updateMindRequest.getName())
-                        .introduce(updateMindRequest.getIntroduce())
-                        .writeFormat(updateMindRequest.getWriteFormat())
-                        .introImage(updateMindRequest.getIntroImage())
-                        .pageImage(updateMindRequest.getPageImage())
-                        .totalListImage(updateMindRequest.getTotalListImage())
-                        .myListImage(updateMindRequest.getMyListImage())
-                        .build(), verifiedMind));
     }
 
 
