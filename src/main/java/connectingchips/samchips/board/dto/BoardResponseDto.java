@@ -34,7 +34,7 @@ public class BoardResponseDto {
             this.profileImage = board.getUser().getProfileImage();
 
             StringBuilder sb = new StringBuilder();
-            sb.append(board.getCreatedAt().getDayOfYear()).append("년 ")
+            sb.append(board.getCreatedAt().getYear()).append("년 ")
                     .append(board.getCreatedAt().getMonth().getValue()).append("월 ")
                     .append(board.getCreatedAt().getDayOfMonth()).append("일");
             this.createDate = sb.toString();
