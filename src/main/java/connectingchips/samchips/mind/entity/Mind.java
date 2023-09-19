@@ -25,15 +25,12 @@ public class Mind {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mindId;
 
-    @NotNull
     @Column(length = 20)
     private String name;
 
-    @NotNull
     @Column(length = 100)
     private String introduce;
 
-    @NotNull
     @Column(length = 100)
     private String writeFormat;
 

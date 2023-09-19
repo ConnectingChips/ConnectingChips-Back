@@ -111,7 +111,7 @@ public class BoardService {
                 findById(boardRequestDto.getUserId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
 
-        JoinedMind joinedMind = checkJoinMind(user, mind).setIsJoining(JOINING);
+        JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
         joinedMindRepository.save(joinedMind);
 
         Board board = Board.builder()

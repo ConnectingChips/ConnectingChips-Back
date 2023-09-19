@@ -177,6 +177,10 @@ public class MindService {
     public MindResponse updateMind(Long mindId,
                                    UpdateMindRequest updateMindRequest,
                                    List<MultipartFile> images) throws IOException {
+        MindType mindType= new MindType();
+        if(updateMindRequest == null) updateMindRequest = new UpdateMindRequest();
+        if(updateMindRequest.getMindTypeId() != null) mindType = findVerifiedMindType(updateMindRequest.getMindTypeId());
+
         Mind verifiedMind = findVerifiedMind(mindId);
         List<String> upload = s3Uploader.upload(images);
         return MindResponse.of(beanUtils.copyNonNullProperties(
@@ -188,7 +192,7 @@ public class MindService {
                         .pageImage(upload.get(SECOND_IMAGE_NUM))
                         .totalListImage(upload.get(THIRD_IMAGE_NUM))
                         .myListImage(upload.get(FOURTH_IMAGE_NUM))
-                        .mindType(findVerifiedMindType(updateMindRequest.getMindTypeId()))
+                        .mindType(mindType)
                         .build(), verifiedMind));
     }
 
@@ -216,9 +220,11 @@ public class MindService {
     }
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(String accountId,Long mindTypeId) {
         User loginUser = findVerifiedUserByAccount(accountId);
+        List<Long> list = loginUser.getJoinedMinds().stream().map(user -> user.getMind().getMindId()).toList();
+
         return mindRepository.findAll()
                 .stream()
-                .filter(mind -> Objects.equals(mind.getMindType().getMindTypeId(), mindTypeId))
+                .filter(mind -> Objects.equals(mind.getMindType().getMindTypeId(), mindTypeId) &&!list.contains(mind.getMindId()))
                 .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
                 .toList();
 
