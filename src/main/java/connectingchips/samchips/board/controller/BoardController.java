@@ -30,7 +30,7 @@ public class BoardController {
     }
 
     /* 게시글 작성자 여부 */
-    @GetMapping("/경")
+    @GetMapping("/authentication")
     private DataResponse<BoardResponseDto.CanEdit> getBoardUser(@RequestParam(value = "board_id") Long boardId,
                                                                 @RequestParam(value = "user_id") Long userId){
         BoardResponseDto.CanEdit canEdit = boardService.isUserEditor(boardId, userId);
@@ -39,7 +39,8 @@ public class BoardController {
 
     /* 게시글 작성 */
     @PostMapping
-    private BasicResponse createBoard(@RequestPart MultipartFile file,@RequestPart BoardRequestDto boardRequestDto) throws IOException {
+    private BasicResponse createBoard(@RequestPart(value = "file", required = false) MultipartFile file,
+                                      @RequestPart(value = "boardRequestDto") BoardRequestDto boardRequestDto) throws IOException {
         boardService.createBoard(file, boardRequestDto);
 
         return BasicResponse.of(HttpStatus.OK);
