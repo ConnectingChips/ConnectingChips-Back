@@ -17,6 +17,7 @@ import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -251,6 +252,7 @@ public class MindService {
                         .myListImage(updateMindRequest.getMyListImage())
                         .build(), verifiedMind));
     }
+
 
     @Transactional
     public IntroImageResponse findIntroMindImage(Long mindId) {
