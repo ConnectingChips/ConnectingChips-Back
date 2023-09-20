@@ -28,7 +28,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
-    private final S3Uploader s3Uploader;
 
     @Transactional
     public AuthResponseDto.Token login(UserRequestDto.Login loginDto){
@@ -62,7 +61,7 @@ public class AuthService {
                     .password(encodedPassword)
                     .nickname(user.getNickname())
                     .email(user.getEmail())
-                    .profileImage(s3Uploader.getFileUrl(userService.randomDefaultProfileImage()))
+                    .profileImage(userService.randomDefaultProfileImage())
                     .gender(user.getGender())
                     .ageRange(user.getAgeRange())
                     .socialType(user.getSocialType())

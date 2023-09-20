@@ -39,7 +39,7 @@ public class UserService {
                 .password(encodedPassword)
                 .nickname(signupDto.getNickname())
                 .email(signupDto.getEmail())
-                .profileImage(s3Uploader.getFileUrl(randomDefaultProfileImage()))
+                .profileImage(randomDefaultProfileImage())
                 .socialType(SocialType.SAMCHIPS)
                 .build();
 
@@ -80,14 +80,18 @@ public class UserService {
         List<String> fileNames = s3Uploader.find("profileImage/default/");
 
         if(fileNames.isEmpty()){
-            return null;
+            return "";
         }else{
-            fileNames.remove(0);
+            if(fileNames.size() == 1){
+                return "";
+            }else{
+                fileNames.remove(0);
+            }
         }
 
         Random random = new Random();
         int randomIdx = random.nextInt(fileNames.size());
 
-        return fileNames.get(randomIdx);
+        return s3Uploader.getFileUrl(fileNames.get(randomIdx));
     }
 }
