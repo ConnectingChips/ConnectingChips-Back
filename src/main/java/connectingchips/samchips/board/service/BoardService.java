@@ -102,7 +102,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void createBoard(MultipartFile file, BoardRequestDto boardRequestDto) throws IOException {
+    public void createBoard(MultipartFile file, BoardRequestDto.Save boardRequestDto) throws IOException {
         Mind mind = mindRepository.
                 findById(boardRequestDto.getMindId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
@@ -133,7 +133,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponseDto.Update updateBoard(Long boardId, BoardRequestDto boardRequestDto) {
+    public BoardResponseDto.Update updateBoard(Long boardId, BoardRequestDto.Edit boardRequestDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
         board.editContent(boardRequestDto.getContent());
