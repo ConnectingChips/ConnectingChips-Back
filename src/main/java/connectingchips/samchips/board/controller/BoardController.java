@@ -40,7 +40,7 @@ public class BoardController {
     /* 게시글 작성 */
     @PostMapping
     private BasicResponse createBoard(@RequestPart(value = "file", required = false) MultipartFile file,
-                                      @RequestPart(value = "boardRequestDto") BoardRequestDto boardRequestDto) throws IOException {
+                                      @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto) throws IOException {
         boardService.createBoard(file, boardRequestDto);
 
         return BasicResponse.of(HttpStatus.OK);
@@ -48,7 +48,7 @@ public class BoardController {
 
     /* 게시글 수정 */
     @PutMapping("/{board_id}")
-    private DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
+    private DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId, @RequestBody BoardRequestDto.Edit boardRequestDto) {
         BoardResponseDto.Update boardResponseDto = boardService.updateBoard(boardId, boardRequestDto);
         return DataResponse.of(boardResponseDto);
     }
