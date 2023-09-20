@@ -21,7 +21,7 @@ public class MindType extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mindTypeId;
-    //parentId 확인후 수정 예정
+
     private String name;
 
     @OneToMany(mappedBy = "mindType", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)

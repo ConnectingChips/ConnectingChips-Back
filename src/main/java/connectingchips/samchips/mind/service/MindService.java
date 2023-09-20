@@ -50,13 +50,6 @@ public class MindService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public FindIntroMindResponse findMind(Long mindId) {
-        User user = findVerifiedUser(1L);
-        Integer canJoin = checkCanJoin(mindId, user);
-        return FindIntroMindResponse
-                .of(findVerifiedMind(mindId),canJoin);
-    }
-    @Transactional
     public FindIntroMindResponse findIntroMindNotAccountId(Long mindId) {
         return FindIntroMindResponse
                 .of(findVerifiedMind(mindId),ANONYMOUS_USER);
@@ -84,17 +77,6 @@ public class MindService {
         return FindPageMindResponse.of(verifiedMind, false, NOT_JOIN);
     }
 
-    @Transactional
-    public List<FindTotalMindResponse> findTotalMindNotAccountId(){
-        return mindRepository.findAll().stream().map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER)).toList();
-    }
-    @Transactional
-    public List<FindTotalMindResponse> findTotalMindByAccountId(String accountId){
-        return mindRepository.findAll().stream()
-                .map(mind -> FindTotalMindResponse
-                        .of(mind, checkCanJoin(mind.getMindId(), findVerifiedUserByAccount(accountId))))
-                        .toList();
-    }
     private User findVerifiedUserByAccount(String accountId) {
         Optional<User> byAccountId = userRepository.findByAccountId(accountId);
         User user = byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
@@ -111,21 +93,7 @@ public class MindService {
         return canJoin;
     }
 
-    @Transactional
-    public List<FindIntroMindResponse> findMinds(User user) {
-        return mindRepository.findAll()
-                .stream()
-                .map(mind -> FindIntroMindResponse.of(mind,checkCanJoin(mind.getMindId(),user)))
-                .toList();
-    }
 
-    @Transactional
-    public List<FindIntroMindResponse> findAllMinds(){
-        return mindRepository.findAll()
-                .stream()
-                .map(FindIntroMindResponse::of)
-                .toList();
-    }
     @Transactional
     public Mind findVerifiedMind(Long mindId) {
         Optional<Mind> findMindById = mindRepository.findById(mindId);
@@ -221,6 +189,7 @@ public class MindService {
                 .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER))
                 .toList();
     }
+    @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(String accountId,Long mindTypeId) {
         User loginUser = findVerifiedUserByAccount(accountId);
         List<Long> list = loginUser.getJoinedMinds().stream().map(user -> user.getMind().getMindId()).toList();
@@ -233,6 +202,7 @@ public class MindService {
 
     }
 
+    @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(Long mindTypeId) {
         return mindRepository.findAll()
                 .stream()
@@ -242,6 +212,7 @@ public class MindService {
     }
 
 
+    @Transactional
     public List<MyMindResponse> findMyJoinMindList(User loginUser) {
         return loginUser.getJoinedMinds()
                 .stream()
@@ -253,6 +224,7 @@ public class MindService {
                 .toList();
     }
 
+    @Transactional
     public List<MyJoinedMindResponse> findMyJoinedMindList(User loginUser) {
         return loginUser.getJoinedMinds()
                 .stream()
