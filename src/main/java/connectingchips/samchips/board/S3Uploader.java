@@ -96,7 +96,7 @@ public class S3Uploader {
         return url;
     }
 
-    //MultipartFile을 전달받아 File로 전환 후 S3에 업로드
+    //MultipartFile -> File 전환
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
@@ -104,12 +104,16 @@ public class S3Uploader {
     }
 
     public String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + uploadFile.getName();
+        //set UUID
+        String uploadS3fileName = UUID.randomUUID().toString();
+        //set Directory
+        String fileName = dirName + "/" + uploadS3fileName;
+        //s3에 업로드
         String uploadImageUrl = putS3(uploadFile, fileName);
-
         //로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
         removeNewFile(uploadFile);
 
+        //https://chips-bucket-image.s3.ap-northeast-2.amazonaws.com/%2F%2Fboard/b803ffbd-858c-484e-86e0-0ddb2fe339cc
         return uploadImageUrl; //업로드된 파일의 S3 URL 주소 반환
     }
 
