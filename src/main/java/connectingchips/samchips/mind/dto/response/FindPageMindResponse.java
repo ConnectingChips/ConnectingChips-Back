@@ -12,6 +12,7 @@ public class FindPageMindResponse {
     private final String mindTypeName;
     private final String name;
     private final Integer userCount;
+    private final String introduce;
     private final String writeFormat;
     private final String pageImage;
     private final Boolean isDoneToday;
@@ -22,6 +23,7 @@ public class FindPageMindResponse {
                 mind.getMindType().getName(),
                 mind.getName(),
                 mind.getJoinedMinds().size(),
+                mind.getIntroduce(),
                 mind.getWriteFormat(),
                 mind.getPageImage(),
                 isDoneToday,
