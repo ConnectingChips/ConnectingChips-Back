@@ -71,9 +71,9 @@ public class SecurityConfig {
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        //  ============ 추가한 부분 ============
+        //  ============ 추가한 부분 =============
         http.cors(Customizer.withDefaults());
-        // ============= 추가한 부분 ============
+        // ============= 추가한 부분 =============
 
         // Spring Security 6.1.0부터는 메서드 체이닝의 사용을 지양하고 람다식을 통해 함수형으로 설정하게 지향
         http.authorizeHttpRequests(auth -> auth
