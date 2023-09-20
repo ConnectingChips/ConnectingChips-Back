@@ -31,7 +31,9 @@ public class CommentResponseDto {
             StringBuilder sb = new StringBuilder();
             sb.append(comment.getCreatedAt().getMonth().getValue()).append("월 ")
                     .append(comment.getCreatedAt().getDayOfMonth()).append("일 ")
-                    .append(comment.getCreatedAt().getHour()).append(":").append(comment.getCreatedAt().getMinute());
+                    .append(comment.getCreatedAt().getHour()).append(":");
+            if(comment.getCreatedAt().getMinute() < 10) sb.append("0");
+            sb.append(comment.getCreatedAt().getMinute());
             this.createDate = sb.toString();
             this.replyList = null;
         }
