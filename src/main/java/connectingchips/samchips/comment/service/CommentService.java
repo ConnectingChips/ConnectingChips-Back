@@ -60,9 +60,9 @@ public class CommentService {
 
     @Transactional
     public void deleteReply(Long replyId) {
-        commentRepository.findById(replyId)
+        replyRepository.findById(replyId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_REPLY_ID));
 
-        commentRepository.deleteById(replyId);
+        replyRepository.deleteById(replyId);
     }
 }
