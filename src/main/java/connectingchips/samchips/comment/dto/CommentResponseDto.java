@@ -30,8 +30,9 @@ public class CommentResponseDto {
             this.profileImage = comment.getUser().getProfileImage();
             StringBuilder sb = new StringBuilder();
             sb.append(comment.getCreatedAt().getMonth().getValue()).append("월 ")
-                    .append(comment.getCreatedAt().getDayOfMonth()).append("일 ")
-                    .append(comment.getCreatedAt().getHour()).append(":");
+                    .append(comment.getCreatedAt().getDayOfMonth()).append("일 ");
+            if(comment.getCreatedAt().getHour() < 10) sb.append("0");
+            sb.append(comment.getCreatedAt().getHour()).append(":");
             if(comment.getCreatedAt().getMinute() < 10) sb.append("0");
             sb.append(comment.getCreatedAt().getMinute());
             this.createDate = sb.toString();
