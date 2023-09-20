@@ -10,7 +10,7 @@ public class FindIntroMindResponse {
 
     public static final int NOT_LOGIN = -1;
     private final Long mindId;
-    private final String mindType;
+    private final String mindTypeName;
     private final String name;
     private final String introduce;
     private final Integer userCount;
