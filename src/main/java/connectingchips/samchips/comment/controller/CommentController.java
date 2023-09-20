@@ -25,8 +25,8 @@ public class CommentController {
         return DataResponse.of(HttpStatus.CREATED, comment);
     }
 
-    @DeleteMapping("/comments/{commentId}")
-    private BasicResponse deleteComment(@PathVariable Long commentId){
+    @DeleteMapping("/comments/{comment_id}")
+    private BasicResponse deleteComment(@PathVariable(value = "comment_id") Long commentId){
         commentService.deleteComment(commentId);
         return BasicResponse.of(HttpStatus.OK);
     }
@@ -37,8 +37,9 @@ public class CommentController {
         return DataResponse.of(HttpStatus.CREATED, reply);
     }
 
-    @DeleteMapping("/replies/{replyId}")
-    private BasicResponse deleteReply(@PathVariable Long replyId){
+    @DeleteMapping("/replies/{reply_id}")
+    private BasicResponse deleteReply(@PathVariable(value = "reply_id") Long replyId){
+        System.out.println(replyId);
         commentService.deleteReply(replyId);
         return BasicResponse.of(HttpStatus.OK);
     }
