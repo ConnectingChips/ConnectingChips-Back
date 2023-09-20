@@ -1,14 +1,13 @@
 package connectingchips.samchips.board;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import connectingchips.samchips.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -64,6 +63,37 @@ public class S3Uploader {
     private void removeNewFile(File file) {
         if(file.delete()) System.out.println("파일 삭제 성공");
         else System.out.println("파일 삭제 실패");
+    }
+
+    public List<String> find(String prefix){
+        List<String> fileNames = new ArrayList<>();
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+        listObjectsRequest.setBucketName(bucket);
+        if(!prefix.isBlank()){
+            listObjectsRequest.setPrefix(prefix);
+        }
+        listObjectsRequest.setDelimiter("/");
+
+        ObjectListing s3Objects;
+
+        do{
+            s3Objects = amazonS3Client.listObjects(listObjectsRequest);
+            for(S3ObjectSummary s3ObjectSummary : s3Objects.getObjectSummaries()){
+                System.out.println(" - " + s3ObjectSummary.getKey() + "  " +
+                        "(size = " + s3ObjectSummary.getSize() +
+                        ")");
+                fileNames.add(s3ObjectSummary.getKey());
+            }
+            listObjectsRequest.setMarker(s3Objects.getNextMarker());
+        }while(s3Objects.isTruncated());
+
+        return fileNames;
+    }
+
+    public String getFileUrl(String fileName){
+        String url = amazonS3Client.getUrl(bucket, fileName).toString();
+
+        return url;
     }
 
     //MultipartFile을 전달받아 File로 전환 후 S3에 업로드

@@ -1,5 +1,6 @@
 package connectingchips.samchips.user.service;
 
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.exception.RestApiException;
 import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.exception.BadRequestException;
@@ -12,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Random;
+
 import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
@@ -20,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public void signup(UserRequestDto.Signup signupDto){
@@ -34,6 +39,7 @@ public class UserService {
                 .password(encodedPassword)
                 .nickname(signupDto.getNickname())
                 .email(signupDto.getEmail())
+                .profileImage(s3Uploader.getFileUrl(randomDefaultProfileImage()))
                 .socialType(SocialType.SAMCHIPS)
                 .build();
 
@@ -68,5 +74,20 @@ public class UserService {
         }
 
         userRepository.deleteById(userId);
+    }
+
+    public String randomDefaultProfileImage(){
+        List<String> fileNames = s3Uploader.find("profileImage/default/");
+
+        if(fileNames.isEmpty()){
+            return null;
+        }else{
+            fileNames.remove(0);
+        }
+
+        Random random = new Random();
+        int randomIdx = random.nextInt(fileNames.size());
+
+        return fileNames.get(randomIdx);
     }
 }

@@ -1,5 +1,6 @@
 package connectingchips.samchips.user.service;
 
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.exception.RestApiException;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
@@ -26,6 +27,8 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public AuthResponseDto.Token login(UserRequestDto.Login loginDto){
@@ -59,6 +62,7 @@ public class AuthService {
                     .password(encodedPassword)
                     .nickname(user.getNickname())
                     .email(user.getEmail())
+                    .profileImage(s3Uploader.getFileUrl(userService.randomDefaultProfileImage()))
                     .gender(user.getGender())
                     .ageRange(user.getAgeRange())
                     .socialType(user.getSocialType())

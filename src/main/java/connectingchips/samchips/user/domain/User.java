@@ -34,7 +34,6 @@ public class User extends Auditable {
     @NotNull
     private String email;   //이메일
 
-    @NotNull
     private String profileImage;
 
     private String gender;  // 성별
@@ -53,12 +52,12 @@ public class User extends Auditable {
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @Builder
-    public User(String accountId, String password, String nickname, String email, String gender, String ageRange, SocialType socialType) {
+    public User(String accountId, String password, String nickname, String email, String profileImage, String gender, String ageRange, SocialType socialType) {
         this.accountId = accountId;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
-        this.profileImage = "default";
+        this.profileImage = profileImage;
         this.gender = gender;
         this.ageRange = ageRange;
         this.socialType = socialType;
