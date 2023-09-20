@@ -31,11 +31,6 @@ public class MindTypeController {
         updateMindTypeRequest.setMindTypeId(mindTypeId);
         return DataResponse.of(mindTypeService.updateMindType(mindTypeId,updateMindTypeRequest));
     }
-    @PutMapping("/{mind-type-id}/{mind-id}")
-    public DataResponse putMindType(@PathVariable("mind-type-id")Long mindTypeId,
-                                    @PathVariable("mind-id") Long mindId){
-        return DataResponse.of(mindTypeService.addMind(mindTypeId,mindId));
-    }
 
     @DeleteMapping("/{mind-type-id}")
     public BasicResponse deleteMindType(@PathVariable("mind-type-id")Long mindTypeId){

@@ -50,7 +50,7 @@ public class MindController {
         return DataResponse.of(mindService.findIntroMindImage(mindId));
     }
 
-      @GetMapping("/page/{mind-id}")
+    @GetMapping("/page/{mind-id}")
     public DataResponse getPageMind(@PathVariable("mind-id")Long mindId){
           Authentication auth = SecurityContextHolder.getContext().getAuthentication();
           FindPageMindResponse minds;
@@ -61,20 +61,10 @@ public class MindController {
 
         return DataResponse.of(minds);
     }
-    @GetMapping("/pages/{mind-id}/image")
+    @GetMapping("/page/{mind-id}/image")
     public DataResponse getPageMindImage(@PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.findPageMindImage(mindId));
     }
-//    @GetMapping /except-me와 동작방식이 유사하나 혹시 몰라서 남겨둠
-//    public DataResponse getTotalMind(){
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        List<FindTotalMindResponse> minds;
-//        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
-//            minds = mindService.findTotalMindNotAccountId();
-//        else
-//            minds = mindService.findTotalMindByAccountId(makeAccountId(auth));
-//        return DataResponse.of(minds);
-//    }
 
     @GetMapping("/except-me")
     public DataResponse getAllMindExceptMe(){

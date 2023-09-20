@@ -2,7 +2,6 @@ package connectingchips.samchips.mind.entity;
 
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.mindtype.entity.MindType;
-import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotNull;
