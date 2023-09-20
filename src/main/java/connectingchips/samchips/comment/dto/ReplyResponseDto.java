@@ -29,8 +29,11 @@ public class ReplyResponseDto {
         StringBuilder sb = new StringBuilder();
 
         sb.append(reply.getCreatedAt().getMonth().getValue()).append("월 ")
-                .append(reply.getCreatedAt().getDayOfMonth()).append("일 ")
-                .append(reply.getCreatedAt().getHour()).append(":").append(reply.getCreatedAt().getMinute());
+                .append(reply.getCreatedAt().getDayOfMonth()).append("일 ");
+        if(reply.getCreatedAt().getHour() < 10) sb.append("0");
+        sb.append(reply.getCreatedAt().getHour()).append(":");
+        if(reply.getCreatedAt().getMinute() < 10) sb.append("0");
+        sb.append(reply.getCreatedAt().getMinute());
         this.createDate = sb.toString();
     }
 }
