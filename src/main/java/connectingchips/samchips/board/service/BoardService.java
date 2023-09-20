@@ -116,7 +116,7 @@ public class BoardService {
 
         Board board = Board.builder()
                 .content(boardRequestDto.getContent())
-                .image(getImageURL(file, "/board"))
+                .image(getImageURL(file, "board"))
                 .mind(mind)
                 .user(user)
                 .build();
