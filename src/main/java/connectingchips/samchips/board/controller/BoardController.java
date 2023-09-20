@@ -18,9 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardController {
 
-
     private final BoardService boardService;
-
 
     /* 게시글 리스트 반환 */
     @GetMapping("/{mind_id}")
@@ -48,6 +46,7 @@ public class BoardController {
 
     /* 게시글 수정 */
     @PutMapping("/{board_id}")
+    @CrossOrigin(origins = "http://localhost:3000", methods = RequestMethod.PUT) //특정 url에 cors에러 해결
     private DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId, @RequestBody BoardRequestDto.Edit boardRequestDto) {
         BoardResponseDto.Update boardResponseDto = boardService.updateBoard(boardId, boardRequestDto);
         return DataResponse.of(boardResponseDto);
