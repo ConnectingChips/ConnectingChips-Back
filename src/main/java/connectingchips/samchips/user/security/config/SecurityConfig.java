@@ -100,7 +100,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-//============================ 추가한 부분 ====================================
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -113,5 +112,4 @@ public class SecurityConfig {
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return urlBasedCorsConfigurationSource;
     }
-//================================== 추가한 부분 =====================================
 }
