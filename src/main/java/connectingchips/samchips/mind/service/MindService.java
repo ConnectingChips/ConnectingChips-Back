@@ -18,14 +18,11 @@ import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,13 +69,19 @@ public class MindService {
                 .of(findVerifiedMind(mindId),checkCanJoin(mindId, user));
     }
     @Transactional
-    public FindPageMindResponse findPageMind(Long mindId, User user) {
+    public FindPageMindResponse findPageMindByUser(Long mindId, String accountId) {
+        User user = findVerifiedUserByAccount(accountId);
         Mind verifiedMind = findVerifiedMind(mindId);
         return user.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId)).findFirst()
                 .map(joinedMind -> FindPageMindResponse.of(verifiedMind, joinedMind.getTodayWrite(), joinedMind.getCount()))
                 .orElse(FindPageMindResponse.of(verifiedMind, false, NOT_JOIN));
+    }
+    @Transactional
+    public FindPageMindResponse findPageMindByAnonymous(Long mindId) {
+        Mind verifiedMind = findVerifiedMind(mindId);
+        return FindPageMindResponse.of(verifiedMind, false, NOT_JOIN);
     }
 
     @Transactional

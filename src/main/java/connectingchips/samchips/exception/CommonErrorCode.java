@@ -14,7 +14,7 @@ public enum CommonErrorCode implements ErrorCode{
     // 404 NOT_FOUND 잘못된 리소스 접근
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
     NOT_FOUND_MIND_ID(HttpStatus.NOT_FOUND, "존재하지 않는 작심 번호입니다."),
-    NOT_JOIN_MIND(HttpStatus.NOT_FOUND,"작심에 참여하고 있지 않아 글을 쓸 수 없습니다."),
+    NOT_JOIN_MIND(HttpStatus.NOT_FOUND,"작심에 참여하고 있지 않습니다."),
     NOT_FOUND_JOINED_MIND_ID(HttpStatus.NOT_FOUND, "존재하지 않는 참여한 작심 번호입니다."),
     NOT_FOUND_MIND_TYPE_ID(HttpStatus.NOT_FOUND, "존재하지 않는 작심 종류 번호입니다."),
     NOT_FOUND_BOARD_ID(HttpStatus.NOT_FOUND, "존재하지 않는 게시글 번호입니다."),

@@ -5,6 +5,7 @@ import connectingchips.samchips.commons.dto.DataResponse;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.FindIntroMindResponse;
+import connectingchips.samchips.mind.dto.response.FindPageMindResponse;
 import connectingchips.samchips.mind.dto.response.FindTotalMindResponse;
 import connectingchips.samchips.mind.service.MindService;
 import connectingchips.samchips.user.domain.LoginUser;
@@ -50,12 +51,17 @@ public class MindController {
     }
 
       @GetMapping("/page/{mind-id}")
-      @PreAuthorize("hasAnyRole('USER')")
-    public DataResponse getPageMind(@PathVariable("mind-id")Long mindId,
-                                    @LoginUser User user){
-        return DataResponse.of(mindService.findPageMind(mindId,user));
+    public DataResponse getPageMind(@PathVariable("mind-id")Long mindId){
+          Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+          FindPageMindResponse minds;
+          if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
+              minds = mindService.findPageMindByAnonymous(mindId);
+          else minds = mindService.findPageMindByUser(mindId,makeAccountId(auth));
+
+
+        return DataResponse.of(minds);
     }
-    @GetMapping("/page/{mind-id}/image")
+    @GetMapping("/pages/{mind-id}/image")
     public DataResponse getPageMindImage(@PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.findPageMindImage(mindId));
     }
