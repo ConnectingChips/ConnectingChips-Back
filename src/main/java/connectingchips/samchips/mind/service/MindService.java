@@ -18,6 +18,7 @@ import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,7 @@ public class MindService {
     public static final int SECOND_IMAGE_NUM = 1;
     public static final int THIRD_IMAGE_NUM = 2;
     public static final int FOURTH_IMAGE_NUM = 3;
+    public static final int FULL_COUNT = 3;
     private final MindRepository mindRepository;
     private final MindTypeRepository mindTypeRepository;
     private final JoinedMindRepository joinedMindRepository;
@@ -248,5 +250,11 @@ public class MindService {
         Optional<MindType> byId = mindTypeRepository.findById(mindTypeId);
         return byId.orElseThrow(() ->
                 new BadRequestException(NOT_FOUND_MIND_TYPE_ID));
+    }
+
+    public CheckReMindResponse checkReMindAvailability(User loginUser,Long mindId){
+        JoinedMind jm = loginUser.getJoinedMinds().stream().filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId))
+                .findFirst().orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
+        return CheckReMindResponse.of(jm);
     }
 }

@@ -110,7 +110,12 @@ public class MindController {
         return DataResponse.of(mindService.findMyJoinedMindList(loginUser));
     }
 
-
+    @GetMapping("/keepJoin/{mind-id}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse checkKeepJoin(@LoginUser User loginUser,
+                                      @PathVariable("mind-id")Long mindId){
+        return DataResponse.of(mindService.checkReMindAvailability(loginUser,mindId));
+    }
     @PostMapping
     public BasicResponse postMind(
             @RequestPart CreateMindRequest createMindRequest,
