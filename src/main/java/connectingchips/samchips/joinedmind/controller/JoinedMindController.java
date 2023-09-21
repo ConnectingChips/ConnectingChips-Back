@@ -11,6 +11,7 @@ import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ public class JoinedMindController {
 
     private final JoinedMindService joinedMindService;
 
-    @GetMapping("/{joined-mind-id}/join-check") //참여 여부
+    @GetMapping("/{joined-mind-id}/join-check") //참여 여부.....////////////마인드아이디쓰도록변경
     public DataResponse joinCheck(@PathVariable("joined-mind-id")Long joinedMindId){
         return DataResponse.of(joinedMindService.JoinCheck(joinedMindId));
     }
@@ -29,6 +30,7 @@ public class JoinedMindController {
 
 
     @PostMapping("/{mind-id}")
+    @PreAuthorize("hasAnyRole('USER')")
     public BasicResponse joinMind(@PathVariable("mind-id")Long mindId, @LoginUser User loginUser) {
         joinedMindService.makeMindRelation(mindId,loginUser);
         return BasicResponse.of(HttpStatus.CREATED);
