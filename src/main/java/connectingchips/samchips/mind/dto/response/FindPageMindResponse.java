@@ -14,7 +14,6 @@ public class FindPageMindResponse {
     private final Integer userCount;
     private final String introduce;
     private final String writeFormat;
-    private final String pageImage;
     private final Boolean isDoneToday;
     private final Integer count;
     public static FindPageMindResponse of(final Mind mind,boolean isDoneToday,Integer count){
@@ -25,7 +24,6 @@ public class FindPageMindResponse {
                 mind.getJoinedMinds().size(),
                 mind.getIntroduce(),
                 mind.getWriteFormat(),
-                mind.getPageImage(),
                 isDoneToday,
                 count
         );

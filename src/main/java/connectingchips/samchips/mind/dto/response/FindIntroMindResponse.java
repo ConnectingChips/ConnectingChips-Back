@@ -16,7 +16,6 @@ public class FindIntroMindResponse {
     private final Integer userCount;
     private final String writeFormat;
     private final Integer canJoin;
-    private final String introImage;
 
     public static FindIntroMindResponse of(final Mind mind, Integer canJoin){
         return new FindIntroMindResponse(
@@ -26,8 +25,7 @@ public class FindIntroMindResponse {
                 mind.getIntroduce(),
                 mind.getJoinedMinds().size(),
                 mind.getWriteFormat(),
-                canJoin,
-                mind.getIntroImage()
+                canJoin
                 );
     }
     public static FindIntroMindResponse of(final Mind mind){
@@ -38,8 +36,7 @@ public class FindIntroMindResponse {
                 mind.getIntroduce(),
                 mind.getJoinedMinds().size(),
                 mind.getWriteFormat(),
-                NOT_LOGIN,
-                mind.getIntroImage()
+                NOT_LOGIN
                 );
     }
 }
