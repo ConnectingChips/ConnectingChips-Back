@@ -16,8 +16,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class JoinedMind extends Auditable {
-    private final Integer FIRST_COUNT = 0;
-    private final Integer FIRST_JOINING = 1;
 
 
     @Id
@@ -26,10 +24,10 @@ public class JoinedMind extends Auditable {
 
     @NotNull
 
-    private Integer count = FIRST_COUNT;
+    private Integer count = 0;
 
     @NotNull
-    private Integer isJoining = FIRST_JOINING;
+    private Integer isJoining = 1;
 
     @NotNull
     private Boolean todayWrite = false;
