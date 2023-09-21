@@ -63,4 +63,8 @@ public class JoinedMind extends Auditable {
         this.todayWrite = todayWrite;
         return this;
     }
+
+    public void setCount() {
+        this.count++;
+    }
 }
