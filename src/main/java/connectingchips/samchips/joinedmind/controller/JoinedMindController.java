@@ -22,9 +22,10 @@ public class JoinedMindController {
 
     private final JoinedMindService joinedMindService;
 
-    @GetMapping("/{joined-mind-id}/join-check") //참여 여부.....////////////마인드아이디쓰도록변경
-    public DataResponse joinCheck(@PathVariable("joined-mind-id")Long joinedMindId){
-        return DataResponse.of(joinedMindService.JoinCheck(joinedMindId));
+    @GetMapping("/{mind-id}/join-check")
+    @PreAuthorize("hasAnyRole('USER')")
+    public DataResponse joinCheck(@PathVariable("mind-id")Long mindId,@LoginUser User loginUser){
+        return DataResponse.of(joinedMindService.JoinCheck(mindId,loginUser));
     }
 
 

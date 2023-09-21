@@ -29,10 +29,16 @@ public class JoinedMindService {
     private final MindRepository mindRepository;
 
     @Transactional
-    public JoinCheckResponse JoinCheck(Long joinedMindId) {
-
-        return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getIsJoining() == JOIN);
+    public JoinCheckResponse JoinCheck(Long mindId,User loginUser) {
+        return JoinCheckResponse.of(checkJoinedMind(mindId, loginUser));
     }
+
+    private static boolean checkJoinedMind(Long mindId, User loginUser) {
+        return loginUser.getJoinedMinds()
+                .stream()
+                .anyMatch(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining() == JOIN);
+    }
+
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
         Mind mind = findVerifiedMind(mindId);
