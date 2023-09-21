@@ -64,7 +64,7 @@ public class JoinedMind extends Auditable {
         return this;
     }
 
-    public void setCount() {
-        this.count++;
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }

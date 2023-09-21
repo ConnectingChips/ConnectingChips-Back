@@ -112,7 +112,7 @@ public class BoardService {
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
 
         JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
-        joinedMind.setCount();
+        joinedMind.setCount(joinedMind.getCount()+JOINING);
         joinedMindRepository.save(joinedMind);
 
         Board board = Board.builder()
