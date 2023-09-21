@@ -82,9 +82,8 @@ public class JoinedMindService {
         userRepository.save(user);
     }
     @Transactional
-    public void exitMindRelation(Long joinedMindId,User user) {
-        JoinedMind joinedMind = findVerifiedJoinedMind(joinedMindId);
-        checkUserHaveJoinedMind(joinedMindId, user);
+    public void exitMindRelation(Long mindId,User user) {
+        JoinedMind joinedMind = checkUserHaveJoinedMind(mindId, user);
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
         joinedMinds.remove(joinedMind);
         joinedMind.setIsJoining(NOT_JOIN);
@@ -94,10 +93,10 @@ public class JoinedMindService {
         userRepository.save(user);
     }
 
-    private static void checkUserHaveJoinedMind(Long joinedMindId, User user) {
-        user.getJoinedMinds()
+    private static JoinedMind checkUserHaveJoinedMind(Long mindId, User user) {
+        return user.getJoinedMinds()
                 .stream()
-                .filter(jm -> Objects.equals(jm.getJoinedMindId(), joinedMindId) && jm.getIsJoining() == JOIN)
+                .filter(jm -> Objects.equals(jm.getMind().getMindId(), mindId) && jm.getIsJoining() == JOIN)
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
     }
