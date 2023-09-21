@@ -110,7 +110,7 @@ public class MindController {
         return DataResponse.of(mindService.findMyJoinedMindList(loginUser));
     }
 
-    @GetMapping("/keepJoin/{mind-id}")
+    @GetMapping("/keep-join/{mind-id}")
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse checkKeepJoin(@LoginUser User loginUser,
                                       @PathVariable("mind-id")Long mindId){
