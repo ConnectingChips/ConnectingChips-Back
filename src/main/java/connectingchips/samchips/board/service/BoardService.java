@@ -22,6 +22,7 @@ import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -114,9 +115,11 @@ public class BoardService {
         JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
         joinedMindRepository.save(joinedMind);
 
+        String imageURL = (file != null) ? getImageURL(file, "board") : "";
+
         Board board = Board.builder()
                 .content(boardRequestDto.getContent())
-                .image(getImageURL(file, "board"))
+                .image(imageURL)
                 .mind(mind)
                 .user(user)
                 .build();
