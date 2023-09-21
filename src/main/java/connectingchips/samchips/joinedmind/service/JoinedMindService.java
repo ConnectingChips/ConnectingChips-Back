@@ -24,6 +24,7 @@ public class JoinedMindService {
 
     public static final int JOIN = 1;
     public static final int NOT_JOIN = 0;
+    public static final int FULL_COUNT = 3;
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
     private final MindRepository mindRepository;
@@ -67,7 +68,7 @@ public class JoinedMindService {
         if(user.getJoinedMinds().
                 stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == JOIN)
-                .toList().size() >= 3){
+                .toList().size() >= FULL_COUNT){
             throw new BadRequestException(INVALID_REQUEST);
         }
     }
