@@ -155,7 +155,8 @@ public class BoardService {
         Optional<JoinedMind> first = user.getJoinedMinds().stream()
                 .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), board.getMind().getMindId()) && board.getCreatedAt().toLocalDate().equals(LocalDate.now()))
                 .findFirst();
-        first.ifPresent(joinedMind -> {joinedMindRepository.save(joinedMind.setTodayWrite(false));
+        first.ifPresent(joinedMind -> {joinedMind.setCount(joinedMind.getCount()-1);
+            joinedMindRepository.save(joinedMind.setTodayWrite(false));
         });
         //==================================== 추가된 부분 =========================================
         if(boardRepository.existsById(boardId)) {
