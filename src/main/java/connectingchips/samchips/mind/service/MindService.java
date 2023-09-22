@@ -213,7 +213,6 @@ public class MindService {
                 .toList();
     }
 
-    @Transactional
     public MyMindResponse findMyJoinMind(User loginUser, Long mindId) {
         JoinedMind jm = loginUser.getJoinedMinds()
                 .stream()
