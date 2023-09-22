@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -143,7 +144,15 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(Long boardId,User user) {
+        //====================================추가된 부분==========================================
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
+        Optional<JoinedMind> first = user.getJoinedMinds().stream()
+                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), board.getMind().getMindId()) && board.getCreatedAt().toLocalDate() == LocalDateTime.now().toLocalDate())
+                .findFirst();
+        first.ifPresent(joinedMind -> joinedMindRepository.save(joinedMind.setTodayWrite(false)));
+        //==================================== 추가된 부분 =========================================
         if(boardRepository.existsById(boardId)) {
             boardRepository.deleteById(boardId);
         }
