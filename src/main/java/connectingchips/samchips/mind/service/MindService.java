@@ -53,9 +53,16 @@ public class MindService {
 
     @Transactional
     public FindIntroMindResponse findIntroMindNotAccountId(Long mindId) {
+        Mind verifiedMind = findVerifiedMind(mindId);
+        int size = makeJoinMindSize(verifiedMind);
         return FindIntroMindResponse
-                .of(findVerifiedMind(mindId),ANONYMOUS_USER);
+                .of(findVerifiedMind(mindId),ANONYMOUS_USER,size);
     }
+
+    private static int makeJoinMindSize(Mind verifiedMind) {
+        return verifiedMind.getJoinedMinds().stream().filter(jm -> jm.getIsJoining() == CAN_JOIN).toList().size();
+    }
+
     @Transactional
     public FindIntroMindResponse findIntroMindByAccountId(Long mindId, String accountId) {
         User user = findVerifiedUserByAccount(accountId);
@@ -70,13 +77,13 @@ public class MindService {
         return user.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId)).findFirst()
-                .map(joinedMind -> FindPageMindResponse.of(verifiedMind, joinedMind.getTodayWrite(), joinedMind.getCount()))
-                .orElse(FindPageMindResponse.of(verifiedMind, false, NOT_JOIN));
+                .map(joinedMind -> FindPageMindResponse.of(verifiedMind, joinedMind.getTodayWrite(), joinedMind.getCount(),makeJoinMindSize(verifiedMind)))
+                .orElse(FindPageMindResponse.of(verifiedMind, false, NOT_JOIN,makeJoinMindSize(verifiedMind)));
     }
     @Transactional
     public FindPageMindResponse findPageMindByAnonymous(Long mindId) {
         Mind verifiedMind = findVerifiedMind(mindId);
-        return FindPageMindResponse.of(verifiedMind, false, NOT_JOIN);
+        return FindPageMindResponse.of(verifiedMind, false, NOT_JOIN,makeJoinMindSize(verifiedMind));
     }
 
     private User findVerifiedUserByAccount(String accountId) {
@@ -180,7 +187,7 @@ public class MindService {
         return mindRepository.findAll()
                 .stream()
                 .filter(mind -> !list.contains(mind.getMindId()))
-                .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
+                .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser),makeJoinMindSize(mind)))
                 .collect(Collectors.toList());
     }
 
@@ -188,7 +195,7 @@ public class MindService {
     public List<FindTotalMindResponse> findAllMindExceptMe() {
         return mindRepository.findAll()
                 .stream()
-                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER))
+                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER,makeJoinMindSize(mind)))
                 .toList();
     }
     @Transactional
@@ -199,7 +206,7 @@ public class MindService {
         return mindRepository.findAll()
                 .stream()
                 .filter(mind -> Objects.equals(mind.getMindType().getMindTypeId(), mindTypeId) &&!list.contains(mind.getMindId()))
-                .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser)))
+                .map(mind -> FindTotalMindResponse.of(mind,checkCanJoin(mind.getMindId(),loginUser),makeJoinMindSize(mind)))
                 .toList();
 
     }
@@ -209,7 +216,7 @@ public class MindService {
         return mindRepository.findAll()
                 .stream()
                 .filter(mind -> Objects.equals(mind.getMindType().getMindTypeId(), mindTypeId))
-                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER))
+                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER,makeJoinMindSize(mind)))
                 .toList();
     }
 

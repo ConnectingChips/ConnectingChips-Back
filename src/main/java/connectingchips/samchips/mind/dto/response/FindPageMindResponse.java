@@ -1,9 +1,10 @@
 package connectingchips.samchips.mind.dto.response;
 
 import connectingchips.samchips.mind.entity.Mind;
-import connectingchips.samchips.user.domain.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+
 
 @Getter
 @RequiredArgsConstructor
@@ -16,17 +17,18 @@ public class FindPageMindResponse {
     private final String writeFormat;
     private final Boolean isDoneToday;
     private final Integer count;
-    public static FindPageMindResponse of(final Mind mind,boolean isDoneToday,Integer count){
+    public static FindPageMindResponse of(final Mind mind,boolean isDoneToday,Integer count,Integer joinMindSize){
         return new FindPageMindResponse(
                 mind.getMindId(),
                 mind.getMindType().getName(),
                 mind.getName(),
-                mind.getJoinedMinds().size(),
+                joinMindSize,
                 mind.getIntroduce(),
                 mind.getWriteFormat(),
                 isDoneToday,
                 count
         );
     }
+
 
 }

@@ -4,6 +4,7 @@ import connectingchips.samchips.mind.entity.Mind;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+
 @Getter
 @RequiredArgsConstructor
 public class FindTotalMindResponse {
@@ -18,13 +19,13 @@ public class FindTotalMindResponse {
     private final String totalListImage;
 
 
-    public static FindTotalMindResponse of(Mind mind, Integer canJoin){
+    public static FindTotalMindResponse of(Mind mind, Integer canJoin,Integer joinMindSize){
         return new FindTotalMindResponse(
                 mind.getMindId(),
                 mind.getMindType().getName(),
                 mind.getName(),
                 mind.getIntroduce(),
-                mind.getJoinedMinds().size(),
+                joinMindSize,
                 mind.getWriteFormat(),
                 canJoin,
                 mind.getTotalListImage()
