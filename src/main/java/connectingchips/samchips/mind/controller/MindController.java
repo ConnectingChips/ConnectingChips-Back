@@ -104,7 +104,7 @@ public class MindController {
         return DataResponse.of(mindService.findMyJoinMindList(loginUser));
     }
 
-    @GetMapping("/minds/my-list/{mind-id}")
+    @GetMapping("/my-list/{mind-id}")
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse getMyJoinMind(@LoginUser User loginUser,
                                       @PathVariable("mind-id") Long mindId){
