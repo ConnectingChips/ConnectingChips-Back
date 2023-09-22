@@ -17,5 +17,11 @@ public class CheckReMindResponse {
                 joinedMind.getTodayWrite()
         );
     }
+    public static CheckReMindResponse of(){ //joinedMind가 없을 경우
+        return new CheckReMindResponse(
+                true,
+                false
+        );
+    }
 
 }
