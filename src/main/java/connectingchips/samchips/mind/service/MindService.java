@@ -230,8 +230,8 @@ public class MindService {
     public List<MyJoinedMindResponse> findMyJoinedMindList(User loginUser) {
         return loginUser.getJoinedMinds()
                 .stream()
-                .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
-                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(),NOT_JOIN))
+                .filter(joinedMind -> joinedMind.getIsJoining() == CAN_JOIN)
+                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(),CAN_JOIN))
                 .toList();
     }
 
