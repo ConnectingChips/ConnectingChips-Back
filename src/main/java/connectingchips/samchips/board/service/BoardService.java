@@ -23,12 +23,15 @@ import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -144,14 +147,16 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(Long boardId,User user) {
+    public void deleteBoard(Long boardId) {
         //====================================추가된 부분==========================================
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
+        User user = board.getUser();
         Optional<JoinedMind> first = user.getJoinedMinds().stream()
-                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), board.getMind().getMindId()) && board.getCreatedAt().toLocalDate() == LocalDateTime.now().toLocalDate())
+                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), board.getMind().getMindId()) && board.getCreatedAt().toLocalDate().equals(LocalDate.now()))
                 .findFirst();
-        first.ifPresent(joinedMind -> joinedMindRepository.save(joinedMind.setTodayWrite(false)));
+        first.ifPresent(joinedMind -> {joinedMindRepository.save(joinedMind.setTodayWrite(false));
+        });
         //==================================== 추가된 부분 =========================================
         if(boardRepository.existsById(boardId)) {
             boardRepository.deleteById(boardId);
