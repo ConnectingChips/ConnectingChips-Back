@@ -5,8 +5,10 @@ import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.service.BoardService;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
+import connectingchips.samchips.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,8 +56,9 @@ public class BoardController {
 
     /* 게시글 삭제 */
     @DeleteMapping("/{board_id}")
-    private BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId){
-        boardService.deleteBoard(boardId);
+    @PreAuthorize("hasAnyRole('USER')") //USER 객체를 가져오기위해 추가
+    private BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId, User user){
+        boardService.deleteBoard(boardId,user);
         return BasicResponse.of(HttpStatus.OK);
     }
 }
