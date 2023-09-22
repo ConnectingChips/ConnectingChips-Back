@@ -263,7 +263,7 @@ public class MindService {
 
     public CheckReMindResponse checkReMindAvailability(User loginUser,Long mindId){
         Optional<JoinedMind> first = loginUser.getJoinedMinds().stream()
-                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) &&joinedMind.getIsJoining() == NOT_JOIN)
+                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId))
                 .findFirst();
         return first.map(CheckReMindResponse::of).orElseGet(CheckReMindResponse::of);
     }
