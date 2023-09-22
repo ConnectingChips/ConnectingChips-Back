@@ -213,6 +213,15 @@ public class MindService {
                 .toList();
     }
 
+    @Transactional
+    public MyMindResponse findMyJoinMind(User loginUser, Long mindId) {
+        JoinedMind jm = loginUser.getJoinedMinds()
+                .stream()
+                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId))
+                .findFirst().orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
+        return MyMindResponse.of(jm.getMind(),jm.getCount(),boardRepository.findBoardCountByUserAndMind(loginUser,jm.getMind()),
+                jm.getTodayWrite());
+    }
 
     @Transactional
     public List<MyMindResponse> findMyJoinMindList(User loginUser) {
@@ -259,4 +268,5 @@ public class MindService {
                 .findFirst();
         return first.map(CheckReMindResponse::of).orElseGet(CheckReMindResponse::of);
     }
+
 }

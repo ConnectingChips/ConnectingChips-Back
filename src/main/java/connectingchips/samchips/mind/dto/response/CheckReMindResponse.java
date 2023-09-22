@@ -19,7 +19,7 @@ public class CheckReMindResponse {
     }
     public static CheckReMindResponse of(){ //joinedMind가 없을 경우
         return new CheckReMindResponse(
-                true,
+                false,
                 false
         );
     }
