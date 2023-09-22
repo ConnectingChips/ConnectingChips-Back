@@ -232,7 +232,7 @@ public class MindService {
         return loginUser.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
-                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(),NOT_JOIN))
+                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind.getMind(),CAN_JOIN))
                 .toList();
     }
 
