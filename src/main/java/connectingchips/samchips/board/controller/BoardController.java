@@ -56,9 +56,8 @@ public class BoardController {
 
     /* 게시글 삭제 */
     @DeleteMapping("/{board_id}")
-    @PreAuthorize("hasAnyRole('USER')") //USER 객체를 가져오기위해 추가
-    private BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId, User user){
-        boardService.deleteBoard(boardId,user);
+    private BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId){
+        boardService.deleteBoard(boardId);
         return BasicResponse.of(HttpStatus.OK);
     }
 }
