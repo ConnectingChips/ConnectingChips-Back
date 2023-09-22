@@ -113,7 +113,6 @@ public class S3Uploader {
         //로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
         removeNewFile(uploadFile);
 
-        //https://chips-bucket-image.s3.ap-northeast-2.amazonaws.com/%2F%2Fboard/b803ffbd-858c-484e-86e0-0ddb2fe339cc
         return uploadImageUrl; //업로드된 파일의 S3 URL 주소 반환
     }
 
