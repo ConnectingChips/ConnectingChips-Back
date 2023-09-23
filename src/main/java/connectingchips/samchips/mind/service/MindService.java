@@ -201,7 +201,9 @@ public class MindService {
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(String accountId,Long mindTypeId) {
         User loginUser = findVerifiedUserByAccount(accountId);
-        List<Long> list = loginUser.getJoinedMinds().stream().map(user -> user.getMind().getMindId()).toList();
+        List<Long> list = loginUser.getJoinedMinds().stream()
+                .filter(joinedMind -> joinedMind.getIsJoining() == CAN_JOIN)
+                .map(jm -> jm.getMind().getMindId()).toList();
 
         return mindRepository.findAll()
                 .stream()
