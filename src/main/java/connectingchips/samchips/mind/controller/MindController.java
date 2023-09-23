@@ -10,6 +10,7 @@ import connectingchips.samchips.mind.dto.response.FindTotalMindResponse;
 import connectingchips.samchips.mind.service.MindService;
 import connectingchips.samchips.user.domain.LoginUser;
 import connectingchips.samchips.user.domain.User;
+import connectingchips.samchips.utils.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ public class MindController {
 
 
     @GetMapping("/intro/{mind-id}")
+    @LogExecutionTime
     public DataResponse getIntroMind(@PathVariable("mind-id")Long mindId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         FindIntroMindResponse mind;
@@ -45,12 +47,14 @@ public class MindController {
         return DataResponse.of(mind);
     }
     @GetMapping("/intro/{mind-id}/image")
+    @LogExecutionTime
     public DataResponse getIntroMindImage(@PathVariable("mind-id")Long mindId){
 
         return DataResponse.of(mindService.findIntroMindImage(mindId));
     }
 
     @GetMapping("/page/{mind-id}")
+    @LogExecutionTime
     public DataResponse getPageMind(@PathVariable("mind-id")Long mindId){
           Authentication auth = SecurityContextHolder.getContext().getAuthentication();
           FindPageMindResponse minds;
@@ -62,11 +66,13 @@ public class MindController {
         return DataResponse.of(minds);
     }
     @GetMapping("/page/{mind-id}/image")
+    @LogExecutionTime
     public DataResponse getPageMindImage(@PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.findPageMindImage(mindId));
     }
 
     @GetMapping("/except-me")
+    @LogExecutionTime
     public DataResponse getAllMindExceptMe(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<FindTotalMindResponse> minds;
@@ -76,6 +82,7 @@ public class MindController {
         return DataResponse.of(minds);
     }
     @GetMapping("/except-me/{mind-type-name}")
+    @LogExecutionTime
     public DataResponse getAllMindExceptMeByMindType(@PathVariable("mind-type-name")Long mindTypeId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<FindTotalMindResponse> minds;
@@ -88,24 +95,28 @@ public class MindController {
 
     @GetMapping("/today-check")
     @PreAuthorize("hasAnyRole('USER')")
+    @LogExecutionTime
     public DataResponse todaysAllCheck(@LoginUser User loginUser){
         return DataResponse.of(mindService.checkTodayAll(loginUser.getId()));
 
     }
     @GetMapping("/today-check/{joined-mind-id}")
     @PreAuthorize("hasAnyRole('USER')")
+    @LogExecutionTime
     public DataResponse todayCheck(@PathVariable("joined-mind-id")Long joinedMindId){
         return DataResponse.of(mindService.checkToday(joinedMindId));
     }
 
     @GetMapping("/my-list")
     @PreAuthorize("hasAnyRole('USER')")
+    @LogExecutionTime
     public DataResponse getMyJoinMindList(@LoginUser User loginUser){
         return DataResponse.of(mindService.findMyJoinMindList(loginUser));
     }
 
     @GetMapping("/my-list/{mind-id}")
     @PreAuthorize("hasAnyRole('USER')")
+    @LogExecutionTime
     public DataResponse getMyJoinMind(@LoginUser User loginUser,
                                       @PathVariable("mind-id") Long mindId){
         return DataResponse.of(mindService.findMyJoinMind(loginUser, mindId));
@@ -113,17 +124,20 @@ public class MindController {
 
     @GetMapping("/my-joined-mind-list")
     @PreAuthorize("hasAnyRole('USER')")
+    @LogExecutionTime
     public DataResponse getMyJoinedMindList(@LoginUser User loginUser){
         return DataResponse.of(mindService.findMyJoinedMindList(loginUser));
     }
 
     @GetMapping("/keep-join/{mind-id}")
     @PreAuthorize("hasAnyRole('USER')")
+    @LogExecutionTime
     public DataResponse checkKeepJoin(@LoginUser User loginUser,
                                       @PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.checkReMindAvailability(loginUser,mindId));
     }
     @PostMapping
+    @LogExecutionTime
     public BasicResponse postMind(
             @RequestPart CreateMindRequest createMindRequest,
                                  @RequestPart MultipartFile introImage,
@@ -136,6 +150,7 @@ public class MindController {
     }
 
     @PutMapping("/{mind-id}")
+    @LogExecutionTime
     public DataResponse putMind(@PathVariable("mind-id") Long mindId,
                                 @RequestPart(required = false) UpdateMindRequest updateMindRequest,
                                 @RequestPart MultipartFile introImage,
@@ -147,6 +162,7 @@ public class MindController {
     }
 
     @DeleteMapping("/{mind-id}")
+    @LogExecutionTime
     public BasicResponse deleteMind(@PathVariable("mind-id")Long mindId){
         mindService.deleteMind(mindId);
         return BasicResponse.of(HttpStatus.OK);

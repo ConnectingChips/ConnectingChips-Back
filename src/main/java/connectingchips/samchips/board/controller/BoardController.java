@@ -5,6 +5,7 @@ import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.service.BoardService;
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
+import connectingchips.samchips.utils.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class BoardController {
 
     /* 게시글 작성 */
     @PostMapping
+    @LogExecutionTime
     public BasicResponse createBoard(@RequestPart(value = "file", required = false) MultipartFile file,
                                       @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto) throws IOException {
         boardService.createBoard(file, boardRequestDto);
