@@ -56,7 +56,7 @@ public class JoinedMindService {
         joinedMindRepository.save(joinedMind);
     }
 
-    private static Optional<JoinedMind> beforeJoinedCheck(Long mindId, User user) {
+    private Optional<JoinedMind> beforeJoinedCheck(Long mindId, User user) {
         Optional<JoinedMind> first = user.getJoinedMinds()
                 .stream()
                 .filter(jm -> Objects.equals(jm.getMind().getMindId(), mindId) && jm.getIsJoining().equals(NOT_JOIN))
@@ -64,7 +64,7 @@ public class JoinedMindService {
         return first;
     }
 
-    private static void checkJoinMindCountMax(User user) {
+    private void checkJoinMindCountMax(User user) {
         if(user.getJoinedMinds().
                 stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == JOIN)
@@ -94,7 +94,7 @@ public class JoinedMindService {
         userRepository.save(user);
     }
 
-    private static JoinedMind checkUserHaveJoinedMind(Long mindId, User user) {
+    private JoinedMind checkUserHaveJoinedMind(Long mindId, User user) {
         return user.getJoinedMinds()
                 .stream()
                 .filter(jm -> Objects.equals(jm.getMind().getMindId(), mindId) && jm.getIsJoining() == JOIN)
@@ -102,7 +102,7 @@ public class JoinedMindService {
                 .orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
     }
 
-    private static void checkAlreadyJoined(Long mindId, User user) {
+    private void checkAlreadyJoined(Long mindId, User user) {
         if(user.getJoinedMinds().isEmpty()) return;
         Optional<JoinedMind> first = user.getJoinedMinds().stream()
                 .filter(jm -> jm.getMind().getMindId().equals(mindId) && jm.getIsJoining().equals(JOIN))
