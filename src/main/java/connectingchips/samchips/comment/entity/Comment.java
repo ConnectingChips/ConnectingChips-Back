@@ -4,6 +4,7 @@ import connectingchips.samchips.audit.Auditable;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Comment extends Auditable {
     private User user;
 
     @Column(name = "content")
+    @Size(max = 400)
     private String content;
 
     @OneToMany(mappedBy = "comment", orphanRemoval = true)

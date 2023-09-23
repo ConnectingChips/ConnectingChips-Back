@@ -6,6 +6,7 @@ import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class Board extends Auditable {
     private long boardId;
 
     @NotNull
+    @Size(max = 800)
     private String content;
 
     @NotNull
