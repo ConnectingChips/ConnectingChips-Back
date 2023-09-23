@@ -38,7 +38,6 @@ public class BoardController {
 
     /* 게시글 작성 */
     @PostMapping
-    @LogExecutionTime
     public BasicResponse createBoard(@RequestPart(value = "file", required = false) MultipartFile file,
                                       @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto) throws IOException {
         boardService.createBoard(file, boardRequestDto);

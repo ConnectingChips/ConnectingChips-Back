@@ -25,7 +25,7 @@ public class JoinedMindController {
 
     @GetMapping("/{mind-id}/join-check")
     @PreAuthorize("hasAnyRole('USER')")
-    @LogExecutionTime
+//    @LogExecutionTime
     public DataResponse joinCheck(@PathVariable("mind-id")Long mindId,@LoginUser User loginUser){
         return DataResponse.of(joinedMindService.JoinCheck(mindId,loginUser));
     }
@@ -34,14 +34,14 @@ public class JoinedMindController {
 
     @PostMapping("/{mind-id}")
     @PreAuthorize("hasAnyRole('USER')")
-    @LogExecutionTime
+//    @LogExecutionTime
     public BasicResponse joinMind(@PathVariable("mind-id")Long mindId, @LoginUser User loginUser) {
         joinedMindService.makeMindRelation(mindId,loginUser);
         return BasicResponse.of(HttpStatus.CREATED);
     }
     @PutMapping("/{mind-id}/exit")
     @PreAuthorize("hasAnyRole('USER')")
-    @LogExecutionTime
+//    @LogExecutionTime
     public BasicResponse exitMind(@PathVariable("mind-id")Long joinedMindId,
                                   @LoginUser User loginUser){
         joinedMindService.exitMindRelation(joinedMindId,loginUser);
@@ -49,7 +49,7 @@ public class JoinedMindController {
     }
     @PutMapping("/{joined-mind-id}/remind")
     @PreAuthorize("hasAnyRole('USER')")
-    @LogExecutionTime
+//    @LogExecutionTime
     public BasicResponse reMind(@PathVariable("joined-mind-id")Long joinedMindId,
                                 @LoginUser User loginUser){
         joinedMindService.reMindRelation(joinedMindId,loginUser);
