@@ -3,6 +3,7 @@ package connectingchips.samchips.comment.entity;
 import connectingchips.samchips.audit.Auditable;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Reply extends Auditable {
     private User user;
 
     @Column(name = "content")
+    @Size(max = 400)
     private String content;
 
     @Builder
