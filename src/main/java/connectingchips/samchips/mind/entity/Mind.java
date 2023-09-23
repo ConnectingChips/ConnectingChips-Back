@@ -46,6 +46,10 @@ public class Mind {
     @Column(length = 255)
     private String myListImage;
 
+    @NotNull
+    @Column
+    private String exampleImage;
+
 
     @OneToMany(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<JoinedMind> joinedMinds = new ArrayList<>();

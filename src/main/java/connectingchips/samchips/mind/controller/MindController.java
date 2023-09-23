@@ -34,6 +34,10 @@ public class MindController {
     private final MindService mindService;
 
 
+    @GetMapping("/upload/{mind-id}/image")
+    public DataResponse getExampleImage(@PathVariable("mind-id")Long mindId){
+        return DataResponse.of(mindService.getExampleImage(mindId));
+    }
     @GetMapping("/intro/{mind-id}")
     public DataResponse getIntroMind(@PathVariable("mind-id")Long mindId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -85,6 +89,7 @@ public class MindController {
 
         return DataResponse.of(minds);
     }
+
 
     @GetMapping("/today-check")
     @PreAuthorize("hasAnyRole('USER')")

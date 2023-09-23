@@ -58,6 +58,10 @@ public class MindService {
         return FindIntroMindResponse
                 .of(findVerifiedMind(mindId),ANONYMOUS_USER,size);
     }
+    @Transactional
+    public MindExampleImageResponse getExampleImage(Long mindId) {
+        return MindExampleImageResponse.of(findVerifiedMind(mindId));
+    }
 
     private static int makeJoinMindSize(Mind verifiedMind) {
         return verifiedMind.getJoinedMinds().stream().filter(jm -> jm.getIsJoining() == CAN_JOIN).toList().size();
