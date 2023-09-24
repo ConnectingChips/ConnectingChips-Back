@@ -1,25 +1,23 @@
 package connectingchips.samchips.board;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import connectingchips.samchips.exception.BadRequestException;
+import connectingchips.samchips.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static connectingchips.samchips.exception.CommonErrorCode.INVALID_REQUEST;
+import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,17 +39,12 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    //로컬 프로젝트에 사진 파일이 생성되지만, removeNewFile()을 통해서 바로 지워줄 예정
-    private Optional<File> convert(MultipartFile file) throws IOException {
-        File convertFile = new File(file.getOriginalFilename());
-        if(convertFile.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(file.getBytes());
-            }
-            return Optional.of(convertFile);
-        }
-        return Optional.empty();
-    }
+    /**
+     * S3에 파일 업로드
+     * @param uploadfile : 업로드할 파일
+     * @param fileName : 업로드할 파일 이름
+     * @return : 업로드 경로
+     */
     private String putS3(File uploadfile, String fileName){
         amazonS3Client.putObject(
                 new PutObjectRequest(bucket, fileName, uploadfile)
@@ -59,7 +52,22 @@ public class S3Uploader {
         );
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
+    /**
+     * S3에 파일 삭제
+     */
+    public void deleteS3(String filePath) throws Exception {
+        try {
+            amazonS3Client.deleteObject(bucket, filePath);
+        } catch (AmazonServiceException e) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
 
+    }
+
+    /**
+     * 로컬에 있는 파일 삭제하는 메서드
+     * @param file : 삭제할 파일
+     */
     private void removeNewFile(File file) {
         if(file.delete()) System.out.println("파일 삭제 성공");
         else System.out.println("파일 삭제 실패");
@@ -91,21 +99,32 @@ public class S3Uploader {
     }
 
     public String getFileUrl(String fileName){
-        String url = amazonS3Client.getUrl(bucket, fileName).toString();
-
-        return url;
+        return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
-    //MultipartFile -> File 전환
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+    public String upload(MultipartFile multipartFile, String filePath) throws IOException {
         File uploadFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
-        return upload(uploadFile, dirName);
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_FILE));
+        return upload(uploadFile, filePath);
+    }
+
+    /**
+     * MultiPartFile -> File로 전환
+     */
+    private Optional<File> convert(MultipartFile file) throws IOException {
+        File convertFile = new File(file.getOriginalFilename());
+        if(convertFile.createNewFile()) {
+            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
+                fos.write(file.getBytes());
+            }
+            return Optional.of(convertFile);
+        }
+        return Optional.empty();
     }
 
     public String upload(File uploadFile, String dirName) {
-        //set UUID
-        String uploadS3fileName = UUID.randomUUID().toString();
+        //set UUID + 확장자 제한
+        String uploadS3fileName = createFileName(uploadFile.getName());
         //set Directory
         String fileName = dirName + "/" + uploadS3fileName;
         //s3에 업로드
@@ -114,6 +133,11 @@ public class S3Uploader {
         removeNewFile(uploadFile);
 
         return uploadImageUrl; //업로드된 파일의 S3 URL 주소 반환
+    }
+
+    //기존 확장자명을 유지한 채, 유니크한 파일의 이름을 생성하는 로직
+    private String createFileName(String originalFileName) {
+        return UUID.randomUUID().toString().concat(".").concat(getFileExtension(originalFileName));
     }
 
     //================================== 추가한 부분=========================
@@ -141,27 +165,25 @@ public class S3Uploader {
         return imgUrlList;
     }
 
-    private String createFileName(String fileName) {
-        return getFileExtension(fileName);
-    }
-
-    // 파일 유효성 검사
+    /**
+     * 파일 유효성 검사
+     * 이미지 파일만 업로드 가능하도록 진행
+     */
     private String getFileExtension(String fileName) {
-        if (fileName.length() == 0) {
+        ArrayList<String> fileValidate = new ArrayList<String>(
+                Arrays.asList("jpg", "jpeg","JPG", "JPEG",
+                        "png", "PNG", "heic", "HEIC", "bmp", "BMP")
+        );
+        if (fileName.isBlank()) {
             throw new BadRequestException(INVALID_REQUEST);
         }
-        ArrayList<String> fileValidate = new ArrayList<>();
-        fileValidate.add(".jpg");
-        fileValidate.add(".jpeg");
-        fileValidate.add(".png");
-        fileValidate.add(".JPG");
-        fileValidate.add(".JPEG");
-        fileValidate.add(".PNG");
-        String idxFileName = fileName.substring(fileName.lastIndexOf("."));
-        if (!fileValidate.contains(idxFileName)) {
+
+        String extension = fileName.substring(fileName.lastIndexOf(".")+1);
+        if (!fileValidate.contains(extension)) {
             throw new BadRequestException(INVALID_REQUEST);
+        } else {
+            return extension;
         }
-        return fileName.substring(fileName.lastIndexOf("."));
     }
 
 }
