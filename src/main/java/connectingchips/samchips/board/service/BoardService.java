@@ -56,14 +56,15 @@ public class BoardService {
 
         for(BoardResponseDto.Read board : boardList) {
             Board tempBoard = boardRepository.findById(board.getBoardId()).orElseThrow(()->new BadRequestException(NOT_FOUND_BOARD_ID));
-            int commentCount = (int) commentRepository.countByBoard(tempBoard);
             List<CommentResponseDto.Read> commentList = getCommentList(board.getBoardId());
-            board.editRead(commentCount, commentList);
+            int commentCount = (int) commentRepository.countByBoard(tempBoard);
 
             for(CommentResponseDto.Read comment : commentList) {
                 List<ReplyResponseDto> replyList = getReplyList(comment.getCommentId());
+                commentCount += replyList.size();
                 comment.editRead(replyList);
             }
+            board.editRead(commentCount, commentList);
         }
         return boardList;
     }
