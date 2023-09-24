@@ -32,12 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import java.util.Objects;
-import java.util.Optional;
 
 import static connectingchips.samchips.exception.CommonErrorCode.*;
 
@@ -75,7 +71,10 @@ public class BoardService {
     public List<BoardResponseDto.Read> getBoardList(Long mindId) {
         Mind mind = mindRepository.findById(mindId).orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
         List<Board> boards = boardRepository.findAllByMind(mind);
-        return boards.stream().map(board -> new BoardResponseDto.Read(board)).collect(Collectors.toList());
+        return boards.stream()
+                .sorted(Comparator.comparing(Board::getBoardId).reversed())
+                .map(board -> new BoardResponseDto.Read(board))
+                .collect(Collectors.toList());
     }
     public List<CommentResponseDto.Read> getCommentList(Long boardId){
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
