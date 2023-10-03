@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0">
+    <thead>
+    <tr>
+        <th>메일 인증 요청이 왔습니다.</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <a
+                    th:href="@{http://localhost:8080/users/authentication-email(email = ${email})}"
+                    style="
+                display: block;
+                box-sizing: border-box;
+                background-color: #ffbb00;
+                font-size: 16px;
+                line-height: 27px;
+                width: 250px;
+                height: 56px;
+                color: #000000;
+                text-decoration: none;
+                padding: 16px 90px;
+                text-align: center;
+                border-radius: 30px;
+              "
+            >
+                <font
+                        style="
+                  font-family: sans-serif;
+                  color: #000000;
+                  font-size: 16px;
+                  line-height: 27px;
+                "
+                >인증하기</font
+                >
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

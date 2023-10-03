@@ -2,6 +2,7 @@ package connectingchips.samchips.user.controller;
 
 import connectingchips.samchips.commons.dto.BasicResponse;
 import connectingchips.samchips.commons.dto.DataResponse;
+import connectingchips.samchips.email.dto.EmailRequestDto;
 import connectingchips.samchips.user.domain.LoginUser;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
@@ -9,6 +10,7 @@ import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.service.AuthService;
 import connectingchips.samchips.user.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @Validated
@@ -71,6 +74,27 @@ public class UserController {
         UserResponseDto.CheckLogin checkLoginDto = new UserResponseDto.CheckLogin(isLogin);
 
         return DataResponse.of(checkLoginDto);
+    }
+
+    @PostMapping("/authentication-email")
+    public BasicResponse sendAuthenticationEmail(@RequestBody @Valid EmailRequestDto.Authentication authenticationDto) throws MessagingException {
+        authService.sendAuthenticationEmail(authenticationDto);
+
+        return BasicResponse.of(HttpStatus.OK);
+    }
+
+    @GetMapping("/authentication-email")
+    public ModelAndView authenticationEmail(@RequestParam @NotBlank String email){
+        authService.authenticationEmail(email);
+
+        return new ModelAndView("authenticationSuccess");
+    }
+
+    @GetMapping("/verification-email")
+    public DataResponse<AuthResponseDto.VerificationEmail> verificationEmail(@RequestParam @NotBlank String email){
+        AuthResponseDto.VerificationEmail verificationEmailDto = authService.verificationEmail(email);
+
+        return DataResponse.of(verificationEmailDto);
     }
 
     @GetMapping
