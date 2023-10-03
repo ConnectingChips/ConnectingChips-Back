@@ -1,20 +1,27 @@
 package connectingchips.samchips.user.service;
 
 import connectingchips.samchips.board.S3Uploader;
+import connectingchips.samchips.email.EmailSender;
+import connectingchips.samchips.email.dto.EmailRequestDto;
 import connectingchips.samchips.exception.RestApiException;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.repository.UserRepository;
+import connectingchips.samchips.utils.RedisUtils;
+import jakarta.mail.MessagingException;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
 
 import static connectingchips.samchips.exception.AuthErrorCode.INVALID_REFRESH_TOKEN;
 import static connectingchips.samchips.exception.CommonErrorCode.*;
@@ -23,11 +30,16 @@ import static connectingchips.samchips.exception.CommonErrorCode.*;
 @RequiredArgsConstructor
 public class AuthService {
 
+    @Value("${spring.mail.auth-code-expiration-millis}")
+    private long authCodeExpirationMillis;
+
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
+    private final EmailSender emailSender;
+    private final RedisUtils redisUtils;
 
     @Transactional
     public AuthResponseDto.Token login(UserRequestDto.Login loginDto){
@@ -51,7 +63,6 @@ public class AuthService {
 
     @Transactional
     public AuthResponseDto.Token authenticateSocial(User user){
-
         User findUser = userRepository.findByAccountId(user.getAccountId()).orElse(null);
 
         if(findUser == null){
@@ -81,6 +92,39 @@ public class AuthService {
         findUser.editRefreshToken(refreshToken);
 
         return new AuthResponseDto.Token(accessToken, refreshToken);
+    }
+
+    public void sendAuthenticationEmail(EmailRequestDto.Authentication authenticationDto) throws MessagingException {
+        String toEmail = authenticationDto.getToEmail();;
+        String subject = "작심삼칩 인증 메일";
+        String template = "authentication";
+        HashMap<String, String> values = new HashMap<>();
+        values.put("email", toEmail);
+
+        emailSender.sendTemplateEmail(toEmail, subject, template, values);
+    }
+
+    @Transactional
+    public void authenticationEmail(String email){
+        if(redisUtils.getData(email).isPresent()){
+            redisUtils.deleteData(email);
+        }
+
+        redisUtils.setData(email, "true", authCodeExpirationMillis);
+    }
+
+    @Transactional
+    public AuthResponseDto.VerificationEmail verificationEmail(String email){
+        boolean isVerified;
+
+        if(redisUtils.getData(email).isPresent()){
+            redisUtils.deleteData(email);
+            isVerified = true;
+        }
+        else
+            isVerified = false;
+
+        return new AuthResponseDto.VerificationEmail(isVerified);
     }
 
     @Transactional
