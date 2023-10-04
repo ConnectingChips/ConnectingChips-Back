@@ -25,6 +25,7 @@ public class JoinedMindService {
     public static final int JOIN = 1;
     public static final int NOT_JOIN = 0;
     public static final int FULL_COUNT = 3;
+    public static final int ZERO_COUNT = 0;
     private final JoinedMindRepository joinedMindRepository;
     private final UserRepository userRepository;
     private final MindRepository mindRepository;
@@ -120,4 +121,10 @@ public class JoinedMindService {
                 new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
     }
 
+    public void reMind(Long mindId, User user) {
+        JoinedMind joinedMind = checkUserHaveJoinedMind(mindId, user);
+        if(!joinedMind.getKeepJoin()) throw new BadRequestException(INVALID_REQUEST);
+        joinedMind.setKeepJoin(false);
+        joinedMindRepository.save(joinedMind);
+    }
 }

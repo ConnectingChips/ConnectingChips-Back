@@ -32,6 +32,8 @@ public class JoinedMind extends Auditable {
     @NotNull
     private Boolean todayWrite = false;
 
+    private Boolean keepJoin = false;
+
     @ManyToOne
     @JoinColumn(name = "mind_id")
     private Mind mind;

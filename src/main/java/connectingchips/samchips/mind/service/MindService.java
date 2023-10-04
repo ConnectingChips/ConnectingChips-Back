@@ -234,7 +234,7 @@ public class MindService {
                 .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId))
                 .findFirst().orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
         return MyMindResponse.of(jm.getMind(),jm.getCount(),boardRepository.findBoardCountByUserAndMind(loginUser,jm.getMind()),
-                jm.getTodayWrite());
+                jm.getTodayWrite(),jm.getKeepJoin());
     }
 
     @Transactional
@@ -246,7 +246,8 @@ public class MindService {
                         MyMindResponse.of(joinedMind.getMind(),
                                 joinedMind.getCount(),
                                 boardRepository.findBoardCountByUserAndMind(loginUser,joinedMind.getMind()),
-                                joinedMind.getTodayWrite()))
+                                joinedMind.getTodayWrite(),
+                                joinedMind.getKeepJoin()))
                 .toList();
     }
 
