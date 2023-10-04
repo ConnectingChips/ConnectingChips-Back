@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static connectingchips.samchips.exception.CommonErrorCode.*;
+import static connectingchips.samchips.joinedmind.service.JoinedMindService.FULL_COUNT;
 
 
 @Service
@@ -116,9 +117,7 @@ public class BoardService {
                 findById(boardRequestDto.getUserId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
 
-        JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
-        joinedMind.setCount(joinedMind.getCount()+JOINING);
-        joinedMindRepository.save(joinedMind);
+        changeJoinedMind(user, mind);
 
         String imageURL = (file != null) ? getImageURL(file, "board") : "";
 
@@ -129,6 +128,13 @@ public class BoardService {
                 .user(user)
                 .build();
         boardRepository.save(board);
+    }
+
+    private void changeJoinedMind(User user, Mind mind) {
+        JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
+        joinedMind.setCount(joinedMind.getCount()+JOINING);
+        if(joinedMind.getCount() == FULL_COUNT) joinedMind.setKeepJoin(true);
+        joinedMindRepository.save(joinedMind);
     }
 
     private static JoinedMind checkJoinMind(User user, Mind mind) {
