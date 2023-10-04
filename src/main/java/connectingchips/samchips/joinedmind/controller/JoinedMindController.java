@@ -48,4 +48,9 @@ public class JoinedMindController {
         return BasicResponse.of(HttpStatus.OK);
     }
 
+    @PutMapping("/changeKeepJoin")
+    public BasicResponse changeKeepJoin(){
+        joinedMindService.resetCount();
+        return BasicResponse.of(HttpStatus.OK);
+    }
 }

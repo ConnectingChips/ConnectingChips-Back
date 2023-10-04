@@ -4,6 +4,7 @@ import connectingchips.samchips.exception.BadRequestException;
 import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
+import connectingchips.samchips.joinedmind.repository.JoinedMindRepositoryImpl;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
@@ -27,6 +28,7 @@ public class JoinedMindService {
     public static final int FULL_COUNT = 3;
     public static final int ZERO_COUNT = 0;
     private final JoinedMindRepository joinedMindRepository;
+    private final JoinedMindRepositoryImpl joinedMindRepositoryImpl;
     private final UserRepository userRepository;
     private final MindRepository mindRepository;
 
@@ -126,5 +128,8 @@ public class JoinedMindService {
         if(!joinedMind.getKeepJoin()) throw new BadRequestException(INVALID_REQUEST);
         joinedMind.setKeepJoin(false);
         joinedMindRepository.save(joinedMind);
+    }
+    public void resetCount(){
+        joinedMindRepositoryImpl.resetCount();
     }
 }

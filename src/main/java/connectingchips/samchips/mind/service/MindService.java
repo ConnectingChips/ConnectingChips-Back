@@ -229,12 +229,17 @@ public class MindService {
     }
 
     public MyMindResponse findMyJoinMind(User loginUser, Long mindId) {
+        JoinedMind jm = getJoinedMind(loginUser, mindId);
+        return MyMindResponse.of(jm.getMind(),jm.getCount(),boardRepository.findBoardCountByUserAndMind(loginUser,jm.getMind()),
+                jm.getTodayWrite(),jm.getKeepJoin());
+    }
+
+    private static JoinedMind getJoinedMind(User loginUser, Long mindId) {
         JoinedMind jm = loginUser.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId))
                 .findFirst().orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
-        return MyMindResponse.of(jm.getMind(),jm.getCount(),boardRepository.findBoardCountByUserAndMind(loginUser,jm.getMind()),
-                jm.getTodayWrite(),jm.getKeepJoin());
+        return jm;
     }
 
     @Transactional
@@ -284,4 +289,10 @@ public class MindService {
         return first.map(CheckReMindResponse::of).orElseGet(CheckReMindResponse::of);
     }
 
+    public CheckReMindResponse changeIsDoneToday(Long mindId, User user) {
+        JoinedMind joinedMind = getJoinedMind(user, mindId);
+        joinedMind.setTodayWrite(false);
+        joinedMindRepository.save(joinedMind);
+        return CheckReMindResponse.of(joinedMind);
+    }
 }

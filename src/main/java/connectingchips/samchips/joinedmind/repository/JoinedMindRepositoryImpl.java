@@ -39,6 +39,7 @@ public class JoinedMindRepositoryImpl implements JoinedMindRepositoryCustom{
         QJoinedMind joinedMind = QJoinedMind.joinedMind;
         queryFactory.update(joinedMind)
                         .set(joinedMind.count,0)
+                .set(joinedMind.keepJoin,true)
                 .where(joinedMind.count.eq(3))
                                 .execute();
 

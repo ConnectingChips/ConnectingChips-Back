@@ -57,7 +57,6 @@ public class JoinedMind extends Auditable {
         }
     }
 
-
     public void setIsJoining(Integer isJoining) {
         this.isJoining = isJoining;
     }
