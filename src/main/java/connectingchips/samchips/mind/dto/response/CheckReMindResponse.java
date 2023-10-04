@@ -13,7 +13,7 @@ public class CheckReMindResponse {
 
     public static CheckReMindResponse of(JoinedMind joinedMind){
         return new CheckReMindResponse(
-                joinedMind.getCount()==3,
+                joinedMind.getKeepJoin(),
                 joinedMind.getTodayWrite()
         );
     }
