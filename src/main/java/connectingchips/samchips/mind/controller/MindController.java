@@ -150,6 +150,11 @@ public class MindController {
         List<MultipartFile> images = List.of(introImage, pageImage, totalListImage, myListImage);
         return DataResponse.of(mindService.updateMind(mindId,updateMindRequest,images));
     }
+    @PutMapping("/change-is-done-today/{mind-id}")
+    public DataResponse changeIsDoneToday(@PathVariable("mind-id") Long mindId,
+                                          @LoginUser User user) {
+        return DataResponse.of(mindService.changeIsDoneToday(mindId,user));
+    }
 
     @DeleteMapping("/{mind-id}")
     public BasicResponse deleteMind(@PathVariable("mind-id")Long mindId){
