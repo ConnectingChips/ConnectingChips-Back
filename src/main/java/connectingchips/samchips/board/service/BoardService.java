@@ -133,8 +133,7 @@ public class BoardService {
     private void changeJoinedMind(User user, Mind mind) {
         JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
         joinedMind.setCount(joinedMind.getCount()+JOINING);
-        if(joinedMind.getCount() == FULL_COUNT) joinedMind.setKeepJoin(true);
-        else if(joinedMind.getCount() > FULL_COUNT) throw new BadRequestException(INVALID_REQUEST);
+        if(joinedMind.getCount() > FULL_COUNT) throw new BadRequestException(INVALID_REQUEST);
         joinedMindRepository.save(joinedMind);
     }
 
