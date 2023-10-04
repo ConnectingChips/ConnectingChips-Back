@@ -21,8 +21,9 @@ public class MyMindResponse {
     private final Integer boardCount;
     private final String myListImage;
     private final Boolean isDoneToday;
+    private final Boolean keepJoin;
 
-    public static MyMindResponse of(Mind mind, Integer count, Integer boardCount,Boolean isDoneToday) {
+    public static MyMindResponse of(Mind mind, Integer count, Integer boardCount,Boolean isDoneToday,Boolean keepJoin) {
         return new MyMindResponse(
                 mind.getMindId(),
                 mind.getMindType().getName(),
@@ -30,7 +31,8 @@ public class MyMindResponse {
                 count,
                 boardCount,
                 mind.getMyListImage(),
-                isDoneToday
+                isDoneToday,
+                keepJoin
         );
     }
 }
