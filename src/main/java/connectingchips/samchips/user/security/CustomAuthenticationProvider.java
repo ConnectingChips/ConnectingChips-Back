@@ -23,9 +23,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
 
         UserAdapter userAdapter = (UserAdapter) userDetailsService.loadUserByUsername(name);
-        System.out.println("password : " + password + ", userAdapter.getPassword() : " + userAdapter.getPassword());
+
         if(!passwordEncoder.matches(password, userAdapter.getPassword())){
-            System.out.println("하이");
             throw new BadCredentialsException(userAdapter.getUsername() + " Invalid password");
         }
 

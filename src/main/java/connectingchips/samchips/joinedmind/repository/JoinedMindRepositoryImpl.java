@@ -24,7 +24,7 @@ public class JoinedMindRepositoryImpl implements JoinedMindRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Transactional
-    @Scheduled(cron = "0 0 16 * * *") // 매일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 * * *") // 매일 0시 0분 0초에 실행
     public void resetTodayWrite(){
         QJoinedMind joinedMind = QJoinedMind.joinedMind;
         queryFactory.update(joinedMind)
@@ -34,7 +34,7 @@ public class JoinedMindRepositoryImpl implements JoinedMindRepositoryCustom{
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 16 * * *") // 매일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 * * *") // 매일 0시 0분 0초에 실행
     public void resetCount(){
         QJoinedMind joinedMind = QJoinedMind.joinedMind;
         queryFactory.update(joinedMind)
