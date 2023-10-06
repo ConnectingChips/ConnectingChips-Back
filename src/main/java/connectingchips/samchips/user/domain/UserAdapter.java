@@ -3,6 +3,8 @@ package connectingchips.samchips.user.domain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +21,12 @@ public class UserAdapter extends org.springframework.security.core.userdetails.U
         return user;
     }
 
-    private static List<GrantedAuthority> authorities(Role roles) {
-        return Collections.singletonList(new SimpleGrantedAuthority(roles.getRole()));
+    private static List<GrantedAuthority> authorities(String roles) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        for(String role : roles.split(",")){
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
     }
 }

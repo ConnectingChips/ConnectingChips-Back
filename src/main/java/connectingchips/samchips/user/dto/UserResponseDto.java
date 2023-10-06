@@ -15,7 +15,7 @@ public class UserResponseDto {
         private Long userId;
         private String nickname;
         private String profileImage;
-        private Role roles;
+        private String roles;
     }
 
     @Getter

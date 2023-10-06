@@ -25,6 +25,7 @@ public class JoinedMindService {
 
     public static final int JOIN = 1;
     public static final int NOT_JOIN = 0;
+    public static final int ADMIN_FULL_COUNT = Integer.MAX_VALUE;
     public static final int FULL_COUNT = 3;
     public static final int ZERO_COUNT = 0;
     private final JoinedMindRepository joinedMindRepository;
@@ -68,10 +69,15 @@ public class JoinedMindService {
     }
 
     private void checkJoinMindCountMax(User user) {
+        // 권한에 따라 참여 가능한 작심 개수 조정
+        int maxCount = FULL_COUNT;
+        if(user.getRoles().contains("ROLE_ADMIN"))
+            maxCount = ADMIN_FULL_COUNT;
+
         if(user.getJoinedMinds().
                 stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == JOIN)
-                .toList().size() >= FULL_COUNT){
+                .toList().size() >= maxCount){
             throw new BadRequestException(INVALID_REQUEST);
         }
     }
