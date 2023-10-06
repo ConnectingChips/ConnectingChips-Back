@@ -33,6 +33,11 @@ public class RedisUtils {
         }
     }
 
+    // 키 존재 유무
+    public boolean isExists(String key){
+        return redisTemplate.hasKey(key);
+    }
+
     public void deleteData(String key){
         redisTemplate.delete(key);
     }

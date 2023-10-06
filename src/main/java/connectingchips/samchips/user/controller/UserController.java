@@ -84,10 +84,13 @@ public class UserController {
     }
 
     @GetMapping("/authentication-email")
-    public ModelAndView authenticationEmail(@RequestParam @NotBlank String email){
-        authService.authenticationEmail(email);
+    public ModelAndView authenticationEmail(@RequestParam @NotBlank String email, @RequestParam @NotBlank String authCode){
+        boolean isAuthenticated = authService.authenticationEmail(email, authCode);
 
-        return new ModelAndView("authenticationSuccess");
+        if(isAuthenticated)
+            return new ModelAndView("authSuccess");
+        else
+            return new ModelAndView("authFail");
     }
 
     @GetMapping("/verification-email")
