@@ -101,7 +101,7 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     public DataResponse<UserResponseDto.Info> getLoginUser(@LoginUser User loginUser){
         UserResponseDto.Info info = UserResponseDto.Info.builder()
                 .userId(loginUser.getId())
@@ -121,7 +121,7 @@ public class UserController {
     }
 
     @PutMapping("/logout")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     public BasicResponse logout(@LoginUser User loginUser, HttpServletResponse response){
         authService.logout(loginUser.getId());
 
@@ -136,7 +136,7 @@ public class UserController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     public BasicResponse editUserInfo(@RequestBody @Valid UserRequestDto.Edit editDto, @LoginUser User loginUser){
         userService.editInfo(loginUser.getId(), editDto);
 
@@ -144,7 +144,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     public BasicResponse deleteUser(@LoginUser User loginUser){
         userService.deleteByUserId(loginUser.getId());
 

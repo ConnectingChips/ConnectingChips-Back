@@ -43,8 +43,7 @@ public class User extends Auditable {
     @Enumerated
     private SocialType socialType;
 
-    @Enumerated(EnumType.STRING)
-    private Role roles;     // 권한
+    private String roles;     // 권한
 
     private String refreshToken;  //리프레쉬 토큰
 
@@ -61,7 +60,7 @@ public class User extends Auditable {
         this.gender = gender;
         this.ageRange = ageRange;
         this.socialType = socialType;
-        this.roles = Role.ROLE_USER;
+        this.roles = Role.ROLE_USER.getRole();
     }
 
     public void setPassword(String password){
