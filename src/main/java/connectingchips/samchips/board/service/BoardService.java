@@ -133,7 +133,12 @@ public class BoardService {
     private void changeJoinedMind(User user, Mind mind) {
         JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
         joinedMind.setCount(joinedMind.getCount()+JOINING);
-        if(joinedMind.getCount() > FULL_COUNT) throw new BadRequestException(INVALID_REQUEST);
+
+        // 일반 사용자라면 참여한 작심 개수에 따라 예외 발생
+        if(!user.getRoles().contains("ROLE_ADMIN")){
+            if(joinedMind.getCount() > FULL_COUNT) throw new BadRequestException(INVALID_REQUEST);
+        }
+
         joinedMindRepository.save(joinedMind);
     }
 
