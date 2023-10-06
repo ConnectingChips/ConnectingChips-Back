@@ -1,11 +1,11 @@
-package connectingchips.samchips.user.security.config;
+package connectingchips.samchips.security.config;
 
+import connectingchips.samchips.security.CustomAuthenticationProvider;
 import connectingchips.samchips.user.jwt.JwtSecurityConfig;
 import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.jwt.filter.JwtExceptionFilter;
 import connectingchips.samchips.user.jwt.handler.JwtAccessDeniedHandler;
 import connectingchips.samchips.user.repository.UserRepository;
-import connectingchips.samchips.user.security.CustomAuthenticationProvider;
 import connectingchips.samchips.user.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

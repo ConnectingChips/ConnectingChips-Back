@@ -1,4 +1,4 @@
-package connectingchips.samchips.user.security;
+package connectingchips.samchips.security;
 
 import connectingchips.samchips.user.domain.UserAdapter;
 import connectingchips.samchips.user.service.CustomUserDetailsService;
