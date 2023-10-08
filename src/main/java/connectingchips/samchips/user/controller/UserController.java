@@ -76,6 +76,7 @@ public class UserController {
         return DataResponse.of(checkLoginDto);
     }
 
+    // 인증 이메일 보내기
     @PostMapping("/authentication-email")
     public BasicResponse sendAuthenticationEmail(@RequestBody @Valid EmailRequestDto.Authentication authenticationDto) throws MessagingException {
         authService.sendAuthenticationEmail(authenticationDto);
@@ -83,6 +84,7 @@ public class UserController {
         return BasicResponse.of(HttpStatus.OK);
     }
 
+    // 이메일 인증하기 버튼
     @GetMapping("/authentication-email")
     public ModelAndView authenticationEmail(@RequestParam @NotBlank String email, @RequestParam @NotBlank String authCode){
         boolean isAuthenticated = authService.authenticationEmail(email, authCode);
@@ -93,6 +95,7 @@ public class UserController {
             return new ModelAndView("authFail");
     }
 
+    // 해당 이메일이 인증된 이메일인지 검증
     @GetMapping("/verification-email")
     public DataResponse<AuthResponseDto.VerificationEmail> verificationEmail(@RequestParam @NotBlank String email){
         AuthResponseDto.VerificationEmail verificationEmailDto = authService.verificationEmail(email);

@@ -65,8 +65,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode) {
+        ErrorResponse errorResponse;
+        if(errorCode instanceof AuthErrorCode){
+            errorResponse = ErrorResponse.of((AuthErrorCode) errorCode);
+        }else{
+            errorResponse = ErrorResponse.of(errorCode);
+        }
         return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(ErrorResponse.of(errorCode));
+                .body(errorResponse);
     }
 
     private ResponseEntity<ErrorResponse> handleExceptionInternal(HttpStatus httpStatus, String massage) {

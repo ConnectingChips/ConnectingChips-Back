@@ -14,10 +14,13 @@ public enum AuthErrorCode implements ErrorCode{
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, 4012,"만료된 JWT 토큰입니다."),
     UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, 4013,"지원하지 않는 JWT 토큰입니다."),
     ILLEGAL_ARGUMENT_TOKEN(HttpStatus.UNAUTHORIZED, 4014,"잘못된 JWT 토큰입니다."),
-    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 4014,"유효하지 않은 Refresh 토큰입니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 4015,"유효하지 않은 Refresh 토큰입니다."),
 
     // 403 FORBIDDEN 권한이 없는 경우
-    FORBIDDEN(HttpStatus.FORBIDDEN, 403,"해당 요청에 대한 권한이 없습니다.");
+    FORBIDDEN(HttpStatus.FORBIDDEN, 403,"해당 요청에 대한 권한이 없습니다."),
+
+    // 이메일 인증 관련
+    COOL_TIME_SEND_EMAIL(HttpStatus.BAD_REQUEST, 600,"이메일 재전송 대기 시간입니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
