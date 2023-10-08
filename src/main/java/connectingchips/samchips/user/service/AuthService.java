@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 
+import static connectingchips.samchips.exception.AuthErrorCode.COOL_TIME_SEND_EMAIL;
 import static connectingchips.samchips.exception.AuthErrorCode.INVALID_REFRESH_TOKEN;
 import static connectingchips.samchips.exception.CommonErrorCode.*;
 
@@ -36,6 +37,8 @@ public class AuthService {
 
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
+    @Value("${spring.mail.send-cool-time-millis}")
+    private long sendCoolTimeMillis;
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -102,6 +105,13 @@ public class AuthService {
     @Transactional
     public void sendAuthenticationEmail(EmailRequestDto.Authentication authenticationDto) throws MessagingException {
         String toEmail = authenticationDto.getToEmail();;
+        String emailKey = EMAIL_AUTH_KEY_PREFIX + toEmail;
+
+        // 재전송 대기 시간 검사
+        if(!checkSendEmailCoolTime(emailKey)){
+            throw new RestApiException(COOL_TIME_SEND_EMAIL);
+        }
+
         String subject = "작심삼칩 인증 메일";
         String template = "authEmail";
         String authCode = createAuthCode();
@@ -112,7 +122,7 @@ public class AuthService {
         values.put("authCode", authCode);
 
         emailSender.sendTemplateEmail(toEmail, subject, template, values);
-        redisUtils.setData(EMAIL_AUTH_KEY_PREFIX + toEmail, authCode, authCodeExpirationMillis);
+        redisUtils.setData(emailKey, authCode, authCodeExpirationMillis);
     }
 
     // 이메일 인증
@@ -136,7 +146,8 @@ public class AuthService {
 
         // 인증 데이터가 존재하고 사용자가 인증 완료 버튼을 눌렀다면 true 반환
         if(savedAuthCode.isPresent()){
-            if(savedAuthCode.get().toString().equals("true")){
+            String[] savedAuthInfos = savedAuthCode.get().toString().split("-");
+            if(savedAuthInfos[0].equals("true")){
                 redisUtils.deleteData(key);
                 return new AuthResponseDto.VerificationEmail(true);
             }
@@ -184,16 +195,31 @@ public class AuthService {
         // 인증번호 비교
         if(savedAuthInfos[0].equals(code)){
             // 이메일 전송할 때의 시간과 현재 시간의 차이를 계산하여 데이터 만료 시간으로 설정
-            LocalTime savedTime = LocalTime.parse(savedAuthInfos[1]);
-            LocalTime nowTime = LocalTime.now();
-            Duration diff = Duration.between(savedTime, nowTime);
-            long expiredTime = authCodeExpirationMillis - diff.toMillis();
+            long betweenToMillis = betweenToMillis(LocalTime.parse(savedAuthInfos[1]), LocalTime.now());
+            long expiredTime = authCodeExpirationMillis - betweenToMillis;
 
             // 같은 key로 데이터를 삽입하여 덮어쓰기
-            redisUtils.setData(key, "true", expiredTime);
+            redisUtils.setData(key, "true-"+savedAuthInfos[1], expiredTime);
             return true;
         }
         return false;
+    }
+
+    // 이메일 재전송 대기 시간 검사
+    private boolean checkSendEmailCoolTime(String emailKey){
+        Optional<Object> savedAuthCode = redisUtils.getData(emailKey);
+
+        // 해당 이메일에 대한 데이터가 redis에 저장되어 있다면 시간 비교
+        if(savedAuthCode.isPresent()){
+            String[] savedAuthInfos = savedAuthCode.get().toString().split("-");
+            long betweenToMillis = betweenToMillis(LocalTime.parse(savedAuthInfos[1]), LocalTime.now());
+
+            // 최근 이메일을 전송한 시간과 현재 시간의 차이 값을 coolTime과 비교
+            if(betweenToMillis <= sendCoolTimeMillis)
+                return false;
+        }
+        // redis에 저장되어있지 않거나 coolTime
+        return true;
     }
 
     // 6자리의 인증번호와 현재 시간을 더한 AuthCode 생성
@@ -209,5 +235,10 @@ public class AuthService {
         
         number.append("-" + LocalTime.now().toString());
         return number.toString();
+    }
+
+    // 두 시간의 차이를 Millis로 반환
+    private long betweenToMillis(LocalTime a, LocalTime b){
+        return Duration.between(a, b).toMillis();
     }
 }
