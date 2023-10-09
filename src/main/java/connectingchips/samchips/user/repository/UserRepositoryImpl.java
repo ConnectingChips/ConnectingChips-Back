@@ -35,15 +35,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
     }
 
     @Override
-    public boolean existsTokenByAccountId(String accountId) {
-        return queryFactory
-                .from(user)
-                .where(user.accountId.eq(accountId)
-                        .and(user.refreshToken.isNotNull()))
-                .fetchOne() != null;
-    }
-
-    @Override
     public boolean existsByAccountId(String accountId) {
         return queryFactory
                 .from(user)

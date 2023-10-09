@@ -8,7 +8,5 @@ public interface UserRepositoryCustom {
 
     Optional<UserResponseDto.Info> findByUserId(Long userId);
 
-    boolean existsTokenByAccountId(String accountId);
-
     boolean existsByAccountId(String accountId);
 }

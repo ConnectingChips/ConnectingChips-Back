@@ -40,7 +40,7 @@ public class TokenProvider {
     @Value("${jwt.access-token-expiration-millis}")
     private long accessTokenExpirationMillis;
     @Value("${jwt.refresh-token-expiration-millis}")
-    private long refreshTokenExpirationMillis;
+    public long refreshTokenExpirationMillis;
     private Key key;
 
     // Bean 등록후 Key SecretKey HS256 decode
@@ -119,6 +119,19 @@ public class TokenProvider {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    // 토큰의 남은 유효시간
+    public Long getExpiredTime(String token) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        // 현재 시간
+        Long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 
     // 토큰 유효성 검사
