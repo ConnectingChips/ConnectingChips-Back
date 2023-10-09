@@ -22,16 +22,13 @@ import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -127,12 +124,13 @@ public class BoardService {
                 .mind(mind)
                 .user(user)
                 .build();
+
         boardRepository.save(board);
     }
 
     private void changeJoinedMind(User user, Mind mind) {
         JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
-        joinedMind.setCount(joinedMind.getCount()+JOINING);
+        joinedMind.updateCount(joinedMind.getCount()+JOINING);
 
         // 일반 사용자라면 참여한 작심 개수에 따라 예외 발생
         if(!user.getRoles().contains("ROLE_ADMIN")){
@@ -148,14 +146,13 @@ public class BoardService {
         JoinedMind joinedMind = first.orElseThrow(() -> new BadRequestException(NOT_JOIN_MIND));
         if(joinedMind.getTodayWrite()) throw new BadRequestException(ALREADY_WRITE_BOARD);
         return joinedMind;
-
     }
 
     @Transactional
     public BoardResponseDto.Update updateBoard(Long boardId, BoardRequestDto.Edit boardRequestDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
-        board.editContent(boardRequestDto.getContent());
+        board.updateContent(boardRequestDto.getContent());
 
         return new BoardResponseDto.Update(boardId, board.getContent());
     }
@@ -169,7 +166,7 @@ public class BoardService {
         Optional<JoinedMind> first = user.getJoinedMinds().stream()
                 .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), board.getMind().getMindId()) && board.getCreatedAt().toLocalDate().equals(LocalDate.now()))
                 .findFirst();
-        first.ifPresent(joinedMind -> {joinedMind.setCount(joinedMind.getCount()-1);
+        first.ifPresent(joinedMind -> {joinedMind.updateCount(joinedMind.getCount()-1);
             joinedMindRepository.save(joinedMind.setTodayWrite(false));
         });
         //==================================== 추가된 부분 =========================================

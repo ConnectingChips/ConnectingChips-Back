@@ -33,11 +33,11 @@ public class MindController {
     public static final String ANONYMOUS_USER = "anonymousUser";
     private final MindService mindService;
 
-
     @GetMapping("/upload/{mind-id}/image")
     public DataResponse getExampleImage(@PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.getExampleImage(mindId));
     }
+
     @GetMapping("/intro/{mind-id}")
     public DataResponse getIntroMind(@PathVariable("mind-id")Long mindId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -48,6 +48,7 @@ public class MindController {
             mind = mindService.findIntroMindByAccountId(mindId,makeAccountId(auth));
         return DataResponse.of(mind);
     }
+
     @GetMapping("/intro/{mind-id}/image")
     public DataResponse getIntroMindImage(@PathVariable("mind-id")Long mindId){
 
@@ -62,9 +63,9 @@ public class MindController {
               minds = mindService.findPageMindByAnonymous(mindId);
           else minds = mindService.findPageMindByUser(mindId,makeAccountId(auth));
 
-
         return DataResponse.of(minds);
     }
+
     @GetMapping("/page/{mind-id}/image")
     public DataResponse getPageMindImage(@PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.findPageMindImage(mindId));
@@ -79,6 +80,7 @@ public class MindController {
         else minds = mindService.findAllMindExceptMe(makeAccountId(auth));
         return DataResponse.of(minds);
     }
+
     @GetMapping("/except-me/{mind-type-name}")
     public DataResponse getAllMindExceptMeByMindType(@PathVariable("mind-type-name")Long mindTypeId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -90,13 +92,12 @@ public class MindController {
         return DataResponse.of(minds);
     }
 
-
     @GetMapping("/today-check")
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse todaysAllCheck(@LoginUser User loginUser){
         return DataResponse.of(mindService.checkTodayAll(loginUser.getId()));
-
     }
+
     @GetMapping("/today-check/{joined-mind-id}")
     @PreAuthorize("hasAnyRole('USER')")
     public DataResponse todayCheck(@PathVariable("joined-mind-id")Long joinedMindId){
@@ -128,40 +129,12 @@ public class MindController {
                                       @PathVariable("mind-id")Long mindId){
         return DataResponse.of(mindService.checkReMindAvailability(loginUser,mindId));
     }
-    @PostMapping
-    public BasicResponse postMind(
-            @RequestPart CreateMindRequest createMindRequest,
-                                 @RequestPart MultipartFile introImage,
-                                 @RequestPart MultipartFile pageImage,
-                                 @RequestPart MultipartFile totalListImage,
-                                 @RequestPart MultipartFile myListImage) throws IOException {
 
-        List<MultipartFile> images = List.of(introImage, pageImage, totalListImage, myListImage);
-        return DataResponse.of(HttpStatus.CREATED, mindService.createMind(createMindRequest,images));
-    }
-
-    @PutMapping("/{mind-id}")
-    public DataResponse putMind(@PathVariable("mind-id") Long mindId,
-                                @RequestPart(required = false) UpdateMindRequest updateMindRequest,
-                                @RequestPart MultipartFile introImage,
-                                @RequestPart MultipartFile pageImage,
-                                @RequestPart MultipartFile totalListImage,
-                                @RequestPart MultipartFile myListImage) throws IOException {
-        List<MultipartFile> images = List.of(introImage, pageImage, totalListImage, myListImage);
-        return DataResponse.of(mindService.updateMind(mindId,updateMindRequest,images));
-    }
     @PutMapping("/change-is-done-today/{mind-id}")
     public DataResponse changeIsDoneToday(@PathVariable("mind-id") Long mindId,
                                           @LoginUser User user) {
         return DataResponse.of(mindService.changeIsDoneToday(mindId,user));
     }
-
-    @DeleteMapping("/{mind-id}")
-    public BasicResponse deleteMind(@PathVariable("mind-id")Long mindId){
-        mindService.deleteMind(mindId);
-        return BasicResponse.of(HttpStatus.OK);
-    }
-
 
     private static String makeAccountId(Authentication auth) {
         String string = auth.getPrincipal().toString();
@@ -180,6 +153,34 @@ public class MindController {
             }
         }
         return string.substring(start, end);
+    }
+    @PostMapping
+    public BasicResponse postMind(
+            @RequestPart CreateMindRequest createMindRequest,
+            @RequestPart MultipartFile introImage,
+            @RequestPart MultipartFile pageImage,
+            @RequestPart MultipartFile totalListImage,
+            @RequestPart MultipartFile myListImage) throws IOException {
+
+        List<MultipartFile> images = List.of(introImage, pageImage, totalListImage, myListImage);
+        return DataResponse.of(HttpStatus.CREATED, mindService.createMind(createMindRequest,images));
+    }
+
+    @PutMapping("/{mind-id}")
+    public DataResponse putMind(@PathVariable("mind-id") Long mindId,
+                                @RequestPart(required = false) UpdateMindRequest updateMindRequest,
+                                @RequestPart MultipartFile introImage,
+                                @RequestPart MultipartFile pageImage,
+                                @RequestPart MultipartFile totalListImage,
+                                @RequestPart MultipartFile myListImage) throws IOException {
+        List<MultipartFile> images = List.of(introImage, pageImage, totalListImage, myListImage);
+        return DataResponse.of(mindService.updateMind(mindId,updateMindRequest,images));
+    }
+
+    @DeleteMapping("/{mind-id}")
+    public BasicResponse deleteMind(@PathVariable("mind-id")Long mindId){
+        mindService.deleteMind(mindId);
+        return BasicResponse.of(HttpStatus.OK);
     }
 }
 
