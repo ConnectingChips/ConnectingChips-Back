@@ -200,7 +200,7 @@ public class AuthService {
      *     동일하면 value - "true", 만료 시간을 계산하여 다시 저장
       */
     private boolean checkAuthCode(String key, String savedAuthCode, String authCode){
-        String[] savedAuthInfos = savedAuthCode.split("-");
+        String[] savedAuthInfos = savedAuthCode.split("-", 1);
         String code = authCode.split("-")[0];
 
         // 인증번호 비교

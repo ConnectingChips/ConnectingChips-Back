@@ -1,12 +1,30 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap"
+            rel="stylesheet"
+    />
+    <title>작심삼칩 - 이메일 인증</title>
+    <link rel="stylesheet" th:href="@{/css/authFailStyle.css}" />
 </head>
 <body>
-<p>인증 실패</p>
+<section>
+    <img src="https://chips-bucket-image.s3.ap-northeast-2.amazonaws.com/emailImage/logo.png" alt="작심삼칩 로고" class="logo" />
+    <h1 class="title">인증 링크가 만료되었어요</h1>
+    <img
+            src="https://chips-bucket-image.s3.ap-northeast-2.amazonaws.com/emailImage/chips-cry.png"
+            alt="울고있는 삼칩이"
+            class="fail_image"
+    />
+    <p class="description">
+        회원가입 페이지에서 <strong>재전송</strong> 버튼을 눌러 <br />
+        새로운 인증 메일을 발송하세요.
+    </p>
+</section>
 </body>
 </html>
