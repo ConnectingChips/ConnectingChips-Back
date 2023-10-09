@@ -10,7 +10,4 @@ public interface JoinedMindRepository extends JpaRepository<JoinedMind,Long> ,Jo
 
     @Query("select COUNT(*) from JoinedMind as j where j.mind.mindId = :id")
     Integer countJoinedMindUser(@Param("id")Long mindId);
-
-
-
 }

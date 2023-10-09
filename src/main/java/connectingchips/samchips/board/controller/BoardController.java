@@ -46,7 +46,6 @@ public class BoardController {
 
     /* 게시글 수정 */
     @PutMapping("/{board_id}")
-    @CrossOrigin(origins = "http://localhost:3000", methods = RequestMethod.PUT) //특정 url에 cors에러 해결
     public DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId, @RequestBody BoardRequestDto.Edit boardRequestDto) {
         BoardResponseDto.Update boardResponseDto = boardService.updateBoard(boardId, boardRequestDto);
         return DataResponse.of(boardResponseDto);

@@ -48,7 +48,7 @@ public class UserController {
 
         Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
         cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60);
 

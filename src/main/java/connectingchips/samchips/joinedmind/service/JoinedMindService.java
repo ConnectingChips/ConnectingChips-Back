@@ -129,13 +129,15 @@ public class JoinedMindService {
                 new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
     }
 
-    public void reMind(Long mindId, User user) {
+    public void updateKeepJoin(Long mindId, User user) {
         JoinedMind joinedMind = checkUserHaveJoinedMind(mindId, user);
+
         if(!joinedMind.getKeepJoin()) throw new BadRequestException(INVALID_REQUEST);
+
         joinedMind.setKeepJoin(false);
         joinedMindRepository.save(joinedMind);
     }
-    public void resetCount(){
-        joinedMindRepositoryImpl.resetCount();
+    public void resetCountAndUpdateKeepJoin(){
+        joinedMindRepositoryImpl.resetCountAndUpdateKeepJoin();
     }
 }
