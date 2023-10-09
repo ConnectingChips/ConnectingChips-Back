@@ -105,7 +105,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedOrigins(List.of("https://samchips.com","http://localhost:3000"));
+        corsConfiguration.setAllowedOrigins(List.of("https://samchips.com","http://localhost:3000","https://samchips-test.netlify.app"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "*"));
         corsConfiguration.setExposedHeaders(List.of("Authorization", "Refresh"));
         corsConfiguration.setAllowedMethods(List.of("POST", "GET", "PATCH", "DELETE", "OPTIONS","PUT"));
