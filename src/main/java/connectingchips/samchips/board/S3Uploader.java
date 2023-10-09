@@ -61,7 +61,6 @@ public class S3Uploader {
         } catch (AmazonServiceException e) {
             throw new RestApiException(INVALID_REQUEST);
         }
-
     }
 
     /**
