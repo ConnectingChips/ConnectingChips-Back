@@ -3,7 +3,6 @@ package connectingchips.samchips.mind.service;
 import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.joinedmind.dto.JoinCheckResponse;
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
 import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
 
@@ -18,7 +17,6 @@ import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +40,7 @@ public class MindService {
     public static final int SECOND_IMAGE_NUM = 1;
     public static final int THIRD_IMAGE_NUM = 2;
     public static final int FOURTH_IMAGE_NUM = 3;
-    public static final int FULL_COUNT = 3;
+
     private final MindRepository mindRepository;
     private final MindTypeRepository mindTypeRepository;
     private final JoinedMindRepository joinedMindRepository;
@@ -92,18 +90,16 @@ public class MindService {
 
     private User findVerifiedUserByAccount(String accountId) {
         Optional<User> byAccountId = userRepository.findByAccountId(accountId);
-        User user = byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
-        return user;
+        return byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
     }
 
 
 
     private static Integer checkCanJoin(Long mindId, User user) {
-        Integer canJoin = NOT_JOIN;
         if(user.getJoinedMinds().stream()
                 .anyMatch(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining() == NOT_JOIN))
-            canJoin = CAN_JOIN;
-        return canJoin;
+            return CAN_JOIN;
+        return NOT_JOIN;
     }
 
 
@@ -121,10 +117,7 @@ public class MindService {
         return findUserById.orElseThrow(() ->
                 new BadRequestException(NOT_FOUND_USER));
     }
-    @Transactional
-    public JoinCheckResponse checkToday(Long joinedMindId) {
-        return JoinCheckResponse.of(findVerifiedJoinedMind(joinedMindId).getTodayWrite());
-    }
+
     @Transactional
     public List<CheckAllMindResponse> checkTodayAll(Long userId) {
         return findVerifiedUser(userId)
@@ -135,55 +128,6 @@ public class MindService {
                                 .isDoneToday(joinedMind.getTodayWrite()).build()).toList();
     }
 
-    private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
-        Optional<JoinedMind> findJoinedMindById = joinedMindRepository.findById(joinedMindId);
-        return findJoinedMindById.orElseThrow(() ->
-                new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
-    }
-    @Transactional
-    public MindResponse createMind(CreateMindRequest createMindRequest,
-                                   List<MultipartFile> images) throws IOException {
-        List<String> upload = s3Uploader.upload(images);
-
-        return MindResponse.of(mindRepository.save(Mind.builder()
-                .name(createMindRequest.getName())
-                .introduce(createMindRequest.getIntroduce())
-                .introImage(upload.get(FIRST_IMAGE_NUM))
-                .writeFormat(createMindRequest.getWriteFormat())
-                .pageImage(upload.get(SECOND_IMAGE_NUM))
-                .myListImage(upload.get(THIRD_IMAGE_NUM))
-                .totalListImage(upload.get(FOURTH_IMAGE_NUM))
-                .mindType(findVerifiedMindType(createMindRequest.getMindTypeId()))
-                .build()));
-    }
-
-    @Transactional
-    public MindResponse updateMind(Long mindId,
-                                   UpdateMindRequest updateMindRequest,
-                                   List<MultipartFile> images) throws IOException {
-        MindType mindType= new MindType();
-        if(updateMindRequest == null) updateMindRequest = new UpdateMindRequest();
-        if(updateMindRequest.getMindTypeId() != null) mindType = findVerifiedMindType(updateMindRequest.getMindTypeId());
-
-        Mind verifiedMind = findVerifiedMind(mindId);
-        List<String> upload = s3Uploader.upload(images);
-        return MindResponse.of(beanUtils.copyNonNullProperties(
-                Mind.builder()
-                        .name(updateMindRequest.getName())
-                        .introduce(updateMindRequest.getIntroduce())
-                        .writeFormat(updateMindRequest.getWriteFormat())
-                        .introImage(upload.get(FIRST_IMAGE_NUM))
-                        .pageImage(upload.get(SECOND_IMAGE_NUM))
-                        .totalListImage(upload.get(THIRD_IMAGE_NUM))
-                        .myListImage(upload.get(FOURTH_IMAGE_NUM))
-                        .mindType(mindType)
-                        .build(), verifiedMind));
-    }
-
-    @Transactional
-    public void deleteMind(Long mindId) {
-        mindRepository.delete(findVerifiedMind(mindId));
-    }
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMe(String accountId) {
         User loginUser = findVerifiedUserByAccount(accountId);
@@ -291,8 +235,53 @@ public class MindService {
 
     public CheckReMindResponse changeIsDoneToday(Long mindId, User user) {
         JoinedMind joinedMind = getJoinedMind(user, mindId);
-        joinedMind.setTodayWrite(false);
+        joinedMind.updateTodayWrite(false);
         joinedMindRepository.save(joinedMind);
         return CheckReMindResponse.of(joinedMind);
+    }
+
+    @Transactional
+    public MindResponse createMind(CreateMindRequest createMindRequest,
+                                   List<MultipartFile> images) throws IOException {
+        List<String> upload = s3Uploader.upload(images);
+
+        return MindResponse.of(mindRepository.save(Mind.builder()
+                .name(createMindRequest.getName())
+                .introduce(createMindRequest.getIntroduce())
+                .introImage(upload.get(FIRST_IMAGE_NUM))
+                .writeFormat(createMindRequest.getWriteFormat())
+                .pageImage(upload.get(SECOND_IMAGE_NUM))
+                .myListImage(upload.get(THIRD_IMAGE_NUM))
+                .totalListImage(upload.get(FOURTH_IMAGE_NUM))
+                .mindType(findVerifiedMindType(createMindRequest.getMindTypeId()))
+                .build()));
+    }
+
+    @Transactional
+    public MindResponse updateMind(Long mindId,
+                                   UpdateMindRequest updateMindRequest,
+                                   List<MultipartFile> images) throws IOException {
+        MindType mindType= new MindType();
+        if(updateMindRequest == null) updateMindRequest = new UpdateMindRequest();
+        if(updateMindRequest.getMindTypeId() != null) mindType = findVerifiedMindType(updateMindRequest.getMindTypeId());
+
+        Mind verifiedMind = findVerifiedMind(mindId);
+        List<String> upload = s3Uploader.upload(images);
+        return MindResponse.of(beanUtils.copyNonNullProperties(
+                Mind.builder()
+                        .name(updateMindRequest.getName())
+                        .introduce(updateMindRequest.getIntroduce())
+                        .writeFormat(updateMindRequest.getWriteFormat())
+                        .introImage(upload.get(FIRST_IMAGE_NUM))
+                        .pageImage(upload.get(SECOND_IMAGE_NUM))
+                        .totalListImage(upload.get(THIRD_IMAGE_NUM))
+                        .myListImage(upload.get(FOURTH_IMAGE_NUM))
+                        .mindType(mindType)
+                        .build(), verifiedMind));
+    }
+
+    @Transactional
+    public void deleteMind(Long mindId) {
+        mindRepository.delete(findVerifiedMind(mindId));
     }
 }

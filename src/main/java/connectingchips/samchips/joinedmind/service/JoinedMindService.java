@@ -27,7 +27,6 @@ public class JoinedMindService {
     public static final int NOT_JOIN = 0;
     public static final int ADMIN_FULL_COUNT = Integer.MAX_VALUE;
     public static final int FULL_COUNT = 3;
-    public static final int ZERO_COUNT = 0;
     private final JoinedMindRepository joinedMindRepository;
     private final JoinedMindRepositoryImpl joinedMindRepositoryImpl;
     private final UserRepository userRepository;
@@ -86,7 +85,7 @@ public class JoinedMindService {
     public void reMindRelation(Long joinedMindId, User user) {
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
         JoinedMind verifiedJoinedMind = findVerifiedJoinedMind(joinedMindId);
-        verifiedJoinedMind.setIsJoining(JOIN);
+        verifiedJoinedMind.updateIsJoining(JOIN);
         joinedMinds.add(verifiedJoinedMind);
         user.editJoinedMinds(joinedMinds);
         userRepository.save(user);
@@ -96,7 +95,7 @@ public class JoinedMindService {
         JoinedMind joinedMind = checkUserHaveJoinedMind(mindId, user);
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
         joinedMinds.remove(joinedMind);
-        joinedMind.setIsJoining(NOT_JOIN);
+        joinedMind.updateIsJoining(NOT_JOIN);
         joinedMinds.add(joinedMind);
         user.editJoinedMinds(joinedMinds);
         joinedMindRepository.save(joinedMind);
