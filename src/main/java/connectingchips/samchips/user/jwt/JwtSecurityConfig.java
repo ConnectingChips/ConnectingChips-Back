@@ -3,6 +3,7 @@ package connectingchips.samchips.user.jwt;
 import connectingchips.samchips.user.jwt.filter.JwtAuthenticationFilter;
 import connectingchips.samchips.user.jwt.filter.JwtExceptionFilter;
 import connectingchips.samchips.user.repository.UserRepository;
+import connectingchips.samchips.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,14 +16,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     private final TokenProvider tokenProvider;
-    private final UserRepository userRepository;
+    private final RedisUtils redisUtils;
     private final JwtExceptionFilter jwtExceptionFilter;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         // security 로직에 JwtFilter 등록
         http.addFilterBefore(
-                new JwtAuthenticationFilter(tokenProvider, userRepository),
+                new JwtAuthenticationFilter(tokenProvider, redisUtils),
                 UsernamePasswordAuthenticationFilter.class
         ).addFilterBefore(
                 jwtExceptionFilter,

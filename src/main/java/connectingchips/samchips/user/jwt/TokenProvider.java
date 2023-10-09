@@ -121,6 +121,19 @@ public class TokenProvider {
         return null;
     }
 
+    // 토큰의 남은 유효시간
+    public Long getExpiredTime(String token) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        // 현재 시간
+        Long now = new Date().getTime();
+        return (expiration.getTime() - now);
+    }
+
     // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {

@@ -10,6 +10,7 @@ import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.RedisUtils;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -157,11 +158,15 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(Long userId){
+    public void logout(Long userId, HttpServletRequest request){
+        String accessToken = tokenProvider.resolveToken(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
+        Long expiredTime = tokenProvider.getExpiredTime(accessToken);
 
-        // 로그아웃 시, DB의 token 데이터 초기화
+        // 현재 발급되어 있는 AccessToken을 사용하지 못하게 BlackList를 위해 Redis에 저장
+        redisUtils.setData(accessToken, "logout", expiredTime);
+        // 로그아웃 시, Redis의 RefreshToken 데이터 삭제
         redisUtils.deleteData(REFRESH_TOKEN_KEY_PREFIX + user.getAccountId());
     }
 

@@ -7,6 +7,7 @@ import connectingchips.samchips.user.jwt.filter.JwtExceptionFilter;
 import connectingchips.samchips.user.jwt.handler.JwtAccessDeniedHandler;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.user.service.CustomUserDetailsService;
+import connectingchips.samchips.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
-    private final UserRepository userRepository;
+    private final RedisUtils redisUtils;
     private final CustomUserDetailsService userDetailsService;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtExceptionFilter jwtExceptionFilter;
@@ -96,7 +97,7 @@ public class SecurityConfig {
                 )
         ));
 
-        http.apply(new JwtSecurityConfig(tokenProvider, userRepository, jwtExceptionFilter)); // JwtSecurityConfig 적용
+        http.apply(new JwtSecurityConfig(tokenProvider, redisUtils, jwtExceptionFilter)); // JwtSecurityConfig 적용
 
         return http.build();
     }
