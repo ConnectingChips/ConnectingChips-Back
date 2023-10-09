@@ -1,13 +1,8 @@
 package connectingchips.samchips.mind.dto.response;
 
-import connectingchips.samchips.board.entity.Board;
-import connectingchips.samchips.joinedmind.entity.JoinedMind;
+
 import connectingchips.samchips.mind.entity.Mind;
-import connectingchips.samchips.mindtype.entity.MindType;
-import connectingchips.samchips.user.domain.User;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter

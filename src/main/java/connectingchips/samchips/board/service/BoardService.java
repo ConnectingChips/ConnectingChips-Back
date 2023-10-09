@@ -129,7 +129,7 @@ public class BoardService {
     }
 
     private void changeJoinedMind(User user, Mind mind) {
-        JoinedMind joinedMind = checkJoinMind(user, mind).setTodayWrite(true);
+        JoinedMind joinedMind = checkJoinMind(user, mind).updateTodayWrite(true);
         joinedMind.updateCount(joinedMind.getCount()+JOINING);
 
         // 일반 사용자라면 참여한 작심 개수에 따라 예외 발생
@@ -167,7 +167,7 @@ public class BoardService {
                 .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), board.getMind().getMindId()) && board.getCreatedAt().toLocalDate().equals(LocalDate.now()))
                 .findFirst();
         first.ifPresent(joinedMind -> {joinedMind.updateCount(joinedMind.getCount()-1);
-            joinedMindRepository.save(joinedMind.setTodayWrite(false));
+            joinedMindRepository.save(joinedMind.updateTodayWrite(false));
         });
         //==================================== 추가된 부분 =========================================
         if(boardRepository.existsById(boardId)) {

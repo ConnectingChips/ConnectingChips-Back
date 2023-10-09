@@ -1,7 +1,6 @@
 package connectingchips.samchips.mind.dto.response;
 
 import connectingchips.samchips.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.mind.entity.Mind;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

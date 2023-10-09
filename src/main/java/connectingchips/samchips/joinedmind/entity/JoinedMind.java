@@ -57,10 +57,10 @@ public class JoinedMind extends Auditable {
         }
     }
 
-    public void setIsJoining(Integer isJoining) {
+    public void updateIsJoining(Integer isJoining) {
         this.isJoining = isJoining;
     }
-    public JoinedMind setTodayWrite(Boolean todayWrite) {
+    public JoinedMind updateTodayWrite(Boolean todayWrite) {
         this.todayWrite = todayWrite;
         return this;
     }
