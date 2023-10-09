@@ -45,8 +45,6 @@ public class User extends Auditable {
 
     private String roles;     // 권한
 
-    private String refreshToken;  //리프레쉬 토큰
-
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
@@ -69,10 +67,6 @@ public class User extends Auditable {
 
     public void editInfo(String nickname){
         this.nickname = nickname;
-    }
-
-    public void editRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
     }
 
     public void editJoinedMinds(List<JoinedMind> joinedMinds) {

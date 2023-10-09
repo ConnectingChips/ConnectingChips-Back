@@ -33,6 +33,7 @@ import static connectingchips.samchips.exception.CommonErrorCode.*;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final String REFRESH_TOKEN_KEY_PREFIX = "RT-";
     private static final String EMAIL_AUTH_KEY_PREFIX = "EmailAuth-";
 
     @Value("${spring.mail.auth-code-expiration-millis}")
@@ -63,7 +64,7 @@ public class AuthService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        user.editRefreshToken(refreshToken);
+        redisUtils.setData(REFRESH_TOKEN_KEY_PREFIX + loginDto.getAccountId(), refreshToken, tokenProvider.refreshTokenExpirationMillis);
 
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }
@@ -96,7 +97,7 @@ public class AuthService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        findUser.editRefreshToken(refreshToken);
+        redisUtils.setData(REFRESH_TOKEN_KEY_PREFIX + findUser.getAccountId(), refreshToken, tokenProvider.refreshTokenExpirationMillis);
 
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }
@@ -161,7 +162,7 @@ public class AuthService {
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         // 로그아웃 시, DB의 token 데이터 초기화
-        user.editRefreshToken(null);
+        redisUtils.deleteData(REFRESH_TOKEN_KEY_PREFIX + user.getAccountId());
     }
 
     @Transactional(readOnly = true)
@@ -171,12 +172,17 @@ public class AuthService {
 
         // 리프레시 토큰 값을 이용해 사용자를 꺼낸다.
         Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+        // 해당 User가 존재하는지 체크
         User user = userRepository.findByAccountId(authentication.getName())
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
-        if(!user.getRefreshToken().equals(refreshToken)){
+        // refreshToken이 유효한지 체크
+        String getRefreshToken = redisUtils.getData(REFRESH_TOKEN_KEY_PREFIX + user.getAccountId())
+                .orElseThrow(() -> new RestApiException(INVALID_REFRESH_TOKEN))
+                .toString();
+
+        if(!getRefreshToken.equals(refreshToken))
             throw new RestApiException(INVALID_REFRESH_TOKEN);
-        }
 
         // 리프레시 토큰에 담긴 값을 그대로 액세스 토큰 생성에 활용한다.
         String accessToken = tokenProvider.createAccessToken(authentication);

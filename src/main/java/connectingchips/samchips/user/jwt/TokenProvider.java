@@ -40,7 +40,7 @@ public class TokenProvider {
     @Value("${jwt.access-token-expiration-millis}")
     private long accessTokenExpirationMillis;
     @Value("${jwt.refresh-token-expiration-millis}")
-    private long refreshTokenExpirationMillis;
+    public long refreshTokenExpirationMillis;
     private Key key;
 
     // Bean 등록후 Key SecretKey HS256 decode
