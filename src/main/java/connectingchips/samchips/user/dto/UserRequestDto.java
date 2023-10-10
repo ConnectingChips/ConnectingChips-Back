@@ -52,7 +52,7 @@ public class UserRequestDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Edit{
+    public static class Update{
 
         @NotBlank(message = "닉네임은 필수 입력 값입니다.")
         private String nickname;

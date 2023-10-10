@@ -65,7 +65,7 @@ public class User extends Auditable {
         this.password = password;
     }
 
-    public void editInfo(String nickname){
+    public void updateInfo(String nickname){
         this.nickname = nickname;
     }
 
