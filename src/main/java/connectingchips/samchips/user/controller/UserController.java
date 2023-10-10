@@ -33,13 +33,15 @@ public class UserController {
     private final UserService userService;
     private final AuthService authService;
 
+    /* 유저 회원가입 */
     @PostMapping
-    public ResponseEntity<BasicResponse> signup(@RequestBody @Valid UserRequestDto.Signup signupDto){
+    public ResponseEntity<BasicResponse> createUser(@RequestBody @Valid UserRequestDto.Signup signupDto){
         userService.signup(signupDto);
 
         return new ResponseEntity<>(BasicResponse.of(HttpStatus.CREATED) ,HttpStatus.CREATED);
     }
 
+    /* 자체 로그인 */
     @PostMapping("/login")
     public DataResponse<AuthResponseDto.AccessToken> login(@RequestBody @Valid UserRequestDto.Login loginDto, HttpServletResponse response){
         AuthResponseDto.Token token = authService.login(loginDto);
@@ -57,6 +59,7 @@ public class UserController {
         return DataResponse.of(accessToken);
     }
 
+    /* 아이디 사용 가능 여부 반환 */
     @GetMapping("/check-id")
     public DataResponse<UserResponseDto.CheckId> checkAccountId(@RequestParam @NotBlank String accountId){
         boolean isUsable = !userService.checkAccountId(accountId);
@@ -65,6 +68,7 @@ public class UserController {
         return DataResponse.of(checkIdDto);
     }
 
+    /* 현재 로그인 여부 반환 */
     @GetMapping("/check-login")
     public DataResponse<UserResponseDto.CheckLogin> checkLogin(@LoginUser User loginUser){
         boolean isLogin = false;
@@ -103,6 +107,7 @@ public class UserController {
         return DataResponse.of(verificationEmailDto);
     }
 
+    /* 현재 로그인한 유저 정보 반환 */
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public DataResponse<UserResponseDto.Info> getLoginUser(@LoginUser User loginUser){
@@ -116,13 +121,15 @@ public class UserController {
         return DataResponse.of(info);
     }
 
+    /* accessToken 재발급 */
     @GetMapping("/reissue")
-    public DataResponse<AuthResponseDto.AccessToken> reissue(@CookieValue("refreshToken") String refreshToken){
+    public DataResponse<AuthResponseDto.AccessToken> reissueAccessToken(@CookieValue("refreshToken") String refreshToken){
         AuthResponseDto.AccessToken accessToken = authService.reissueAccessToken(refreshToken);
 
         return DataResponse.of(accessToken);
     }
 
+    /* 로그아웃 */
     @PutMapping("/logout")
     @PreAuthorize("hasRole('USER')")
     public BasicResponse logout(@LoginUser User loginUser, HttpServletRequest request
@@ -139,14 +146,16 @@ public class UserController {
         return BasicResponse.of(HttpStatus.OK);
     }
 
+    /* 유저 정보 수정 */
     @PutMapping
     @PreAuthorize("hasRole('USER')")
-    public BasicResponse editUserInfo(@RequestBody @Valid UserRequestDto.Edit editDto, @LoginUser User loginUser){
-        userService.editInfo(loginUser.getId(), editDto);
+    public BasicResponse updateInfo(@RequestBody @Valid UserRequestDto.Update updateDto, @LoginUser User loginUser){
+        userService.updateInfo(loginUser.getId(), updateDto);
 
         return BasicResponse.of(HttpStatus.OK);
     }
 
+    /* 유저 탈퇴 */
     @DeleteMapping
     @PreAuthorize("hasRole('USER')")
     public BasicResponse deleteUser(@LoginUser User loginUser){

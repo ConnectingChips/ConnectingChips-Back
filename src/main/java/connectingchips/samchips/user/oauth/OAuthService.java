@@ -27,10 +27,12 @@ public class OAuthService {
     private final UserClientComposite userClientComposite;
     private final AuthService authService;
 
+    /* 각 소셜 타입의 AuthCode 요청 Url 반환 */
     public String getAuthCodeRequestUrl(SocialType socialType){
         return authCodeRequestUrlProviderComposite.provideUrl(socialType);
     }
 
+    /* 소셜 로그인 */
     @Transactional
     public AuthResponseDto.Token socialLogin(OAuthRequestDto.Login loginDto){
         User user = userClientComposite.fetch(SocialType.fromName(loginDto.getSocialType()), loginDto.getAuthCode());

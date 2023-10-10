@@ -26,6 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final S3Uploader s3Uploader;
 
+    /* 유저 회원가입 */
     @Transactional
     public void signup(UserRequestDto.Signup signupDto){
         if(userRepository.existsByAccountId(signupDto.getAccountId())){
@@ -46,27 +47,31 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /* userId로 유저 반환 */
     @Transactional(readOnly = true)
-    public UserResponseDto.Info findByUserId(Long userId){
-        UserResponseDto.Info findInfo = userRepository.findByUserId(userId)
+    public UserResponseDto.Info getByUserId(Long userId){
+        UserResponseDto.Info getInfo = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
-        return findInfo;
+        return getInfo;
     }
 
+    /* 아이디 사용 가능 여부 반환 */
     @Transactional(readOnly = true)
     public boolean checkAccountId(String accountId){
         return userRepository.existsByAccountId(accountId);
     }
 
+    /* 유저 정보 수정 */
     @Transactional
-    public void editInfo(Long userId, UserRequestDto.Edit editDto){
-        User findUser = userRepository.findById(userId)
+    public void updateInfo(Long userId, UserRequestDto.Update updateDto){
+        User getUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
-        findUser.editInfo(editDto.getNickname());
+        getUser.updateInfo(updateDto.getNickname());
     }
 
+    /* 유저 탈퇴 */
     @Transactional
     public void deleteByUserId(Long userId){
         if(!userRepository.existsById(userId)){
@@ -76,6 +81,7 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    /* 랜덤 기본 프로필 이미지 반환 */
     public String randomDefaultProfileImage(){
         List<String> fileNames = s3Uploader.find("profileImage/default/");
 

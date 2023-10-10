@@ -30,6 +30,7 @@ public class OAuthController {
     private final OAuthService oAuthService;
     private final TestApiClient testApiClient;
 
+    /* 각 소셜 타입의 AuthCode 요청 Url Redirect */
     @GetMapping("/{socialType}")
     public BasicResponse redirectAuthCodeRequestUrl(@PathVariable @NotNull SocialType socialType, HttpServletResponse response) throws IOException {
         String redirectUrl = oAuthService.getAuthCodeRequestUrl(socialType);
@@ -38,6 +39,7 @@ public class OAuthController {
         return BasicResponse.of(HttpStatus.OK);
     }
 
+    /* 소셜 로그인 */
     @PostMapping("/login")
     public DataResponse<AuthResponseDto.AccessToken> socialLogin(@RequestBody @Valid OAuthRequestDto.Login loginDto, HttpServletResponse response){
 
@@ -46,7 +48,7 @@ public class OAuthController {
 
         Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
         cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60);
 

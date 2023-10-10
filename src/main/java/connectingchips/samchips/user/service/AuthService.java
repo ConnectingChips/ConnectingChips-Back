@@ -50,6 +50,7 @@ public class AuthService {
     private final EmailSender emailSender;
     private final RedisUtils redisUtils;
 
+    /* 자체 로그인 */
     @Transactional
     public AuthResponseDto.Token login(UserRequestDto.Login loginDto){
         // 입력한 accountId와 password로 UsernamePasswordAuthenticationToken 객체 생성
@@ -70,6 +71,7 @@ public class AuthService {
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }
 
+    /* 소셜 로그인 */
     @Transactional
     public AuthResponseDto.Token authenticateSocial(User user){
         User findUser = userRepository.findByAccountId(user.getAccountId()).orElse(null);
@@ -103,7 +105,7 @@ public class AuthService {
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }
 
-    // 인증 메일 보내기
+    /* 인증 이메일 보내기 */
     @Transactional
     public void sendAuthenticationEmail(EmailRequestDto.Authentication authenticationDto) throws MessagingException {
         String toEmail = authenticationDto.getToEmail();;
@@ -140,7 +142,7 @@ public class AuthService {
         return false;
     }
 
-    // 이메일 인증했는지 검증
+    /* 이메일 인증했는지 검증 */
     @Transactional
     public AuthResponseDto.VerificationEmail verificationEmail(String email){
         String key = EMAIL_AUTH_KEY_PREFIX + email;
@@ -157,6 +159,7 @@ public class AuthService {
         return new AuthResponseDto.VerificationEmail(false);
     }
 
+    /* 로그아웃 */
     @Transactional
     public void logout(Long userId, HttpServletRequest request){
         String accessToken = tokenProvider.resolveToken(request);
@@ -170,6 +173,7 @@ public class AuthService {
         redisUtils.deleteData(REFRESH_TOKEN_KEY_PREFIX + user.getAccountId());
     }
 
+    /* accessToken 재발급 */
     @Transactional(readOnly = true)
     public AuthResponseDto.AccessToken reissueAccessToken(String refreshToken){
         // 리프레시 토큰 검증
@@ -178,11 +182,11 @@ public class AuthService {
         // 리프레시 토큰 값을 이용해 사용자를 꺼낸다.
         Authentication authentication = tokenProvider.getAuthentication(refreshToken);
         // 해당 User가 존재하는지 체크
-        User user = userRepository.findByAccountId(authentication.getName())
+        User getUser = userRepository.findByAccountId(authentication.getName())
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         // refreshToken이 유효한지 체크
-        String getRefreshToken = redisUtils.getData(REFRESH_TOKEN_KEY_PREFIX + user.getAccountId())
+        String getRefreshToken = redisUtils.getData(REFRESH_TOKEN_KEY_PREFIX + getUser.getAccountId())
                 .orElseThrow(() -> new RestApiException(INVALID_REFRESH_TOKEN))
                 .toString();
 
@@ -196,8 +200,9 @@ public class AuthService {
     }
 
     /**
-     *     Redis에 저장되어 있는 authCode와 매개변수로 넘어온 authCode를 비교
-     *     동일하면 value - "true", 만료 시간을 계산하여 다시 저장
+     *  인증 코드 검사
+     *  Redis에 저장되어 있는 authCode와 매개변수로 넘어온 authCode를 비교
+     *  동일하면 value - "true", 만료 시간을 계산하여 다시 저장
       */
     private boolean checkAuthCode(String key, String savedAuthCode, String authCode){
         String[] savedAuthInfos = savedAuthCode.split("-", 1);
@@ -216,7 +221,7 @@ public class AuthService {
         return false;
     }
 
-    // 이메일 재전송 대기 시간 검사
+    /* 이메일 재전송 대기 시간 검사 */
     private boolean checkSendEmailCoolTime(String emailKey){
         Optional<Object> savedAuthCode = redisUtils.getData(emailKey);
 
@@ -233,7 +238,7 @@ public class AuthService {
         return true;
     }
 
-    // 6자리의 인증번호와 현재 시간을 더한 AuthCode 생성
+    /* 6자리의 인증번호와 현재 시간을 더한 AuthCode 생성 */
     private String createAuthCode(){
         Random random = new Random();
         StringBuffer number = new StringBuffer();
@@ -248,7 +253,7 @@ public class AuthService {
         return number.toString();
     }
 
-    // 두 시간의 차이를 Millis로 반환
+    /* 두 시간의 차이를 Millis로 반환 */
     private long betweenToMillis(LocalTime a, LocalTime b){
         return Duration.between(a, b).toMillis();
     }
