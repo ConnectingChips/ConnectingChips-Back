@@ -10,6 +10,7 @@ import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.service.AuthService;
 import connectingchips.samchips.user.service.UserService;
+import connectingchips.samchips.utils.SecurityUtils;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
