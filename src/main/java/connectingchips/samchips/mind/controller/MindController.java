@@ -29,7 +29,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class MindController {
-
     public static final String ANONYMOUS_USER = "anonymousUser";
     private final MindService mindService;
 
@@ -43,12 +42,13 @@ public class MindController {
     @GetMapping("/intro/{mind-id}")
     public DataResponse getIntroMind(@PathVariable("mind-id")Long mindId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = mindService.getUsernameByAuthentication(auth);
 
         FindIntroMindResponse mind;
         if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
-            mind = mindService.findIntroMindNotAccountId(mindId);
+            mind = mindService.findIntroMindNotUsername(mindId);
         else
-            mind = mindService.findIntroMindByAccountId(mindId,makeAccountId(auth));
+            mind = mindService.findIntroMindByUsername(mindId, username);
         return DataResponse.of(mind);
     }
 
@@ -62,11 +62,12 @@ public class MindController {
     /*그룹페이지 정보 반환, 토큰 유무에 따라 todayWrite값 변환(0,1(회원),-1(비회원))*/
     @GetMapping("/page/{mind-id}")
     public DataResponse getPageMind(@PathVariable("mind-id")Long mindId){
-          Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-          FindPageMindResponse minds;
-          if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
-              minds = mindService.findPageMindByAnonymous(mindId);
-          else minds = mindService.findPageMindByUser(mindId,makeAccountId(auth));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = mindService.getUsernameByAuthentication(auth);
+        FindPageMindResponse minds;
+
+        if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER)) minds = mindService.findPageMindByAnonymous(mindId);
+        else minds = mindService.findPageMindByUser(mindId, username);
 
         return DataResponse.of(minds);
     }
@@ -82,10 +83,12 @@ public class MindController {
     @GetMapping("/except-me")
     public DataResponse getAllMindExceptMe(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = mindService.getUsernameByAuthentication(auth);
+
         List<FindTotalMindResponse> minds;
         if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
             minds = mindService.findAllMindExceptMe();
-        else minds = mindService.findAllMindExceptMe(makeAccountId(auth));
+        else minds = mindService.findAllMindExceptMe(username);
         return DataResponse.of(minds);
     }
 
@@ -94,10 +97,12 @@ public class MindController {
     @GetMapping("/except-me/{mind-type-name}")
     public DataResponse getAllMindExceptMeByMindType(@PathVariable("mind-type-name")Long mindTypeId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = mindService.getUsernameByAuthentication(auth);
+
         List<FindTotalMindResponse> minds;
         if(Objects.equals(auth.getPrincipal().toString(), ANONYMOUS_USER))
             minds = mindService.findAllMindExceptMeByMindType(mindTypeId);
-        else minds = mindService.findAllMindExceptMeByMindType(makeAccountId(auth),mindTypeId);
+        else minds = mindService.findAllMindExceptMeByMindType(username, mindTypeId);
 
         return DataResponse.of(minds);
     }
@@ -144,40 +149,6 @@ public class MindController {
     public DataResponse changeIsDoneToday(@PathVariable("mind-id") Long mindId,
                                           @LoginUser User user) {
         return DataResponse.of(mindService.changeIsDoneToday(mindId,user));
-    }
-
-    /* auth.getPrincipal().toString()은 토큰이 존재할경우
-    connectingchips.samchips.user.domain.UserAdapter
-    [Username=test1234,
-    Password=[PROTECTED],
-    Enabled=true,
-    AccountNonExpired=true,
-    credentialsNonExpired=true,
-    AccountNonLocked=true,
-    Granted Authorities=[ROLE_USER]]
-    위와 같은 String 형식의 데이터를 전달하고 토큰이 없을경우
-    anonymousUser라는 String 데이터를 반환합니다.
-    아래의 메서드는 auth.getPrincipal().toString() 데이터에서 Username부분(위의 예시에서는 test1234)를
-    사용하기위해 다른 String부분을 잘라주는 메서드입니다. 이거는 확인하시고
-    Authentication에서 회원id를 추출해서 반환한다로 변경해주셔도 될거같습니다. */
-
-    private static String makeAccountId(Authentication auth) {
-        String string = auth.getPrincipal().toString();
-        Integer start = 0;
-        Integer end = 0;
-        for (int i = 0; i < string.length(); i++) {
-            if (string.charAt(i) == '=') {
-                start = i+1;
-                break;
-            }
-        }
-        for (int i = start; i < string.length(); i++) {
-            if (string.charAt(i) == ',') {
-                end = i;
-                break;
-            }
-        }
-        return string.substring(start, end);
     }
 
     /* 작심 생성하기 */

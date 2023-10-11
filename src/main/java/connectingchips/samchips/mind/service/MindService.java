@@ -17,6 +17,7 @@ import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,8 +50,27 @@ public class MindService {
     private final CustomBeanUtils<Mind> beanUtils;
     private final S3Uploader s3Uploader;
 
+    /* auth.getPrincipal().toString()은 토큰이 존재할경우
+    connectingchips.samchips.user.domain.UserAdapter
+    [Username=test1234,
+    Password=[PROTECTED],
+    Enabled=true,
+    AccountNonExpired=true,
+    credentialsNonExpired=true,
+    AccountNonLocked=true,
+    Granted Authorities=[ROLE_USER]]
+    위와 같은 String 형식의 데이터를 전달하고 토큰이 없을경우 anonymousUser라는 String 데이터를 반환합니다.
+    아래의 메서드는 auth.getPrincipal().toString() 데이터에서 Username부분(위의 예시에서는 test1234)를
+    사용하기위해 다른 String부분을 잘라주는 메서드입니다. 이거는 확인하시고
+    Authentication에서 회원id를 추출해서 반환한다로 변경해주셔도 될거같습니다. */
+
+    public String getUsernameByAuthentication(Authentication auth) {
+        String principal = auth.getPrincipal().toString();
+        return principal.substring(principal.indexOf("=")+1, principal.indexOf(","));
+    }
+
     @Transactional
-    public FindIntroMindResponse findIntroMindNotAccountId(Long mindId) {
+    public FindIntroMindResponse findIntroMindNotUsername(Long mindId) {
         Mind verifiedMind = findVerifiedMind(mindId);
         int size = makeJoinMindSize(verifiedMind);
         return FindIntroMindResponse
@@ -66,15 +86,15 @@ public class MindService {
     }
 
     @Transactional
-    public FindIntroMindResponse findIntroMindByAccountId(Long mindId, String accountId) {
-        User user = findVerifiedUserByAccount(accountId);
+    public FindIntroMindResponse findIntroMindByUsername(Long mindId, String username) {
+        User user = findVerifiedUserByUsername(username);
 
         return FindIntroMindResponse
                 .of(findVerifiedMind(mindId),checkCanJoin(mindId, user));
     }
     @Transactional
-    public FindPageMindResponse findPageMindByUser(Long mindId, String accountId) {
-        User user = findVerifiedUserByAccount(accountId);
+    public FindPageMindResponse findPageMindByUser(Long mindId, String username) {
+        User user = findVerifiedUserByUsername(username);
         Mind verifiedMind = findVerifiedMind(mindId);
         return user.getJoinedMinds()
                 .stream()
@@ -88,12 +108,10 @@ public class MindService {
         return FindPageMindResponse.of(verifiedMind, false, NOT_JOIN,makeJoinMindSize(verifiedMind));
     }
 
-    private User findVerifiedUserByAccount(String accountId) {
-        Optional<User> byAccountId = userRepository.findByAccountId(accountId);
+    private User findVerifiedUserByUsername(String username) {
+        Optional<User> byAccountId = userRepository.findByAccountId(username);
         return byAccountId.orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
     }
-
-
 
     private static Integer checkCanJoin(Long mindId, User user) {
         if(user.getJoinedMinds().stream()
@@ -102,15 +120,12 @@ public class MindService {
         return NOT_JOIN;
     }
 
-
     @Transactional
     public Mind findVerifiedMind(Long mindId) {
         Optional<Mind> findMindById = mindRepository.findById(mindId);
         return findMindById.orElseThrow(() ->
                 new BadRequestException(NOT_FOUND_MIND_ID));
     }
-
-
 
     private User findVerifiedUser(Long userId) {
         Optional<User> findUserById = userRepository.findById(userId);
@@ -130,7 +145,7 @@ public class MindService {
 
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMe(String accountId) {
-        User loginUser = findVerifiedUserByAccount(accountId);
+        User loginUser = findVerifiedUserByUsername(accountId);
         List<Long> list = loginUser.getJoinedMinds().stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == CAN_JOIN)
                 .map(user -> user.getMind().getMindId()).toList();
@@ -150,7 +165,7 @@ public class MindService {
     }
     @Transactional
     public List<FindTotalMindResponse> findAllMindExceptMeByMindType(String accountId,Long mindTypeId) {
-        User loginUser = findVerifiedUserByAccount(accountId);
+        User loginUser = findVerifiedUserByUsername(accountId);
         List<Long> list = loginUser.getJoinedMinds().stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == CAN_JOIN)
                 .map(jm -> jm.getMind().getMindId()).toList();
