@@ -17,6 +17,7 @@ import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
 import connectingchips.samchips.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,12 +30,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static connectingchips.samchips.exception.CommonErrorCode.*;
+import static connectingchips.samchips.mind.controller.MindController.ANONYMOUS_USER;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MindService {
 
-    public static final int ANONYMOUS_USER = -1;
+    public static final int NOT_MEMBER = -1;
     public static final int NOT_JOIN = 0;
     public static final int CAN_JOIN = 1;
     public static final int FIRST_IMAGE_NUM = 0;
@@ -66,6 +69,7 @@ public class MindService {
 
     public String getUsernameByAuthentication(Authentication auth) {
         String principal = auth.getPrincipal().toString();
+        if(principal.equals(ANONYMOUS_USER)) return principal;
         return principal.substring(principal.indexOf("=")+1, principal.indexOf(","));
     }
 
@@ -74,7 +78,7 @@ public class MindService {
         Mind verifiedMind = findVerifiedMind(mindId);
         int size = makeJoinMindSize(verifiedMind);
         return FindIntroMindResponse
-                .of(findVerifiedMind(mindId),ANONYMOUS_USER,size);
+                .of(findVerifiedMind(mindId), NOT_MEMBER,size);
     }
     @Transactional
     public MindExampleImageResponse getExampleImage(Long mindId) {
@@ -160,7 +164,7 @@ public class MindService {
     public List<FindTotalMindResponse> findAllMindExceptMe() {
         return mindRepository.findAll()
                 .stream()
-                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER,makeJoinMindSize(mind)))
+                .map(mind -> FindTotalMindResponse.of(mind, NOT_MEMBER,makeJoinMindSize(mind)))
                 .toList();
     }
     @Transactional
@@ -183,7 +187,7 @@ public class MindService {
         return mindRepository.findAll()
                 .stream()
                 .filter(mind -> Objects.equals(mind.getMindType().getMindTypeId(), mindTypeId))
-                .map(mind -> FindTotalMindResponse.of(mind, ANONYMOUS_USER,makeJoinMindSize(mind)))
+                .map(mind -> FindTotalMindResponse.of(mind, NOT_MEMBER,makeJoinMindSize(mind)))
                 .toList();
     }
 
