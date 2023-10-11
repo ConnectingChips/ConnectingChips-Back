@@ -114,9 +114,10 @@ public class BoardService {
                 findById(boardRequestDto.getUserId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
 
-        changeJoinedMind(user, mind);
+        if(file == null) throw new BadRequestException(INVALID_REQUEST);
+        String imageURL = getImageURL(file, "board");
 
-        String imageURL = (file != null) ? getImageURL(file, "board") : "";
+        changeJoinedMind(user, mind);
 
         Board board = Board.builder()
                 .content(boardRequestDto.getContent())
