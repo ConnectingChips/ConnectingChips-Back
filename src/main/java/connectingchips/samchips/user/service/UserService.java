@@ -9,6 +9,9 @@ import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,7 @@ import java.util.Random;
 import static connectingchips.samchips.exception.CommonErrorCode.*;
 
 @Service
+@CacheConfig(cacheNames = "users")
 @RequiredArgsConstructor
 public class UserService {
 
@@ -47,13 +51,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-    /* userId로 유저 반환 */
+    /* accountId로 유저 반환 */
     @Transactional(readOnly = true)
-    public UserResponseDto.Info getByUserId(Long userId){
-        UserResponseDto.Info getInfo = userRepository.findByUserId(userId)
+    @Cacheable(key = "#accountId", unless = "#result == null")
+    public User getByAccountId(String accountId){
+        User getUser = userRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
-        return getInfo;
+        return getUser;
     }
 
     /* 아이디 사용 가능 여부 반환 */
@@ -64,11 +69,12 @@ public class UserService {
 
     /* 유저 정보 수정 */
     @Transactional
-    public void updateInfo(Long userId, UserRequestDto.Update updateDto){
-        User getUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
+    @CachePut(key = "#accountId")
+    public User updateInfo(String accountId, UserRequestDto.Update updateDto){
+        User getUser = getByAccountId(accountId);
 
         getUser.updateInfo(updateDto.getNickname());
+        return getUser;
     }
 
     /* 유저 탈퇴 */

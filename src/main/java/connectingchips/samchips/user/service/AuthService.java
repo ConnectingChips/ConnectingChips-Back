@@ -59,8 +59,7 @@ public class AuthService {
 
         // authenticate 메소드가 실행이 될 때 CustomUserDetailsService의 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        User user = userRepository.findByAccountId(authentication.getName())
-                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
+        User user = userService.getByAccountId(authentication.getName());
 
         // authentication 객체로 token 생성
         String accessToken = tokenProvider.createAccessToken(authentication);
@@ -74,9 +73,9 @@ public class AuthService {
     /* 소셜 로그인 */
     @Transactional
     public AuthResponseDto.Token authenticateSocial(User user){
-        User findUser = userRepository.findByAccountId(user.getAccountId()).orElse(null);
+        User getUser = userRepository.findByAccountId(user.getAccountId()).orElse(null);
 
-        if(findUser == null){
+        if(getUser == null){
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             User createUser = User.builder()
                     .accountId(user.getAccountId())
@@ -89,7 +88,7 @@ public class AuthService {
                     .socialType(user.getSocialType())
                     .build();
 
-            findUser = userRepository.save(createUser);
+            getUser = userRepository.save(createUser);
         }
 
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -100,7 +99,7 @@ public class AuthService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        redisUtils.setData(REFRESH_TOKEN_KEY_PREFIX + findUser.getAccountId(), refreshToken, tokenProvider.refreshTokenExpirationMillis);
+        redisUtils.setData(REFRESH_TOKEN_KEY_PREFIX + getUser.getAccountId(), refreshToken, tokenProvider.refreshTokenExpirationMillis);
 
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }
@@ -182,8 +181,7 @@ public class AuthService {
         // 리프레시 토큰 값을 이용해 사용자를 꺼낸다.
         Authentication authentication = tokenProvider.getAuthentication(refreshToken);
         // 해당 User가 존재하는지 체크
-        User getUser = userRepository.findByAccountId(authentication.getName())
-                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
+        User getUser = userService.getByAccountId(authentication.getName());
 
         // refreshToken이 유효한지 체크
         String getRefreshToken = redisUtils.getData(REFRESH_TOKEN_KEY_PREFIX + getUser.getAccountId())
