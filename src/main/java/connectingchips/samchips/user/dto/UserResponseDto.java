@@ -1,6 +1,7 @@
 package connectingchips.samchips.user.dto;
 
 import connectingchips.samchips.user.domain.Role;
+import connectingchips.samchips.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

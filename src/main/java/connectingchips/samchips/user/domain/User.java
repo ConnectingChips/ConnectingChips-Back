@@ -46,7 +46,6 @@ public class User extends Auditable {
 
     private String roles;     // 권한
 
-    @JsonIgnore // JPA 순환 반복 오류
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
