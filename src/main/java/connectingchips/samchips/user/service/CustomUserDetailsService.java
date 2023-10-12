@@ -13,13 +13,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
 
-        User findUser = userService.getByAccountId(accountId);
+        User getUser = userRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new UsernameNotFoundException(accountId + ": 존재하지 않는 accountId입니다."));
 
-        return new UserAdapter(findUser);
+        return new UserAdapter(getUser);
     }
 }

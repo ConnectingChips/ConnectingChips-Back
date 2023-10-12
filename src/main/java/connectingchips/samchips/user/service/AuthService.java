@@ -59,7 +59,6 @@ public class AuthService {
 
         // authenticate 메소드가 실행이 될 때 CustomUserDetailsService의 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        User user = userService.getByAccountId(authentication.getName());
 
         // authentication 객체로 token 생성
         String accessToken = tokenProvider.createAccessToken(authentication);
@@ -181,7 +180,8 @@ public class AuthService {
         // 리프레시 토큰 값을 이용해 사용자를 꺼낸다.
         Authentication authentication = tokenProvider.getAuthentication(refreshToken);
         // 해당 User가 존재하는지 체크
-        User getUser = userService.getByAccountId(authentication.getName());
+        User getUser = userRepository.findByAccountId(authentication.getName())
+                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         // refreshToken이 유효한지 체크
         String getRefreshToken = redisUtils.getData(REFRESH_TOKEN_KEY_PREFIX + getUser.getAccountId())

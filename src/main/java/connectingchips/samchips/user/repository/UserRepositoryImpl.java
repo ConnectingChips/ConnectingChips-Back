@@ -19,7 +19,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 
     @Override
     public Optional<UserResponseDto.Info> findByUserId(Long userId) {
-
         UserResponseDto.Info result = queryFactory
                 .select(Projections.constructor(UserResponseDto.Info.class,
                         Expressions.asNumber(userId).as("userId"),
@@ -29,6 +28,22 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
                 ))
                 .from(user)
                 .where(user.id.eq(userId))
+                .fetchOne();
+
+        return Optional.of(result);
+    }
+
+    @Override
+    public Optional<UserResponseDto.Info> findInfoByAccountId(String accountId) {
+        UserResponseDto.Info result = queryFactory
+                .select(Projections.constructor(UserResponseDto.Info.class,
+                        user.id,
+                        user.nickname,
+                        user.profileImage,
+                        user.roles
+                ))
+                .from(user)
+                .where(user.accountId.eq(accountId))
                 .fetchOne();
 
         return Optional.of(result);

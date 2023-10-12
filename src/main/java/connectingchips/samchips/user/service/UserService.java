@@ -3,14 +3,12 @@ package connectingchips.samchips.user.service;
 import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.exception.RestApiException;
 import connectingchips.samchips.user.domain.SocialType;
-import connectingchips.samchips.exception.BadRequestException;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,11 +52,11 @@ public class UserService {
     /* accountId로 유저 반환 */
     @Transactional(readOnly = true)
     @Cacheable(key = "#accountId", unless = "#result == null")
-    public User getByAccountId(String accountId){
-        User getUser = userRepository.findByAccountId(accountId)
+    public UserResponseDto.Info getByAccountId(String accountId){
+        UserResponseDto.Info info = userRepository.findInfoByAccountId(accountId)
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
-        return getUser;
+        return info;
     }
 
     /* 아이디 사용 가능 여부 반환 */
@@ -69,9 +67,9 @@ public class UserService {
 
     /* 유저 정보 수정 */
     @Transactional
-    @CachePut(key = "#accountId")
-    public User updateInfo(String accountId, UserRequestDto.Update updateDto){
-        User getUser = getByAccountId(accountId);
+    public User updateInfo(Long userId, UserRequestDto.Update updateDto){
+        User getUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
 
         getUser.updateInfo(updateDto.getNickname());
         return getUser;

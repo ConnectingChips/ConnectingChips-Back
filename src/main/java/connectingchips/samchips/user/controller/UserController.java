@@ -151,7 +151,7 @@ public class UserController {
     @PutMapping
     @PreAuthorize("hasRole('USER')")
     public BasicResponse updateInfo(@RequestBody @Valid UserRequestDto.Update updateDto, @LoginUser User loginUser){
-        userService.updateInfo(loginUser.getAccountId(), updateDto);
+        userService.updateInfo(loginUser.getId(), updateDto);
 
         return BasicResponse.of(HttpStatus.OK);
     }
