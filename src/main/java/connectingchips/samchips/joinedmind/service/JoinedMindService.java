@@ -45,20 +45,25 @@ public class JoinedMindService {
 
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
-        Mind mind = findVerifiedMind(mindId);
+        Mind mind = findVerifiedMind(mindId); //작심을 찾아옴
         Optional<JoinedMind> first = beforeJoinedCheck(mindId, user);
+
         if(first.isPresent()) {
             reMindRelation(first.get().getJoinedMindId(),user);
             return;
         }
+
         checkAlreadyJoined(mindId, user);
         checkJoinMindCountMax(user);
+
         JoinedMind joinedMind = new JoinedMind();
         joinedMind.setUser(user);
         joinedMind.setMind(mind);
+
         joinedMindRepository.save(joinedMind);
     }
 
+    //이게 뭘까
     private Optional<JoinedMind> beforeJoinedCheck(Long mindId, User user) {
         Optional<JoinedMind> first = user.getJoinedMinds()
                 .stream()
