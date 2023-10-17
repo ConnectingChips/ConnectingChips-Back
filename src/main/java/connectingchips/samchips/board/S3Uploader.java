@@ -52,6 +52,7 @@ public class S3Uploader {
         );
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
+
     /**
      * S3에 파일 삭제
      */
@@ -67,7 +68,7 @@ public class S3Uploader {
      * 로컬에 있는 파일 삭제하는 메서드
      * @param file : 삭제할 파일
      */
-    private void removeNewFile(File file) {
+    private void removeLocalFile(File file) {
         if(file.delete()) System.out.println("파일 삭제 성공");
         else System.out.println("파일 삭제 실패");
     }
@@ -129,15 +130,12 @@ public class S3Uploader {
         //s3에 업로드
         String uploadImageUrl = putS3(uploadFile, fileName);
         //로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
-        removeNewFile(uploadFile);
+        removeLocalFile(uploadFile);
 
         return uploadImageUrl; //업로드된 파일의 S3 URL 주소 반환
     }
 
-    //기존 확장자명을 유지한 채, 유니크한 파일의 이름을 생성하는 로직
-    private String createFileName(String originalFileName) {
-        return UUID.randomUUID().toString().concat(".").concat(getFileExtension(originalFileName));
-    }
+
 
     //================================== 추가한 부분=========================
     public List<String> upload(List<MultipartFile> multipartFile) throws IOException {
@@ -164,25 +162,25 @@ public class S3Uploader {
         return imgUrlList;
     }
 
-    /**
-     * 파일 유효성 검사
-     * 이미지 파일만 업로드 가능하도록 진행
-     */
+    //기존 확장자명을 유지한 채, 유니크한 파일의 이름을 생성
+    private String createFileName(String originalFileName) {
+        String extension = getFileExtension(originalFileName);
+        if(!isImageExtension(extension)) throw new BadRequestException(INVALID_REQUEST);
+        return UUID.randomUUID().toString().concat(".").concat(getFileExtension(originalFileName));
+    }
+
+    //확장자 추출
     private String getFileExtension(String fileName) {
-        ArrayList<String> fileValidate = new ArrayList<String>(
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    //파일 유효성 검사 (이미지 확장자만 업로드 가능)
+    private boolean isImageExtension(String extension) {
+        ArrayList<String> imageExtensions = new ArrayList<>(
                 Arrays.asList("jpg", "jpeg","JPG", "JPEG",
                         "png", "PNG", "heic", "HEIC", "bmp", "BMP")
         );
-        if (fileName.isBlank()) {
-            throw new BadRequestException(INVALID_REQUEST);
-        }
-
-        String extension = fileName.substring(fileName.lastIndexOf(".")+1);
-        if (!fileValidate.contains(extension)) {
-            throw new BadRequestException(INVALID_REQUEST);
-        } else {
-            return extension;
-        }
+        return imageExtensions.contains(extension);
     }
 
 }
