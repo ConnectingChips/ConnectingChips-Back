@@ -2,8 +2,7 @@ package connectingchips.samchips.user.jwt;
 
 import connectingchips.samchips.user.jwt.filter.JwtAuthenticationFilter;
 import connectingchips.samchips.user.jwt.filter.JwtExceptionFilter;
-import connectingchips.samchips.user.repository.UserRepository;
-import connectingchips.samchips.utils.RedisUtils;
+import connectingchips.samchips.global.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

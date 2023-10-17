@@ -1,7 +1,7 @@
 package connectingchips.samchips.board.dto;
 
-import connectingchips.samchips.comment.dto.CommentResponseDto;
-import connectingchips.samchips.comment.dto.ReplyResponseDto;
+import connectingchips.samchips.board.comment.dto.CommentResponseDto;
+import connectingchips.samchips.board.comment.dto.ReplyResponseDto;
 
 import java.util.List;
 

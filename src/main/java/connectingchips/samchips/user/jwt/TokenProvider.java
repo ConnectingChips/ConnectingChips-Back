@@ -1,12 +1,11 @@
 package connectingchips.samchips.user.jwt;
 
-import connectingchips.samchips.exception.RestApiException;
+import connectingchips.samchips.global.exception.RestApiException;
 import connectingchips.samchips.user.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static connectingchips.samchips.exception.AuthErrorCode.*;
+import static connectingchips.samchips.global.exception.AuthErrorCode.*;
 import static connectingchips.samchips.user.jwt.filter.JwtAuthenticationFilter.AUTHORIZATION_HEADER;
 
 @Slf4j

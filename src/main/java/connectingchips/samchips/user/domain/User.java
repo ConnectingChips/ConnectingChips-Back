@@ -1,9 +1,7 @@
 package connectingchips.samchips.user.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import connectingchips.samchips.audit.Auditable;
-import connectingchips.samchips.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.mind.entity.Mind;
+import connectingchips.samchips.global.audit.Auditable;
+import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

@@ -1,9 +1,9 @@
 package connectingchips.samchips.user.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import connectingchips.samchips.commons.dto.ErrorResponse;
-import connectingchips.samchips.exception.AuthErrorCode;
-import connectingchips.samchips.exception.RestApiException;
+import connectingchips.samchips.global.commons.dto.ErrorResponse;
+import connectingchips.samchips.global.exception.AuthErrorCode;
+import connectingchips.samchips.global.exception.RestApiException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

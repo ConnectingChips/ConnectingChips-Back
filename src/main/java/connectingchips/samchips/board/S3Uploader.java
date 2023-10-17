@@ -3,8 +3,8 @@ package connectingchips.samchips.board;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.exception.RestApiException;
+import connectingchips.samchips.global.exception.BadRequestException;
+import connectingchips.samchips.global.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static connectingchips.samchips.exception.CommonErrorCode.*;
+import static connectingchips.samchips.global.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

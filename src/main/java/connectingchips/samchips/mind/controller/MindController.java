@@ -1,7 +1,7 @@
 package connectingchips.samchips.mind.controller;
 
-import connectingchips.samchips.commons.dto.BasicResponse;
-import connectingchips.samchips.commons.dto.DataResponse;
+import connectingchips.samchips.global.commons.dto.BasicResponse;
+import connectingchips.samchips.global.commons.dto.DataResponse;
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.FindIntroMindResponse;

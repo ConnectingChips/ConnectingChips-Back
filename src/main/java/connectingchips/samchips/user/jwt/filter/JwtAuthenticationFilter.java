@@ -1,9 +1,8 @@
 package connectingchips.samchips.user.jwt.filter;
 
-import connectingchips.samchips.exception.RestApiException;
+import connectingchips.samchips.global.exception.RestApiException;
 import connectingchips.samchips.user.jwt.TokenProvider;
-import connectingchips.samchips.user.repository.UserRepository;
-import connectingchips.samchips.utils.RedisUtils;
+import connectingchips.samchips.global.utils.RedisUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static connectingchips.samchips.exception.AuthErrorCode.EXPIRED_TOKEN;
+import static connectingchips.samchips.global.exception.AuthErrorCode.EXPIRED_TOKEN;
 
 @Slf4j
 @RequiredArgsConstructor
