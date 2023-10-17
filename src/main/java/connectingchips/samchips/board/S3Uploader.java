@@ -64,10 +64,7 @@ public class S3Uploader {
         }
     }
 
-    /**
-     * 로컬에 있는 파일 삭제하는 메서드
-     * @param file : 삭제할 파일
-     */
+    //로컬에 있는 파일 삭제
     private void removeLocalFile(File file) {
         if(file.delete()) System.out.println("파일 삭제 성공");
         else System.out.println("파일 삭제 실패");
