@@ -176,11 +176,7 @@ public class S3Uploader {
 
     //파일 유효성 검사 (이미지 확장자만 업로드 가능)
     private boolean isImageExtension(String extension) {
-        ArrayList<String> imageExtensions = new ArrayList<>(
-                Arrays.asList("jpg", "jpeg","JPG", "JPEG",
-                        "png", "PNG", "heic", "HEIC", "bmp", "BMP")
-        );
-        return imageExtensions.contains(extension);
+        String[] imageExtensions = {"jpg", "jpeg", "png", "heic", "bmp"};
+        return Arrays.stream(imageExtensions).anyMatch(ext -> ext.equalsIgnoreCase(extension));
     }
-
 }
