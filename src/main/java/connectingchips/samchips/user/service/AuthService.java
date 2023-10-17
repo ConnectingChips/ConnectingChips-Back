@@ -1,14 +1,14 @@
 package connectingchips.samchips.user.service;
 
-import connectingchips.samchips.email.EmailSender;
-import connectingchips.samchips.email.dto.EmailRequestDto;
-import connectingchips.samchips.exception.RestApiException;
+import connectingchips.samchips.global.email.EmailSender;
+import connectingchips.samchips.global.email.dto.EmailRequestDto;
+import connectingchips.samchips.global.exception.RestApiException;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.jwt.TokenProvider;
 import connectingchips.samchips.user.repository.UserRepository;
-import connectingchips.samchips.utils.RedisUtils;
+import connectingchips.samchips.global.utils.RedisUtils;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 
-import static connectingchips.samchips.exception.AuthErrorCode.COOL_TIME_SEND_EMAIL;
-import static connectingchips.samchips.exception.AuthErrorCode.INVALID_REFRESH_TOKEN;
-import static connectingchips.samchips.exception.CommonErrorCode.*;
+import static connectingchips.samchips.global.exception.AuthErrorCode.COOL_TIME_SEND_EMAIL;
+import static connectingchips.samchips.global.exception.AuthErrorCode.INVALID_REFRESH_TOKEN;
+import static connectingchips.samchips.global.exception.CommonErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

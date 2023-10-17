@@ -1,20 +1,16 @@
 package connectingchips.samchips.user.oauth;
 
-import connectingchips.samchips.commons.dto.BasicResponse;
-import connectingchips.samchips.commons.dto.DataResponse;
+import connectingchips.samchips.global.commons.dto.BasicResponse;
+import connectingchips.samchips.global.commons.dto.DataResponse;
 import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.user.dto.AuthResponseDto;
 import connectingchips.samchips.user.oauth.client.TestApiClient;
 import connectingchips.samchips.user.oauth.dto.OAuthRequestDto;
-import jakarta.persistence.Basic;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.exception.DataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

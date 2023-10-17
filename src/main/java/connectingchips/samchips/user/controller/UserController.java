@@ -1,8 +1,8 @@
 package connectingchips.samchips.user.controller;
 
-import connectingchips.samchips.commons.dto.BasicResponse;
-import connectingchips.samchips.commons.dto.DataResponse;
-import connectingchips.samchips.email.dto.EmailRequestDto;
+import connectingchips.samchips.global.commons.dto.BasicResponse;
+import connectingchips.samchips.global.commons.dto.DataResponse;
+import connectingchips.samchips.global.email.dto.EmailRequestDto;
 import connectingchips.samchips.user.domain.LoginUser;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.AuthResponseDto;
@@ -10,7 +10,6 @@ import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.dto.UserResponseDto;
 import connectingchips.samchips.user.service.AuthService;
 import connectingchips.samchips.user.service.UserService;
-import connectingchips.samchips.utils.SecurityUtils;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

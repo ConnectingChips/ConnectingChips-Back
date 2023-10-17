@@ -1,7 +1,7 @@
 package connectingchips.samchips.board.dto;
 
 import connectingchips.samchips.board.entity.Board;
-import connectingchips.samchips.comment.dto.CommentResponseDto;
+import connectingchips.samchips.board.comment.dto.CommentResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

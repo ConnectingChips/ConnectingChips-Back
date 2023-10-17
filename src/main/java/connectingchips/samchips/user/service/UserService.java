@@ -1,7 +1,7 @@
 package connectingchips.samchips.user.service;
 
 import connectingchips.samchips.board.S3Uploader;
-import connectingchips.samchips.exception.RestApiException;
+import connectingchips.samchips.global.exception.RestApiException;
 import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.UserRequestDto;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Random;
 
-import static connectingchips.samchips.exception.CommonErrorCode.*;
+import static connectingchips.samchips.global.exception.CommonErrorCode.*;
 
 @Service
 @CacheConfig(cacheNames = "users")

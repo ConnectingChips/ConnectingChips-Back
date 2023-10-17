@@ -2,20 +2,20 @@ package connectingchips.samchips.mind.service;
 
 import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.repository.BoardRepository;
-import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
+import connectingchips.samchips.global.exception.BadRequestException;
+import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
+import connectingchips.samchips.mind.joinedmind.repository.JoinedMindRepository;
 
 import connectingchips.samchips.mind.dto.request.CreateMindRequest;
 import connectingchips.samchips.mind.dto.request.UpdateMindRequest;
 import connectingchips.samchips.mind.dto.response.*;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
-import connectingchips.samchips.mindtype.entity.MindType;
-import connectingchips.samchips.mindtype.repository.MindTypeRepository;
+import connectingchips.samchips.mind.mindtype.entity.MindType;
+import connectingchips.samchips.mind.mindtype.repository.MindTypeRepository;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.repository.UserRepository;
-import connectingchips.samchips.utils.CustomBeanUtils;
+import connectingchips.samchips.global.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -29,7 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static connectingchips.samchips.exception.CommonErrorCode.*;
+import static connectingchips.samchips.global.exception.CommonErrorCode.*;
 import static connectingchips.samchips.mind.controller.MindController.ANONYMOUS_USER;
 
 @Service

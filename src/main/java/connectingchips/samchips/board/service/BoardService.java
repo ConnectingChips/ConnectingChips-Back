@@ -6,16 +6,16 @@ import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
 
-import connectingchips.samchips.comment.dto.CommentResponseDto;
-import connectingchips.samchips.comment.dto.ReplyResponseDto;
-import connectingchips.samchips.comment.entity.Comment;
-import connectingchips.samchips.comment.entity.Reply;
-import connectingchips.samchips.comment.repository.CommentRepository;
-import connectingchips.samchips.comment.repository.ReplyRepository;
+import connectingchips.samchips.board.comment.dto.CommentResponseDto;
+import connectingchips.samchips.board.comment.dto.ReplyResponseDto;
+import connectingchips.samchips.board.comment.entity.Comment;
+import connectingchips.samchips.board.comment.entity.Reply;
+import connectingchips.samchips.board.comment.repository.CommentRepository;
+import connectingchips.samchips.board.comment.repository.ReplyRepository;
 
-import connectingchips.samchips.exception.BadRequestException;
-import connectingchips.samchips.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.joinedmind.repository.JoinedMindRepository;
+import connectingchips.samchips.global.exception.BadRequestException;
+import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
+import connectingchips.samchips.mind.joinedmind.repository.JoinedMindRepository;
 
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
@@ -32,8 +32,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static connectingchips.samchips.exception.CommonErrorCode.*;
-import static connectingchips.samchips.joinedmind.service.JoinedMindService.FULL_COUNT;
+import static connectingchips.samchips.global.exception.CommonErrorCode.*;
+import static connectingchips.samchips.mind.joinedmind.service.JoinedMindService.FULL_COUNT;
 
 
 @Service
