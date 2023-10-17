@@ -135,8 +135,6 @@ public class S3Uploader {
         return uploadImageUrl; //업로드된 파일의 S3 URL 주소 반환
     }
 
-
-
     //================================== 추가한 부분=========================
     public List<String> upload(List<MultipartFile> multipartFile) throws IOException {
         List<String> imgUrlList = new ArrayList<>();
@@ -162,11 +160,15 @@ public class S3Uploader {
         return imgUrlList;
     }
 
-    //기존 확장자명을 유지한 채, 유니크한 파일의 이름을 생성
+    //기존 확장자 명을 유지한 채, UUID 파일 생성
     private String createFileName(String originalFileName) {
         String extension = getFileExtension(originalFileName);
-        if(!isImageExtension(extension)) throw new BadRequestException(INVALID_REQUEST);
-        return UUID.randomUUID().toString().concat(".").concat(getFileExtension(originalFileName));
+        if (!isImageExtension(extension)) {
+            throw new BadRequestException(INVALID_REQUEST);
+        }
+
+        String uniqueName = UUID.randomUUID().toString();
+        return uniqueName + "." + extension;
     }
 
     //확장자 추출
