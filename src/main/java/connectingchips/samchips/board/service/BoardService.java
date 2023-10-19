@@ -49,7 +49,12 @@ public class BoardService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
-    public  List<BoardResponseDto.Read> getMindBoardList(Long mindId){
+    public Board getBoardById(Long boardId){
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
+    }
+
+    public List<BoardResponseDto.Read> getMindBoardList(Long mindId){
         List<BoardResponseDto.Read> boardList = getBoardList(mindId);
 
         for(BoardResponseDto.Read board : boardList) {
@@ -95,13 +100,7 @@ public class BoardService {
     }
 
     public String getImageURL(MultipartFile file, String dirName) throws IOException {
-        String imageURL;
-        if(!file.isEmpty()) {
-            imageURL = s3Uploader.uploadFile(file,dirName);
-        } else {
-            imageURL = "default";
-        }
-        return imageURL;
+        return (!file.isEmpty()) ? s3Uploader.uploadFile(file,dirName) : "default" ;
     }
 
     @Transactional
