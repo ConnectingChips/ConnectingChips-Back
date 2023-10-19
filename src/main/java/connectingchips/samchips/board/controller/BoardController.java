@@ -46,7 +46,6 @@ public class BoardController {
     public BasicResponse createBoard(@RequestPart(value = "file") MultipartFile file,
                                      @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto) throws IOException {
         boardService.createBoard(file, boardRequestDto);
-
         return BasicResponse.of(HttpStatus.OK);
     }
 

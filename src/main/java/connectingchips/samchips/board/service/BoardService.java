@@ -99,10 +99,6 @@ public class BoardService {
         } else return new BoardResponseDto.CanEdit(false);
     }
 
-    public String getImageURL(MultipartFile file, String dirName) throws IOException {
-        return (!file.isEmpty()) ? s3Uploader.uploadFile(file,dirName) : "default" ;
-    }
-
     @Transactional
     public void createBoard(MultipartFile file, BoardRequestDto.Save boardRequestDto) throws IOException {
         Mind mind = mindRepository.
@@ -113,8 +109,7 @@ public class BoardService {
                 findById(boardRequestDto.getUserId())
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
 
-        if(file == null) throw new BadRequestException(INVALID_REQUEST);
-        String imageURL = getImageURL(file, "board");
+        String imageURL = s3Uploader.uploadFile(file,"board");
 
         changeJoinedMind(user, mind);
 
