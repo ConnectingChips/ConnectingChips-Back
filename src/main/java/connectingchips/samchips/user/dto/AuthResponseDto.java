@@ -19,11 +19,4 @@ public class AuthResponseDto {
 
         private String accessToken;
     }
-
-    @Getter
-    @AllArgsConstructor
-    public static class VerificationEmail{
-
-        private Boolean isVerified;
-    }
 }

@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import static connectingchips.samchips.global.exception.CommonErrorCode.*;
+import static connectingchips.samchips.global.exception.AuthErrorCode.*;
 
 @Service
 @CacheConfig(cacheNames = "users")
@@ -29,12 +30,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Uploader s3Uploader;
+    private final AuthService authService;
 
     /* 유저 회원가입 */
     @Transactional
     public void signup(UserRequestDto.Signup signupDto){
         if(userRepository.existsByAccountId(signupDto.getAccountId())){
             throw new RestApiException(ALREADY_JOIN_MEMBERSHIP);
+        }
+
+        // 인증된 이메일인지 검증
+        boolean isVerified = authService.verificationEmail(signupDto.getEmail());
+        if(!isVerified){
+            throw new RestApiException(UNAUTHENTICATED_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(signupDto.getPassword());

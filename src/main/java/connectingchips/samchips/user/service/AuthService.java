@@ -1,5 +1,6 @@
 package connectingchips.samchips.user.service;
 
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.global.email.EmailSender;
 import connectingchips.samchips.global.email.dto.EmailRequestDto;
 import connectingchips.samchips.global.exception.RestApiException;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -46,9 +48,9 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
     private final EmailSender emailSender;
     private final RedisUtils redisUtils;
+    private final S3Uploader s3Uploader;
 
     /* 자체 로그인 */
     @Transactional
@@ -81,7 +83,7 @@ public class AuthService {
                     .password(encodedPassword)
                     .nickname(user.getNickname())
                     .email(user.getEmail())
-                    .profileImage(userService.randomDefaultProfileImage())
+                    .profileImage(randomDefaultProfileImage())
                     .gender(user.getGender())
                     .ageRange(user.getAgeRange())
                     .socialType(user.getSocialType())
@@ -135,6 +137,7 @@ public class AuthService {
 
         // 인증 데이터 확인
         if(savedAuthCode.isPresent()) {
+            System.out.println("데이터 존재");
             return checkAuthCode(key, savedAuthCode.get().toString(), authCode);
         }
         return false;
@@ -142,7 +145,7 @@ public class AuthService {
 
     /* 이메일 인증했는지 검증 */
     @Transactional
-    public AuthResponseDto.VerificationEmail verificationEmail(String email){
+    public boolean verificationEmail(String email){
         String key = EMAIL_AUTH_KEY_PREFIX + email;
         Optional<Object> savedAuthCode = redisUtils.getData(key);
 
@@ -151,10 +154,10 @@ public class AuthService {
             String[] savedAuthInfos = savedAuthCode.get().toString().split("-");
             if(savedAuthInfos[0].equals("true")){
                 redisUtils.deleteData(key);
-                return new AuthResponseDto.VerificationEmail(true);
+                return true;
             }
         }
-        return new AuthResponseDto.VerificationEmail(false);
+        return false;
     }
 
     /* 로그아웃 */
@@ -203,9 +206,9 @@ public class AuthService {
      *  동일하면 value - "true", 만료 시간을 계산하여 다시 저장
       */
     private boolean checkAuthCode(String key, String savedAuthCode, String authCode){
-        String[] savedAuthInfos = savedAuthCode.split("-", 1);
+        String[] savedAuthInfos = savedAuthCode.split("-");
         String code = authCode.split("-")[0];
-
+        System.out.println(savedAuthInfos[0] + ", " + code);
         // 인증번호 비교
         if(savedAuthInfos[0].equals(code)){
             // 이메일 전송할 때의 시간과 현재 시간의 차이를 계산하여 데이터 만료 시간으로 설정
@@ -213,7 +216,7 @@ public class AuthService {
             long expiredTime = authCodeExpirationMillis - betweenToMillis;
 
             // 같은 key로 데이터를 삽입하여 덮어쓰기
-            redisUtils.setData(key, "true-"+savedAuthInfos[1], expiredTime);
+            redisUtils.setData(key, "true-" + savedAuthInfos[1], expiredTime);
             return true;
         }
         return false;
@@ -254,5 +257,25 @@ public class AuthService {
     /* 두 시간의 차이를 Millis로 반환 */
     private long betweenToMillis(LocalTime a, LocalTime b){
         return Duration.between(a, b).toMillis();
+    }
+
+    // 순환 참조 문제가 발생하여 임시로 AuthService에도 randomDefaultProfileImage 메서드 추가
+    private String randomDefaultProfileImage(){
+        List<String> fileNames = s3Uploader.find("profileImage/default/");
+
+        if(fileNames.isEmpty()){
+            return "";
+        }else{
+            if(fileNames.size() == 1){
+                return "";
+            }else{
+                fileNames.remove(0);
+            }
+        }
+
+        Random random = new Random();
+        int randomIdx = random.nextInt(fileNames.size());
+
+        return s3Uploader.getFileUrl(fileNames.get(randomIdx));
     }
 }
