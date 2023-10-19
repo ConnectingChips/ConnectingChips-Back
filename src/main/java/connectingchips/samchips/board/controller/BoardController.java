@@ -5,6 +5,9 @@ import connectingchips.samchips.board.dto.BoardResponseDto;
 import connectingchips.samchips.board.service.BoardService;
 import connectingchips.samchips.global.commons.dto.BasicResponse;
 import connectingchips.samchips.global.commons.dto.DataResponse;
+import connectingchips.samchips.user.domain.LoginUser;
+import connectingchips.samchips.user.domain.User;
+import connectingchips.samchips.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +23,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final UserService userService;
 
     /* 게시글 리스트 반환 */
     @GetMapping("/{mind_id}")
@@ -40,7 +44,9 @@ public class BoardController {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public BasicResponse createBoard(@RequestPart(value = "file", required = false) MultipartFile file,
-                                      @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto) throws IOException {
+                                     @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto,
+                                     @LoginUser User loginUser) throws IOException {
+        userService.isLoginUser(loginUser, boardRequestDto.getUserId());
         boardService.createBoard(file, boardRequestDto);
 
         return BasicResponse.of(HttpStatus.OK);
@@ -49,7 +55,10 @@ public class BoardController {
     /* 게시글 수정 */
     @PutMapping("/{board_id}")
     @PreAuthorize("hasRole('USER')")
-    public DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId, @RequestBody BoardRequestDto.Edit boardRequestDto) {
+    public DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId,
+                                                             @RequestBody BoardRequestDto.Edit boardRequestDto,
+                                                             @LoginUser User loginUser) {
+        userService.isLoginUser(loginUser, boardService.getBoardById(boardId).getUser().getId());
         BoardResponseDto.Update boardResponseDto = boardService.updateBoard(boardId, boardRequestDto);
         return DataResponse.of(boardResponseDto);
     }
@@ -57,7 +66,8 @@ public class BoardController {
     /* 게시글 삭제 */
     @DeleteMapping("/{board_id}")
     @PreAuthorize("hasRole('USER')")
-    public BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId){
+    public BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId, @LoginUser User loginUser){
+        userService.isLoginUser(loginUser, boardService.getBoardById(boardId).getUser().getId());
         boardService.deleteBoard(boardId);
         return BasicResponse.of(HttpStatus.OK);
     }
