@@ -11,6 +11,9 @@ public enum CommonErrorCode implements ErrorCode{
     // 400 BAD_REQUEST 잘못된 요청
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "올바르지 않은 요청입니다."),
 
+    // 403 FORBIDDEN 접근 근지
+    FORBIDDEN(HttpStatus.FORBIDDEN, "올바르지 않은 접근입니다."),
+
     // 404 NOT_FOUND 잘못된 리소스 접근
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
     NOT_FOUND_FILE(HttpStatus.NOT_FOUND,"존재하지 않는 답글 번호입니다."),
