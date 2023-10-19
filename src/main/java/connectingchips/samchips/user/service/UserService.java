@@ -108,8 +108,7 @@ public class UserService {
     }
 
     /* 로그인한 유저와 요청한 유저가 같은지 체크 */
-    public boolean isLoginUser(User loginUser, Long userId){
+    public void isLoginUser(User loginUser, Long userId){
         if(!Objects.equals(loginUser.getId(), userId)) throw new BadRequestException(FORBIDDEN);
-        return Objects.equals(loginUser.getId(), userId);
     }
 }
