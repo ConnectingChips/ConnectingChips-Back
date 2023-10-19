@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileOutputStream;
 import java.util.*;
 
 import static connectingchips.samchips.global.exception.CommonErrorCode.*;
@@ -29,8 +30,7 @@ public class S3Uploader {
     private String bucket;
 
     public String uploadFile(MultipartFile multipartFile, String filePath) throws IOException {
-        File uploadFile = convertMultipartFileToFile(multipartFile)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_FILE));
+        File uploadFile = convertMultipartFileToFile(multipartFile).orElseThrow(() -> new BadRequestException(NOT_FOUND_FILE));
         String uploadS3fileName = creatUniqueFileName(uploadFile.getName());
         String fileName = filePath + "/" + uploadS3fileName;
         uploadS3Bucket(uploadFile, fileName);
@@ -39,11 +39,15 @@ public class S3Uploader {
         return getFileUrl(fileName);
     }
 
-    //MultiPartFile -> File로 전환
+    /* MultiPartFile -> File로 전환 */
     private Optional<File> convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
         File file = new File(multipartFile.getOriginalFilename());
-        multipartFile.transferTo(file);
-        return file.exists() ? Optional.of(file) : Optional.empty();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(multipartFile.getBytes());
+        } catch (IOException e) {
+            throw new IOException("MultipartFile을 File로 변환하는 중 오류 발생", e);
+        }
+        return Optional.of(file);
     }
 
     //S3 파일 업로드
