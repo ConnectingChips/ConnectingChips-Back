@@ -1,6 +1,7 @@
 package connectingchips.samchips.user.service;
 
 import connectingchips.samchips.board.S3Uploader;
+import connectingchips.samchips.global.exception.BadRequestException;
 import connectingchips.samchips.global.exception.RestApiException;
 import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.user.domain.User;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import static connectingchips.samchips.global.exception.CommonErrorCode.*;
@@ -103,5 +105,11 @@ public class UserService {
         int randomIdx = random.nextInt(fileNames.size());
 
         return s3Uploader.getFileUrl(fileNames.get(randomIdx));
+    }
+
+    /* 로그인한 유저와 요청한 유저가 같은지 체크 */
+    public boolean isLoginUser(User loginUser, Long userId){
+        if(!Objects.equals(loginUser.getId(), userId)) throw new BadRequestException(FORBIDDEN);
+        return Objects.equals(loginUser.getId(), userId);
     }
 }
