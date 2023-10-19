@@ -95,13 +95,7 @@ public class BoardService {
     }
 
     public String getImageURL(MultipartFile file, String dirName) throws IOException {
-        String imageURL;
-        if(!file.isEmpty()) {
-            imageURL = s3Uploader.uploadFile(file,dirName);
-        } else {
-            imageURL = "default";
-        }
-        return imageURL;
+        return (!file.isEmpty()) ? s3Uploader.uploadFile(file,dirName) : "default" ;
     }
 
     @Transactional
