@@ -55,7 +55,7 @@ public class BoardController {
     public DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId,
                                                              @RequestBody BoardRequestDto.Edit boardRequestDto,
                                                              @LoginUser User loginUser) {
-        userService.isLoginUser(loginUser, boardService.getBoardById(boardId).getUser().getId());
+        userService.isLoginUser(loginUser, boardService.getBoardById(boardId).getUser());
         BoardResponseDto.Update boardResponseDto = boardService.updateBoard(boardId, boardRequestDto);
         return DataResponse.of(boardResponseDto);
     }
@@ -64,7 +64,7 @@ public class BoardController {
     @DeleteMapping("/{board_id}")
     @PreAuthorize("hasRole('USER')")
     public BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId, @LoginUser User loginUser){
-        userService.isLoginUser(loginUser, boardService.getBoardById(boardId).getUser().getId());
+        userService.isLoginUser(loginUser, boardService.getBoardById(boardId).getUser());
         boardService.deleteBoard(boardId);
         return BasicResponse.of(HttpStatus.OK);
     }
