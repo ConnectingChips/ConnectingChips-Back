@@ -7,6 +7,7 @@ import connectingchips.samchips.global.commons.dto.BasicResponse;
 import connectingchips.samchips.global.commons.dto.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +38,7 @@ public class BoardController {
 
     /* 게시글 작성 */
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public BasicResponse createBoard(@RequestPart(value = "file", required = false) MultipartFile file,
                                       @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto) throws IOException {
         boardService.createBoard(file, boardRequestDto);
@@ -46,6 +48,7 @@ public class BoardController {
 
     /* 게시글 수정 */
     @PutMapping("/{board_id}")
+    @PreAuthorize("hasRole('USER')")
     public DataResponse<BoardResponseDto.Update> updateBoard(@PathVariable(value = "board_id") Long boardId, @RequestBody BoardRequestDto.Edit boardRequestDto) {
         BoardResponseDto.Update boardResponseDto = boardService.updateBoard(boardId, boardRequestDto);
         return DataResponse.of(boardResponseDto);
@@ -53,6 +56,7 @@ public class BoardController {
 
     /* 게시글 삭제 */
     @DeleteMapping("/{board_id}")
+    @PreAuthorize("hasRole('USER')")
     public BasicResponse deleteBoard(@PathVariable(value = "board_id") Long boardId){
         boardService.deleteBoard(boardId);
         return BasicResponse.of(HttpStatus.OK);
