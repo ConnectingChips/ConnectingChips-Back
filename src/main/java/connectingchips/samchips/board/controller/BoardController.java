@@ -44,8 +44,7 @@ public class BoardController {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public BasicResponse createBoard(@RequestPart(value = "file", required = false) MultipartFile file,
-                                     @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto,
-                                     @LoginUser User loginUser) throws IOException {
+                                     @RequestPart(value = "boardRequestDto") BoardRequestDto.Save boardRequestDto) throws IOException {
         boardService.createBoard(file, boardRequestDto);
 
         return BasicResponse.of(HttpStatus.OK);
