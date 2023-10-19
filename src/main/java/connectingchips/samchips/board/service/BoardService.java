@@ -49,7 +49,12 @@ public class BoardService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
-    public  List<BoardResponseDto.Read> getMindBoardList(Long mindId){
+    public Board getBoardById(Long boardId){
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_BOARD_ID));
+    }
+
+    public List<BoardResponseDto.Read> getMindBoardList(Long mindId){
         List<BoardResponseDto.Read> boardList = getBoardList(mindId);
 
         for(BoardResponseDto.Read board : boardList) {
