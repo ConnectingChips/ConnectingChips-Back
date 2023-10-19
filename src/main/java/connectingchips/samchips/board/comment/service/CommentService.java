@@ -29,6 +29,14 @@ public class CommentService {
     private final ReplyRepository replyRepository;
     private final BoardRepository boardRepository;
 
+    public Comment getCommentById(Long commentId){
+        return commentRepository.findById(commentId).orElseThrow(() -> new BadRequestException(NOT_FOUND_COMMENT_ID));
+    }
+
+    public Reply getReplyById(Long replyId){
+        return replyRepository.findById(replyId).orElseThrow(() -> new BadRequestException(NOT_FOUND_REPLY_ID));
+    }
+
     @Transactional
     public CommentResponseDto.Read createComment(CommentRequestDto commentReqDto) {
         User user = userRepository.findById(commentReqDto.getUserId())
