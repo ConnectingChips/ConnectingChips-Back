@@ -99,14 +99,6 @@ public class UserController {
             return new ModelAndView("authFail");
     }
 
-    // 해당 이메일이 인증된 이메일인지 검증
-    @GetMapping("/verification-email")
-    public DataResponse<AuthResponseDto.VerificationEmail> verificationEmail(@RequestParam @NotBlank String email){
-        AuthResponseDto.VerificationEmail verificationEmailDto = authService.verificationEmail(email);
-
-        return DataResponse.of(verificationEmailDto);
-    }
-
     /* 현재 로그인한 유저 정보 반환 */
     @GetMapping
     @PreAuthorize("hasRole('USER')")

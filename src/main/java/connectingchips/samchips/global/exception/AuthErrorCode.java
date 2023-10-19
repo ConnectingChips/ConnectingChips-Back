@@ -20,7 +20,8 @@ public enum AuthErrorCode implements ErrorCode{
     FORBIDDEN(HttpStatus.FORBIDDEN, 403,"해당 요청에 대한 권한이 없습니다."),
 
     // 이메일 인증 관련
-    COOL_TIME_SEND_EMAIL(HttpStatus.BAD_REQUEST, 600,"이메일 재전송 대기 시간입니다.");
+    COOL_TIME_SEND_EMAIL(HttpStatus.BAD_REQUEST, 600,"이메일 재전송 대기 시간입니다."),
+    UNAUTHENTICATED_EMAIL(HttpStatus.BAD_REQUEST, 601,"인증되지 않은 이메일입니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
