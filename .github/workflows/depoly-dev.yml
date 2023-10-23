@@ -8,41 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # (1) 기본 체크아웃
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          # private repository에 접근하기 위해서 Git 계정의 token 값이 필요하다.
-          token: ${{ secrets.GIT_TOKEN }}
-          # submodules: true로 설정해주어야 프로젝트에 포함된 submodule코드까지 받아온다.
-          submodules: true
-
-      # (2) JDK 17 세팅
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # (3) Gradlew에 실행 권한 부여
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      # (4) 프로젝트 빌드
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test
-
-      - name: Copy Build File
-        run: cp build/libs/*.jar ./
-
-      - name: Docker build
-        run: |
-          docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PWD }}
-          docker build -t ${{ secrets.DOCKER_ID }}/chips .
-          docker push ${{ secrets.DOCKER_ID }}/chips
-
       - name: Checkout
         uses: actions/checkout@v2
       - name: Connect deploy key
