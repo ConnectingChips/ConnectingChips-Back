@@ -50,6 +50,7 @@ jobs:
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           ghtoken: ${{ secrets.GIT_TOKEN }}
+
       - name: Deploy
         uses: cloudtype-github-actions/deploy@v1
         with:
@@ -58,7 +59,7 @@ jobs:
           stage: main
           yaml: |
             name: connectingchips-back
-            app: java@17
+            app: dockerfile
             options:
               ports: 8080
               dockerfile: Dockerfile
