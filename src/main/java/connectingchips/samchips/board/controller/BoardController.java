@@ -57,6 +57,7 @@ public class BoardController {
                                                              @LoginUser User loginUser) {
         userService.isLoginUser(loginUser, boardService.getBoardById(boardId).getUser());
         BoardResponseDto.Update boardResponseDto = boardService.updateBoard(boardId, boardRequestDto);
+
         return DataResponse.of(boardResponseDto);
     }
 
