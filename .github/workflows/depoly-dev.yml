@@ -61,3 +61,12 @@ jobs:
             app: java@17
             options:
               ports: 8080
+              dockerfile: Dockerfile
+              env:
+                - name: SPRING_PROFILES_ACTIVE
+                  value: dev
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
+              preset: dockerfile
