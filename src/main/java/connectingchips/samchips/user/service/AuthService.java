@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -137,7 +138,6 @@ public class AuthService {
 
         // 인증 데이터 확인
         if(savedAuthCode.isPresent()) {
-            System.out.println("데이터 존재");
             return checkAuthCode(key, savedAuthCode.get().toString(), authCode);
         }
         return false;
@@ -206,17 +206,18 @@ public class AuthService {
      *  동일하면 value - "true", 만료 시간을 계산하여 다시 저장
       */
     private boolean checkAuthCode(String key, String savedAuthCode, String authCode){
-        String[] savedAuthInfos = savedAuthCode.split("-");
-        String code = authCode.split("-")[0];
-        System.out.println(savedAuthInfos[0] + ", " + code);
+        String[] savedAuthInfos = savedAuthCode.split("_");
+        String code = authCode.split("_")[0];
+
         // 인증번호 비교
         if(savedAuthInfos[0].equals(code)){
             // 이메일 전송할 때의 시간과 현재 시간의 차이를 계산하여 데이터 만료 시간으로 설정
-            long betweenToMillis = betweenToMillis(LocalTime.parse(savedAuthInfos[1]), LocalTime.now());
+            long betweenToMillis = betweenToMillis(LocalDateTime.parse(savedAuthInfos[1]), LocalDateTime.now());
             long expiredTime = authCodeExpirationMillis - betweenToMillis;
+            expiredTime = expiredTime > 0 ? expiredTime : 0;
 
             // 같은 key로 데이터를 삽입하여 덮어쓰기
-            redisUtils.setData(key, "true-" + savedAuthInfos[1], expiredTime);
+            redisUtils.setData(key, "true_" + savedAuthInfos[1], expiredTime);
             return true;
         }
         return false;
@@ -228,8 +229,8 @@ public class AuthService {
 
         // 해당 이메일에 대한 데이터가 redis에 저장되어 있다면 시간 비교
         if(savedAuthCode.isPresent()){
-            String[] savedAuthInfos = savedAuthCode.get().toString().split("-");
-            long betweenToMillis = betweenToMillis(LocalTime.parse(savedAuthInfos[1]), LocalTime.now());
+            String[] savedAuthInfos = savedAuthCode.get().toString().split("_");
+            long betweenToMillis = betweenToMillis(LocalDateTime.parse(savedAuthInfos[1]), LocalDateTime.now());
 
             // 최근 이메일을 전송한 시간과 현재 시간의 차이 값을 coolTime과 비교
             if(betweenToMillis <= sendCoolTimeMillis)
@@ -250,12 +251,12 @@ public class AuthService {
             number.append(randomNum);
         }
         
-        number.append("-" + LocalTime.now().toString());
+        number.append("_" + LocalDateTime.now());
         return number.toString();
     }
 
     /* 두 시간의 차이를 Millis로 반환 */
-    private long betweenToMillis(LocalTime a, LocalTime b){
+    private long betweenToMillis(LocalDateTime a, LocalDateTime b){
         return Duration.between(a, b).toMillis();
     }
 
