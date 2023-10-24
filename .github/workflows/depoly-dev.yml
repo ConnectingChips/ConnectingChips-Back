@@ -30,6 +30,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Create Build Folder
+        run: |
+          mkdir ./build
+          mkdir ./build/libs
+
       # (4) 프로젝트 빌드
       - name: Build with Gradle
         run: ./gradlew clean build -x test
