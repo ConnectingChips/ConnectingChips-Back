@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -226,7 +225,7 @@ public class AuthService {
     /* 이메일 재전송 대기 시간 검사 */
     private boolean checkSendEmailCoolTime(String emailKey){
         Optional<Object> savedAuthCode = redisUtils.getData(emailKey);
-
+        
         // 해당 이메일에 대한 데이터가 redis에 저장되어 있다면 시간 비교
         if(savedAuthCode.isPresent()){
             String[] savedAuthInfos = savedAuthCode.get().toString().split("_");
@@ -236,6 +235,7 @@ public class AuthService {
             if(betweenToMillis <= sendCoolTimeMillis)
                 return false;
         }
+
         // redis에 저장되어있지 않거나 coolTime
         return true;
     }
