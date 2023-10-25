@@ -14,7 +14,6 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +106,6 @@ public class AuthService {
     }
 
     /* 인증 이메일 보내기 */
-    @Async
     @Transactional
     public void sendAuthenticationEmail(EmailRequestDto.Authentication authenticationDto) throws MessagingException {
         String toEmail = authenticationDto.getToEmail();;
@@ -228,7 +225,7 @@ public class AuthService {
     /* 이메일 재전송 대기 시간 검사 */
     private boolean checkSendEmailCoolTime(String emailKey){
         Optional<Object> savedAuthCode = redisUtils.getData(emailKey);
-
+        
         // 해당 이메일에 대한 데이터가 redis에 저장되어 있다면 시간 비교
         if(savedAuthCode.isPresent()){
             String[] savedAuthInfos = savedAuthCode.get().toString().split("_");
@@ -238,6 +235,7 @@ public class AuthService {
             if(betweenToMillis <= sendCoolTimeMillis)
                 return false;
         }
+
         // redis에 저장되어있지 않거나 coolTime
         return true;
     }
