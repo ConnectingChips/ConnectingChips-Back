@@ -26,9 +26,6 @@ jobs:
             options:
               ports: 8080
               dockerfile: Dockerfile
-              args:
-                - name: SPRING_PROFILE_VARIABLE
-                  value: "dev"
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
