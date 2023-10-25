@@ -14,6 +14,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -107,6 +108,7 @@ public class AuthService {
     }
 
     /* 인증 이메일 보내기 */
+    @Async
     @Transactional
     public void sendAuthenticationEmail(EmailRequestDto.Authentication authenticationDto) throws MessagingException {
         String toEmail = authenticationDto.getToEmail();;
