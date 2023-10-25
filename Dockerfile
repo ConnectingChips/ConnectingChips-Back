@@ -1,6 +1,7 @@
 # jar 파일 빌드
 FROM openjdk:17 as builder
 
+RUN apt-get install findutils
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
