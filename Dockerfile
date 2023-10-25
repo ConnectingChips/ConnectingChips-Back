@@ -13,10 +13,6 @@ RUN ./gradlew bootjar
 
 FROM openjdk:17 as runtime
 
-RUN addgroup --system --gid 1000 worker
-RUN adduser --system --uid 1000 --ingroup worker --disabled-password worker
-USER worker:worker
-
 COPY --from=builder build/libs/*.jar app.jar
 
 ENV PROFILE ${PROFILE}
