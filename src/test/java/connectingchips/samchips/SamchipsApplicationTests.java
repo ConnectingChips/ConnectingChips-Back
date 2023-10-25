@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Profile;
 class SamchipsApplicationTests {
 
 	@Test
-	@Profile("prod")
 	void contextLoads() {
 	}
 
