@@ -12,7 +12,11 @@ RUN ./gradlew bootjar
 
 
 
-FROM openjdk:17 as runtime
+FROM 17-jre-alpine as runtime
+
+RUN addgroup --system --gid 1000 worker
+RUN adduser --system --uid 1000 --ingroup worker --disabled-password worker
+USER worker:worker
 
 COPY --from=builder build/libs/*.jar app.jar
 
