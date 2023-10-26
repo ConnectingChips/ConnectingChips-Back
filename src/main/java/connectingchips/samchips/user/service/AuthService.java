@@ -150,7 +150,7 @@ public class AuthService {
 
         // 인증 데이터가 존재하고 사용자가 인증 완료 버튼을 눌렀다면 true 반환
         if(savedAuthCode.isPresent()){
-            String[] savedAuthInfos = savedAuthCode.get().toString().split("-");
+            String[] savedAuthInfos = savedAuthCode.get().toString().split("_");
             if(savedAuthInfos[0].equals("true")){
                 redisUtils.deleteData(key);
                 return true;
