@@ -11,7 +11,7 @@ on:
 # 코드의 내용을 이 파일을 실행하여 action을 수행하는 주체(Github Actions에서 사용하는 VM)가 읽을 수 있도록 허용합니다.
 
 env:
-  MAIN_PROFILES: ${{ secrets.MAIN_PROFILES }}
+  MAIN_PROFILES: ${{ secrets.MAIN_PROFILE }}
 # 실제 실행될 내용들을 정의합니다.
 jobs:
   build:
@@ -38,7 +38,7 @@ jobs:
     - name: Docker build & push to docker repo
       run: |
         docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PWD }}
-        docker build --build-arg PROFILE=${{ env.MAIN_PROFILES }} \
+        docker build --build-arg MAIN_PROFILE=${{ env.MAIN_PROFILE }} \
         -f Dockerfile -t ${{ secrets.DOCKER_REPO }}/chips .
         docker push ${{ secrets.DOCKER_REPO }}/chips
 
