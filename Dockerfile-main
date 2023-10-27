@@ -2,6 +2,8 @@ FROM openjdk:17
 
 ARG JAR_FILE=build/libs/*.jar
 
+ENV TZ Asia/Seoul
+
 COPY ConnectingChips-Back-Data/application.yml application.yml
 
 COPY ${JAR_FILE} app.jar
