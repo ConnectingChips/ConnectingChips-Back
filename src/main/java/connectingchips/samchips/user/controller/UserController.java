@@ -132,11 +132,15 @@ public class UserController {
         authService.logout(loginUser.getId(), request);
 
         // 로그아웃 시에 refreshToken을 가지고 있는 cookie 제거
-        Cookie cookie = new Cookie("refreshToken", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", null)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
 
         return BasicResponse.of(HttpStatus.OK);
     }
