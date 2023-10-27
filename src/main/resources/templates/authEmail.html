@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email</title>
+</head>
+<body>
+<table
+        cellpadding="0"
+        cellspacing="0"
+        width="100%"
+        style="
+        border: 0;
+        text-align: center;
+        padding-top: 66px;
+        padding-bottom: 66px;
+        background-color: #ffffff;
+      "
+>
+    <tr>
+        <td style="padding-bottom: 12px">
+            <img
+                    src="https://chips-bucket-image.s3.ap-northeast-2.amazonaws.com/emailImage/logo.png"
+                    alt="작심삼칩 로고"
+                    style="width: 212px; height: 35.345px"
+            />
+        </td>
+    </tr>
+
+    <tr>
+        <td
+                style="
+            font-family: sans-serif;
+            text-align: center;
+            color: #000000;
+            font-size: 28px;
+            font-weight: 500;
+            padding-bottom: 80px;
+          "
+        >
+            <strong>메일 인증 요청이 왔어요!</strong>
+        </td>
+    </tr>
+
+    <tr>
+        <td
+                style="
+            font-family: sans-serif;
+            padding-bottom: 23px;
+            color: #111111;
+            line-height: 1.5;
+            font-size: 16px;
+          "
+        >
+            반가워요! 작심삼칩 서비스 이용을 위해<br />
+            이메일 주소 인증을 요청하셨네요.<br />
+            아래 <strong>이메일 인증하기</strong> 버튼을 클릭하여<br />
+            인증을 완료해 주세요.
+        </td>
+    </tr>
+
+    <tr style="height: 68px">
+        <td style="padding-bottom: 12px">
+            <a
+                    th:href="@{https://dev.samchips.com/users/authentication-email(email = ${email}, authCode = ${authCode})}"
+                    style="
+              font-family: sans-serif;
+              box-sizing: border-box;
+              background-color: #ffbb00;
+              text-decoration: none;
+              padding-top: 19px;
+              padding-bottom: 18px;
+              padding-left: 110px;
+              padding-right: 110px;
+              border-radius: 30px;
+              color: #111111;
+              font-size: 16px;
+            "
+            >이메일 인증하기</a
+            >
+        </td>
+    </tr>
+
+    <tr>
+        <td style="font-size: 12px; color: #767676">
+          <span>
+            <img
+                    src="https://chips-bucket-image.s3.ap-northeast-2.amazonaws.com/emailImage/info_icon.png"
+                    alt="느낌표 아이콘"
+                    style="
+                font-family: sans-serif;
+                vertical-align: sub;
+                width: 14px;
+                height: 14px;
+              "
+            />
+            인증은 1시간 이내에 완료해 주세요!
+          </span>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,103 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.3'
+	id 'io.spring.dependency-management' version '1.1.3'
+}
+
+group = 'connectingchips'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// Http Interface
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// FOR @ConfigurationProperties
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+	// Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
+
+    // Jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+	// QueryDSL, springboot 3.0.0 버전 이후로는 javax -> jakarta
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	// Querydsl JPA의 경우에는 Q 클래스를 활용해서 동작하는데 @Entity 어노테이션을 선언한 클래스를 탐색하고, Q 클래스를 생성한다.
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+// build시 QClass도 함께 빌드 하기 위해서 sourceSets에 해당 위치를 추가해 준다.
+def querydslSrcDir = "$projectDir/src/main/generated"
+sourceSets {
+	main {
+		java {
+			srcDirs += [ querydslSrcDir ]
+		}
+	}
+}
+
+tasks.withType(JavaCompile) {
+	/**
+	 * generatedSourceOutputDirectory는 annotation processors에서 생성한 소스 파일을 저장할 디렉토리를 지정 해준다.
+	 * 이 코드를 통해 위에서 선언한 querydslSrcDir 변수의 src/main/generated에다가 annotation processors가 만든 QClass들을 저장해준다.
+	 */
+	options.generatedSourceOutputDirectory = file(querydslSrcDir)
+}
+
+// clean 시에 생성되었던 QClass 를 모두 삭제 (querydslSrcDir = src/main/generated)
+clean {
+	delete file(querydslSrcDir)
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+task copyPrivate(type: Copy) {
+	copy {
+		from './ConnectingChips-Back-Data'
+		include "*.yml"
+		into 'src/main/resources'
+	}
+}
+
+jar {
+	enabled = false
+}
