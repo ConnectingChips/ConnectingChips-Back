@@ -1,62 +1,66 @@
-name: Deploy to Amazon EC2
+name: CD with Gradle
 
+# 언제 이 파일의 내용이 실행될 것인지 정의합니다.
+# 여기서는 main 브랜치에 코드가 push 되거나 pull_request되었을 때 실행할 것을 말하고 있습니다.
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
+# 코드의 내용을 이 파일을 실행하여 action을 수행하는 주체(Github Actions에서 사용하는 VM)가 읽을 수 있도록 허용합니다.
+
+env:
+  MAIN_PROFILES: ${{ secrets.MAIN_PROFILE }}
+# 실제 실행될 내용들을 정의합니다.
 jobs:
-  deploy:
-    name: deploy
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest # ubuntu 최신 버전에서 script를 실행
 
     steps:
-      # (1) 기본 체크아웃
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          # private repository에 접근하기 위해서 Git 계정의 token 값이 필요하다.
-          token: ${{ secrets.GIT_TOKEN }}
-          # submodules: true로 설정해주어야 프로젝트에 포함된 submodule코드까지 받아온다.
-          submodules: true
+    - name: checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+        token: ${{ secrets.GIT_TOKEN }}
 
-      # (2) JDK 17 세팅
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
 
-      # (3) Gradlew에 실행 권한 부여
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: "adopt"
 
-      # (4) 프로젝트 빌드
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test
 
-      # (5) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+    # gradle을 통해 소스를 빌드.
+    - name: Build with Gradle
+      run: |
+        chmod +x ./gradlew
+        ./gradlew clean build -x test
 
-      # (6) 빌드 결과물을 S3 버킷에 업로드
-      - name: Upload to AWS S3
-        run: |
-          aws deploy push \
-            --application-name ${{ secrets.AWS_CODE_DEPLOY_APPLICATION }} \
-            --ignore-hidden-files \
-            --s3-location s3://${{ secrets.AWS_S3_BUCKET }}/${{ secrets.FILE_NAME }}.zip \
-            --source .
+    # dockerfile을 통해 이미지를 빌드하고, 이를 docker repo로 push 합니다.
+    # 이 때 사용되는 ${{ secrets.DOCKER_REPO }}/directors-dev 가 위에서 만든 도커 repository 입니다.
+    - name: Docker build & push to docker repo
 
-      # (7) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
-      - name: Deploy to AWS EC2 from S3
-        run: |
-          aws deploy create-deployment \
-            --application-name ${{ secrets.AWS_CODE_DEPLOY_APPLICATION }} \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --deployment-group-name ${{ secrets.AWS_CODE_DEPLOY_GROUP }} \
-            --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=${{ secrets.FILE_NAME }}.zip,bundleType=zip
+      run: |
+        docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PWD }}
+        docker build --build-arg MAIN_PROFILE=${{ env.MAIN_PROFILE }} \
+        -f Dockerfile-main -t ${{ secrets.DOCKER_REPO }}/chips .
+        docker push ${{ secrets.DOCKER_REPO }}/chips
+
+    # appleboy/ssh-action@master 액션을 사용하여 지정한 서버에 ssh로 접속하고, script를 실행합니다.
+    # script의 내용은 도커의 기존 프로세스들을 제거하고, docker repo로부터 방금 위에서 push한 내용을 pull 받아 실행하는 것
+    # 실행 시, docker-compose를 사용합니다.
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      id: deploy
+      with:
+        host: ${{ secrets.HOST }}
+        username: ec2-user
+        key: ${{ secrets.KEY }}
+        envs: GITHUB_SHA
+        script: |
+          sudo docker rm -f $(docker ps -qa)
+          sudo docker pull ${{ secrets.DOCKER_REPO }}/chips
+          docker-compose up -d
+          docker image prune -f
