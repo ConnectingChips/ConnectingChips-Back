@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -48,13 +49,15 @@ public class UserController {
 
         AuthResponseDto.AccessToken accessToken = new AuthResponseDto.AccessToken(token.getAccessToken());
 
-        Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", token.getRefreshToken())
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(24 * 60 * 60)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
 
         return DataResponse.of(accessToken);
     }
