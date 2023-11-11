@@ -51,7 +51,7 @@ public class Mind {
     private String exampleImage;
 
 
-    @OneToMany(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @ManyToOne
