@@ -44,7 +44,7 @@ public class User extends Auditable {
 
     private String roles;     // 권한
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @Builder
