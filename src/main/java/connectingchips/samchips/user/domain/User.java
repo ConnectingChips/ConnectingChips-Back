@@ -1,7 +1,7 @@
 package connectingchips.samchips.user.domain;
 
 import connectingchips.samchips.global.audit.Auditable;
-import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
+import connectingchips.samchips.mind.entity.JoinedMind;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

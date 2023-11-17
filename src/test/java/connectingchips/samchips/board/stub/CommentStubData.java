@@ -1,14 +1,8 @@
 package connectingchips.samchips.board.stub;
 
-import connectingchips.samchips.board.comment.dto.CommentRequestDto;
-import connectingchips.samchips.board.comment.dto.CommentResponseDto;
-import connectingchips.samchips.board.comment.entity.Comment;
-import connectingchips.samchips.board.entity.Board;
-import connectingchips.samchips.mind.entity.Mind;
-import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.mind.mindtype.entity.MindType;
-import connectingchips.samchips.user.domain.SocialType;
-import connectingchips.samchips.user.domain.User;
+import connectingchips.samchips.board.dto.comment.CommentRequestDto;
+import connectingchips.samchips.board.dto.comment.CommentResponseDto;
+import connectingchips.samchips.board.entity.Comment;
 
 import java.util.ArrayList;
 import java.util.List;

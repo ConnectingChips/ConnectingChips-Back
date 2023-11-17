@@ -1,17 +1,17 @@
 package connectingchips.samchips.board.service;
 
-import connectingchips.samchips.board.stub.BoardStubData;
 import connectingchips.samchips.board.S3Uploader;
-import connectingchips.samchips.board.comment.dto.CommentResponseDto;
-import connectingchips.samchips.board.comment.entity.Comment;
-import connectingchips.samchips.board.comment.repository.CommentRepository;
-import connectingchips.samchips.board.comment.repository.ReplyRepository;
-import connectingchips.samchips.board.dto.BoardResponseDto;
+import connectingchips.samchips.board.stub.BoardStubData;
+import connectingchips.samchips.board.dto.comment.CommentResponseDto;
+import connectingchips.samchips.board.entity.Comment;
+import connectingchips.samchips.board.repository.CommentRepository;
+import connectingchips.samchips.board.repository.ReplyRepository;
+import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.board.stub.CommentStubData;
 import connectingchips.samchips.mind.entity.Mind;
-import connectingchips.samchips.mind.joinedmind.repository.JoinedMindRepository;
+import connectingchips.samchips.mind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.repository.MindRepository;
 import connectingchips.samchips.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ class BoardServiceTest {
     @InjectMocks
     private BoardService boardService;
     @Mock
-    private  S3Uploader s3Uploader;
+    private S3Uploader s3Uploader;
     @Mock
     private  BoardRepository boardRepository;
     @Mock

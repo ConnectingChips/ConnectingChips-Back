@@ -1,10 +1,10 @@
 package connectingchips.samchips.mind.dto.response;
 
-import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
+import connectingchips.samchips.mind.entity.JoinedMind;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import static connectingchips.samchips.mind.joinedmind.service.JoinedMindService.NOT_JOIN;
+import static connectingchips.samchips.mind.service.JoinedMindService.NOT_JOIN;
 import static connectingchips.samchips.mind.service.MindService.CAN_JOIN;
 
 @Getter
