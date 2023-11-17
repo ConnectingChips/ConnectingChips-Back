@@ -1,21 +1,20 @@
 package connectingchips.samchips.board.service;
 
-import connectingchips.samchips.board.S3Uploader;
-import connectingchips.samchips.board.dto.BoardRequestDto;
-import connectingchips.samchips.board.dto.BoardResponseDto;
+import connectingchips.samchips.board.dto.board.BoardRequestDto;
+import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
 
-import connectingchips.samchips.board.comment.dto.CommentResponseDto;
-import connectingchips.samchips.board.comment.dto.ReplyResponseDto;
-import connectingchips.samchips.board.comment.entity.Comment;
-import connectingchips.samchips.board.comment.entity.Reply;
-import connectingchips.samchips.board.comment.repository.CommentRepository;
-import connectingchips.samchips.board.comment.repository.ReplyRepository;
+import connectingchips.samchips.board.dto.comment.CommentResponseDto;
+import connectingchips.samchips.board.dto.comment.ReplyResponseDto;
+import connectingchips.samchips.board.entity.Comment;
+import connectingchips.samchips.board.entity.Reply;
+import connectingchips.samchips.board.repository.CommentRepository;
+import connectingchips.samchips.board.repository.ReplyRepository;
 
 import connectingchips.samchips.global.exception.BadRequestException;
-import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.mind.joinedmind.repository.JoinedMindRepository;
+import connectingchips.samchips.mind.entity.JoinedMind;
+import connectingchips.samchips.mind.repository.JoinedMindRepository;
 
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.MindRepository;
@@ -33,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static connectingchips.samchips.global.exception.CommonErrorCode.*;
-import static connectingchips.samchips.mind.joinedmind.service.JoinedMindService.FULL_COUNT;
+import static connectingchips.samchips.mind.service.JoinedMindService.FULL_COUNT;
 
 
 @Service

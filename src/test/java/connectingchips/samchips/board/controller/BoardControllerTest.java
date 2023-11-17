@@ -1,7 +1,7 @@
 package connectingchips.samchips.board.controller;
 
 import connectingchips.samchips.board.stub.BoardStubData;
-import connectingchips.samchips.board.dto.BoardResponseDto;
+import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.service.BoardService;
 

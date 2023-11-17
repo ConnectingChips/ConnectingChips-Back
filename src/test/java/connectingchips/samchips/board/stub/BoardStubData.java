@@ -1,10 +1,9 @@
 package connectingchips.samchips.board.stub;
 
-import connectingchips.samchips.board.comment.entity.Comment;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.mind.entity.Mind;
-import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.mind.mindtype.entity.MindType;
+import connectingchips.samchips.mind.entity.JoinedMind;
+import connectingchips.samchips.mind.entity.MindType;
 import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.user.domain.User;
 

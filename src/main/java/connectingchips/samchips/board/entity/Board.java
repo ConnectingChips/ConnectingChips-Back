@@ -1,7 +1,6 @@
 package connectingchips.samchips.board.entity;
 
 import connectingchips.samchips.global.audit.Auditable;
-import connectingchips.samchips.board.comment.entity.Comment;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.user.domain.User;
 import jakarta.persistence.*;

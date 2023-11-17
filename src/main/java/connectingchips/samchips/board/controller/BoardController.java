@@ -1,7 +1,7 @@
 package connectingchips.samchips.board.controller;
 
-import connectingchips.samchips.board.dto.BoardRequestDto;
-import connectingchips.samchips.board.dto.BoardResponseDto;
+import connectingchips.samchips.board.dto.board.BoardRequestDto;
+import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.service.BoardService;
 import connectingchips.samchips.global.commons.dto.BasicResponse;
 import connectingchips.samchips.global.commons.dto.DataResponse;
