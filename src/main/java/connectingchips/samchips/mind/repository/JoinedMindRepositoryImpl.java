@@ -1,7 +1,7 @@
 package connectingchips.samchips.mind.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import connectingchips.samchips.mind.joinedmind.entity.QJoinedMind;
+import connectingchips.samchips.mind.entity.QJoinedMind;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -1,5 +1,6 @@
 package connectingchips.samchips.board.service;
 
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.stub.BoardStubData;
 import connectingchips.samchips.board.dto.comment.CommentResponseDto;
 import connectingchips.samchips.board.entity.Comment;
@@ -38,7 +39,7 @@ class BoardServiceTest {
     @InjectMocks
     private BoardService boardService;
     @Mock
-    private  S3Uploader s3Uploader;
+    private S3Uploader s3Uploader;
     @Mock
     private  BoardRepository boardRepository;
     @Mock

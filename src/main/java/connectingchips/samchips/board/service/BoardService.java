@@ -1,5 +1,6 @@
 package connectingchips.samchips.board.service;
 
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.dto.board.BoardRequestDto;
 import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;

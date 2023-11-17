@@ -1,6 +1,6 @@
 package connectingchips.samchips.user.service;
 
-import connectingchips.samchips.board.service.S3Uploader;
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.global.email.EmailSender;
 import connectingchips.samchips.global.email.dto.EmailRequestDto;
 import connectingchips.samchips.global.exception.RestApiException;

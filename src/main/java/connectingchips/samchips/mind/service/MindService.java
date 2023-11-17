@@ -1,6 +1,6 @@
 package connectingchips.samchips.mind.service;
 
-import connectingchips.samchips.board.service.S3Uploader;
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.repository.BoardRepository;
 import connectingchips.samchips.global.exception.BadRequestException;
 import connectingchips.samchips.mind.entity.JoinedMind;

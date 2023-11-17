@@ -1,4 +1,4 @@
-package connectingchips.samchips.board.service;
+package connectingchips.samchips.board;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;

@@ -1,6 +1,6 @@
 package connectingchips.samchips.user.service;
 
-import connectingchips.samchips.board.service.S3Uploader;
+import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.global.exception.BadRequestException;
 import connectingchips.samchips.global.exception.RestApiException;
 import connectingchips.samchips.user.domain.SocialType;
