@@ -111,8 +111,8 @@ class BoardServiceTest {
     @Test
     void 유저_게시판_수정_자격여부확인() {
         //given
-        Board board = boardStubData.createBoard();
-        given(boardRepository.findById(Mockito.anyLong())).willReturn(Optional.of(board));
+//        Board board = boardStubData.createBoard();
+//        given(boardRepository.findById(Mockito.anyLong())).willReturn(Optional.of(board));
         //when
         //then
 
