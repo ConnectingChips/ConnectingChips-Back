@@ -1,4 +1,4 @@
-package connectingchips.samchips.board.stub;
+package connectingchips.samchips.stub;
 
 import connectingchips.samchips.board.dto.comment.CommentRequestDto;
 import connectingchips.samchips.board.dto.comment.CommentResponseDto;
