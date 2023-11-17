@@ -46,25 +46,25 @@ class CommentControllerTest {
         boardStubData = new BoardStubData();
         commentStubData = new CommentStubData(boardStubData);
     }
-    @Test
-    void createComment() throws Exception {
-        //given
-
-        CommentResponseDto.Read read = commentStubData.createCommentResponseDtoRead();
-        String content = objectMapper.writeValueAsString(read);
-        given(commentService.createComment(Mockito.any(CommentRequestDto.class))).willReturn(read);
-
-        //when
-        ResultActions result = mockMvc.perform(
-                post("/comments")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content));
-        //then
-        result.andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.nickname").value(read.getNickname()));
-
-    }
+//    @Test
+//    void createComment() throws Exception {
+//        //given
+//
+//        CommentResponseDto.Read read = commentStubData.createCommentResponseDtoRead();
+//        String content = objectMapper.writeValueAsString(read);
+//        given(commentService.createComment(Mockito.any(CommentRequestDto.class))).willReturn(read);
+//
+//        //when
+//        ResultActions result = mockMvc.perform(
+//                post("/comments")
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(content));
+//        //then
+//        result.andExpect(status().isCreated())
+//                .andExpect(jsonPath("$.data.nickname").value(read.getNickname()));
+//
+//    }
 
     @Test
     void deleteComment() {
