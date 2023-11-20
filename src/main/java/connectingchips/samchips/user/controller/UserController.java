@@ -65,6 +65,7 @@ public class UserController {
     /* 아이디 사용 가능 여부 반환 */
     @GetMapping("/check-id")
     public DataResponse<UserResponseDto.CheckId> checkAccountId(@RequestParam @NotBlank String accountId){
+        // 존재하는 아이디라면 false
         boolean isUsable = !userService.checkAccountId(accountId);
         UserResponseDto.CheckId checkIdDto = new UserResponseDto.CheckId(isUsable);
 
