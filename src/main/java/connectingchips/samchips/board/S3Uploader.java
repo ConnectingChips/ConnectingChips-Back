@@ -98,6 +98,8 @@ public class S3Uploader {
         listObjectsRequest.setBucketName(bucket);
         if(!prefix.isBlank()){
             listObjectsRequest.setPrefix(prefix);
+        }else{
+            return Collections.emptyList();
         }
         listObjectsRequest.setDelimiter("/");
 
