@@ -27,13 +27,14 @@ public class JoinedMindService {
     public static final int NOT_JOIN = 0;
     public static final int ADMIN_FULL_COUNT = Integer.MAX_VALUE;
     public static final int FULL_COUNT = 3;
+
     private final JoinedMindRepository joinedMindRepository;
     private final JoinedMindRepositoryImpl joinedMindRepositoryImpl;
     private final UserRepository userRepository;
     private final MindRepository mindRepository;
 
     @Transactional
-    public JoinCheckResponse JoinCheck(Long mindId,User loginUser) {
+    public JoinCheckResponse JoinCheck(Long mindId,User loginUser) { //작심에 참여하고 있는지 확인
         return JoinCheckResponse.of(checkJoinedMind(mindId, loginUser));
     }
 
@@ -46,28 +47,28 @@ public class JoinedMindService {
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
         Mind mind = findVerifiedMind(mindId); //작심을 찾아옴
-        Optional<JoinedMind> first = beforeJoinedCheck(mindId, user);
+        Optional<JoinedMind> first = beforeJoinedCheck(mindId, user); //이전에 참여한 적이 있는지 확인
 
-        if(first.isPresent()) {
-            reMindRelation(first.get().getJoinedMindId(),user);
+        if(first.isPresent()) { //이전에 참여한 전적이 있으면
+            reMindRelation(first.get().getJoinedMindId(), user); //다시 연결맺기
             return;
         }
 
         checkAlreadyJoined(mindId, user);
         checkJoinMindCountMax(user);
-
-        JoinedMind joinedMind = new JoinedMind();
-        joinedMind.setUser(user);
-        joinedMind.setMind(mind);
-
-        joinedMindRepository.save(joinedMind);
+        createJoinedMind(mind, user);
     }
 
-    //이게 뭘까
+    public JoinedMind createJoinedMind(Mind mind, User user) {
+        JoinedMind joinedMind = JoinedMind.builder().mind(mind).user(user).build();
+        return joinedMindRepository.save(joinedMind);
+    }
+
+    //user로 들어온 user가
     private Optional<JoinedMind> beforeJoinedCheck(Long mindId, User user) {
         Optional<JoinedMind> first = user.getJoinedMinds()
                 .stream()
-                .filter(jm -> Objects.equals(jm.getMind().getMindId(), mindId) && jm.getIsJoining().equals(NOT_JOIN))
+                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining().equals(NOT_JOIN))
                 .findFirst();
         return first;
     }
@@ -123,14 +124,12 @@ public class JoinedMindService {
         if(first.isPresent()) throw new BadRequestException(ALREADY_JOIN_MIND);
     }
     private Mind findVerifiedMind(Long mindId) {
-        Optional<Mind> findMindById = mindRepository.findById(mindId);
-        return findMindById.orElseThrow(() ->
-                new BadRequestException(NOT_FOUND_MIND_ID));
+        return mindRepository.findById(mindId)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
     }
     private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
-        Optional<JoinedMind> findJoinedMindById = joinedMindRepository.findById(joinedMindId);
-        return findJoinedMindById.orElseThrow(() ->
-                new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
+        return joinedMindRepository.findById(joinedMindId)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
     }
 
     public void updateKeepJoin(Long mindId, User user) {
