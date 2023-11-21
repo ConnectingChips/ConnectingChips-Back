@@ -10,15 +10,17 @@ import java.util.List;
 public class CommentStubData {
 
     BoardStubData boardStubData;
+    UserStubData userStubData;
 
-    public CommentStubData(BoardStubData boardStubData) {
+    public CommentStubData(BoardStubData boardStubData, UserStubData userStubData) {
         this.boardStubData = boardStubData;
+        this.userStubData = userStubData;
     }
 
     public Comment createComment() {
         return Comment.builder()
                 .board(boardStubData.createBoard())
-                .user(boardStubData.createUser())
+                .user(userStubData.createUser())
                 .content("댓글 테스트1")
                 .build();
     }

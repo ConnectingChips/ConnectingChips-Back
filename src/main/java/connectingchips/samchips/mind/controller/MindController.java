@@ -59,7 +59,7 @@ public class MindController {
         return DataResponse.of(mindService.findIntroMindImage(mindId));
     }
 
-    /*그룹페이지 정보 반환, 토큰 유무에 따라 todayWrite값 변환(0,1(회원),-1(비회원))*/
+    /*그룹 페이지 정보 반환, 토큰 유무에 따라 todayWrite값 변환(0,1(회원),-1(비회원))*/
     @GetMapping("/page/{mind-id}")
     public DataResponse getPageMind(@PathVariable("mind-id")Long mindId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

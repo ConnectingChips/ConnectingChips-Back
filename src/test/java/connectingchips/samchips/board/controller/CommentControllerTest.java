@@ -2,8 +2,9 @@ package connectingchips.samchips.board.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import connectingchips.samchips.board.service.CommentService;
-import connectingchips.samchips.board.stub.BoardStubData;
-import connectingchips.samchips.board.stub.CommentStubData;
+import connectingchips.samchips.stub.BoardStubData;
+import connectingchips.samchips.stub.CommentStubData;
+import connectingchips.samchips.stub.UserStubData;
 import connectingchips.samchips.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ class CommentControllerTest {
     private BoardStubData boardStubData;
     private ObjectMapper objectMapper;
     private CommentStubData commentStubData;
+    private UserStubData userStubData;
 
     @MockBean
     private CommentService commentService;
@@ -35,7 +37,8 @@ class CommentControllerTest {
     void init() {
         objectMapper = new ObjectMapper();
         boardStubData = new BoardStubData();
-        commentStubData = new CommentStubData(boardStubData);
+        userStubData = new UserStubData();
+        commentStubData = new CommentStubData(boardStubData, userStubData);
     }
 //    @Test
 //    void createComment() throws Exception {

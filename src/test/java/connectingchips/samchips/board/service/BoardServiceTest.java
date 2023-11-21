@@ -1,7 +1,7 @@
 package connectingchips.samchips.board.service;
 
 import connectingchips.samchips.board.S3Uploader;
-import connectingchips.samchips.board.stub.BoardStubData;
+import connectingchips.samchips.stub.BoardStubData;
 import connectingchips.samchips.board.dto.comment.CommentResponseDto;
 import connectingchips.samchips.board.entity.Comment;
 import connectingchips.samchips.board.repository.CommentRepository;
@@ -9,10 +9,11 @@ import connectingchips.samchips.board.repository.ReplyRepository;
 import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.repository.BoardRepository;
-import connectingchips.samchips.board.stub.CommentStubData;
+import connectingchips.samchips.stub.CommentStubData;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.repository.JoinedMindRepository;
 import connectingchips.samchips.mind.repository.MindRepository;
+import connectingchips.samchips.stub.UserStubData;
 import connectingchips.samchips.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ class BoardServiceTest {
     public static final long MIND_ID = 1L;
     public static final long BOARD_ID = 1L;
     private BoardStubData boardStubData;
+    private UserStubData userStubData;
     private CommentStubData commentStubData;
 
     @InjectMocks
@@ -56,7 +58,8 @@ class BoardServiceTest {
     @BeforeEach
     void init() {
         boardStubData = new BoardStubData();
-        commentStubData = new CommentStubData(boardStubData);
+        userStubData = new UserStubData();
+        commentStubData = new CommentStubData(boardStubData, userStubData);
     }
     @Test
     void getBoardById() {
@@ -67,7 +70,6 @@ class BoardServiceTest {
         //given
         Long mindId = MIND_ID;
         List<Board> boards = boardStubData.createBoards();
-
 
         given(mindRepository.findById(Mockito.anyLong())).willReturn(Optional.of(new Mind()));
         given(boardRepository.findAllByMind(Mockito.any(Mind.class))).willReturn(boards);

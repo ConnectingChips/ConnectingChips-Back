@@ -1,11 +1,10 @@
 package connectingchips.samchips.board.controller;
 
-import connectingchips.samchips.board.stub.BoardStubData;
+import connectingchips.samchips.stub.BoardStubData;
 import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.service.BoardService;
 
-import connectingchips.samchips.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,7 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(controllers = BoardController.class)
 class BoardControllerTest {
 
@@ -35,12 +33,8 @@ class BoardControllerTest {
     private MockMvc mockMvc;
     private BoardStubData boardStubData;
 
-
     @MockBean
     private BoardService boardService;
-
-    @MockBean
-    private UserService userService;
 
     @BeforeEach
     void init() {
@@ -51,7 +45,6 @@ class BoardControllerTest {
     @WithMockUser
     void 작심_게시글_ID기반조회() throws Exception {
         //given
-
         Board board = boardStubData.createBoard();
 
         BoardResponseDto.Read read = new BoardResponseDto.Read(board);
@@ -65,7 +58,6 @@ class BoardControllerTest {
                 get("/boards/{mind_id}",1L)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON));
-
 
         //then
         result
@@ -88,6 +80,7 @@ class BoardControllerTest {
 
         info.add("board_id", String.valueOf(boardId));
         info.add("user_id", String.valueOf(userId));
+
         //when
         ResultActions result = mockMvc.perform(
                 get("/boards/authentication")
