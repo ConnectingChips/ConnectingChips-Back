@@ -3,6 +3,8 @@ package connectingchips.samchips.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import connectingchips.samchips.board.S3Uploader;
 import connectingchips.samchips.board.stub.UserStubData;
+import connectingchips.samchips.global.exception.BadRequestException;
+import connectingchips.samchips.global.exception.RestApiException;
 import connectingchips.samchips.user.domain.User;
 import connectingchips.samchips.user.dto.UserRequestDto;
 import connectingchips.samchips.user.repository.UserRepository;
@@ -15,27 +17,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
+import static connectingchips.samchips.global.exception.AuthErrorCode.*;
+import static connectingchips.samchips.global.exception.CommonErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
+
+    private final long USER_ID = 1L;
 
     private UserStubData userStubData;
 
@@ -91,16 +86,42 @@ public class UserServiceTest {
     @Test
     public void 사용자_정보_수정(){
         // given
-        Long userId = 1L;
         UserRequestDto.Update updateDto = userStubData.createUpdateDto();
-        Optional<User> getUser = Optional.of(userStubData.createUser());
-        User createUser = userStubData.createUser();
+        Optional<User> getUser = Optional.of(userStubData.createUser1());
+        User createUser = userStubData.createUser1();
         given(userRepository.findById(Mockito.anyLong())).willReturn(getUser);
 
         // when
-        User updateUser = userService.updateInfo(userId, updateDto);
+        User updateUser = userService.updateInfo(USER_ID, updateDto);
 
         // then
         assertThat(createUser.getNickname()).isNotEqualTo(updateUser.getNickname());
+    }
+
+    @Test
+    public void 사용자_정보_수정_존재하지않는사용자_예외(){
+        // given
+        Long userId = 1L;
+        UserRequestDto.Update updateDto = userStubData.createUpdateDto();
+        given(userRepository.findById(Mockito.anyLong())).willReturn(Optional.empty());
+
+        // when & then
+        RestApiException exception = assertThrows(RestApiException.class, () ->{
+            userService.updateInfo(userId, updateDto);
+        });
+        assertThat(NOT_FOUND_USER.getMessage()).isEqualTo(exception.getErrorCode().getMessage());
+    }
+
+    @Test
+    public void 로그인_사용자인지_비교_불일치_예외(){
+        // given
+        User loginUser = userStubData.createUser1();
+        User user = userStubData.createUser2();
+
+        // when & then
+        BadRequestException exception = assertThrows(BadRequestException.class, () ->{
+            userService.isLoginUser(loginUser, user);
+        });
+        assertThat(FORBIDDEN.getMessage()).isEqualTo(exception.getErrorCode().getMessage());
     }
 }
