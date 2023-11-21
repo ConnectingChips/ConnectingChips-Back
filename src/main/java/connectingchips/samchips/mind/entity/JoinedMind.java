@@ -42,8 +42,6 @@ public class JoinedMind extends Auditable {
     @JoinColumn(name = "user_id")
     private User user;
 
-
-
     @Builder
     public JoinedMind(Mind mind, User user) {
         this.mind = mind;
@@ -59,6 +57,7 @@ public class JoinedMind extends Auditable {
     public void updateIsJoining(Integer isJoining) {
         this.isJoining = isJoining;
     }
+
     public JoinedMind updateTodayWrite(Boolean todayWrite) {
         this.todayWrite = todayWrite;
         return this;
