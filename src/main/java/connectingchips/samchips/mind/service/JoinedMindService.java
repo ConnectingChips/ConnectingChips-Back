@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static connectingchips.samchips.global.exception.CommonErrorCode.*;
 
@@ -44,19 +45,28 @@ public class JoinedMindService {
                 .anyMatch(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining() == JOIN);
     }
 
+    /**
+     *
+     * beforeJoinedCheck는 이전에 작심을 참여한 적이 있는지 확인하는 여부입니다
+     *
+     * 만약에 이전에 작심에 참여한 적 있다면 유저 내부에 해당 JoinedMind가 존재하기 때문에
+     * 새로 객체를 만들어줄 필요없이 참여여부(isJoining)을 true로 변경만 해주면되고 (reMindRelation)
+     *
+     * 없을 경우에는 새로 JoinedMind객체를 생성해 유저 데이터에 저장해주기위해서 만들었어여
+     * 그래서 해당 유저 내부에 JoinedMind의 mindId중 현재 가입하려는 mindId와 동일한 값이 있는지 확인하는 메서드입니다
+     */
+
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
         Mind mind = findVerifiedMind(mindId); //작심을 찾아옴
-        Optional<JoinedMind> first = beforeJoinedCheck(mindId, user); //이전에 참여한 적이 있는지 확인
 
-        if(first.isPresent()) { //이전에 참여한 전적이 있으면
-            reMindRelation(first.get().getJoinedMindId(), user); //다시 연결맺기
-            return;
+        if(isFirstJoinedMind(mindId, user)) { //첫번째 작심이면
+            checkAlreadyJoined(mindId, user);
+            checkJoinMindCountMax(user);
+            createJoinedMind(mind, user);
         }
 
-        checkAlreadyJoined(mindId, user);
-        checkJoinMindCountMax(user);
-        createJoinedMind(mind, user);
+        reMindRelation(first.get().getJoinedMindId(), user); //다시 연결맺기
     }
 
     public JoinedMind createJoinedMind(Mind mind, User user) {
@@ -64,13 +74,10 @@ public class JoinedMindService {
         return joinedMindRepository.save(joinedMind);
     }
 
-    //user로 들어온 user가
-    private Optional<JoinedMind> beforeJoinedCheck(Long mindId, User user) {
-        Optional<JoinedMind> first = user.getJoinedMinds()
-                .stream()
-                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining().equals(NOT_JOIN))
-                .findFirst();
-        return first;
+    //첫번째 작심인지 체크하는 메서드
+    private boolean isFirstJoinedMind(Long mindId, User user) {
+        return user.getJoinedMinds().stream()
+                .noneMatch(joinedMind -> joinedMind.getJoinedMindId().equals(mindId));
     }
 
     private void checkJoinMindCountMax(User user) {
