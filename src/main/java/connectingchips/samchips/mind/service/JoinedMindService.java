@@ -43,17 +43,6 @@ public class JoinedMindService {
                 .anyMatch(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining() == JOIN);
     }
 
-    /**
-     *
-     * beforeJoinedCheck는 이전에 작심을 참여한 적이 있는지 확인하는 여부입니다
-     *
-     * 만약에 이전에 작심에 참여한 적 있다면 유저 내부에 해당 JoinedMind가 존재하기 때문에
-     * 새로 객체를 만들어줄 필요없이 참여여부(isJoining)을 true로 변경만 해주면되고 (reMindRelation)
-     *
-     * 없을 경우에는 새로 JoinedMind객체를 생성해 유저 데이터에 저장해주기위해서 만들었어여
-     * 그래서 해당 유저 내부에 JoinedMind의 mindId중 현재 가입하려는 mindId와 동일한 값이 있는지 확인하는 메서드입니다
-     */
-
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
         Mind mind = findVerifiedMind(mindId); //작심을 찾아옴
