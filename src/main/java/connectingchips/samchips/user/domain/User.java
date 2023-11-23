@@ -64,6 +64,10 @@ public class User extends Auditable {
         this.password = password;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void updateInfo(String nickname){
         this.nickname = nickname;
     }
