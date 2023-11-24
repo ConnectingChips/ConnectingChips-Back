@@ -24,13 +24,12 @@ public class JoinedMindService {
 
     public static final int JOIN = 1;
     public static final int NOT_JOIN = 0;
-    public static final int ADMIN_FULL_COUNT = Integer.MAX_VALUE;
-    public static final int FULL_COUNT = 3;
 
     private final JoinedMindRepository joinedMindRepository;
     private final JoinedMindRepositoryImpl joinedMindRepositoryImpl;
     private final UserRepository userRepository;
     private final MindRepository mindRepository;
+    private final ValidateJoinedMind validateJoinedMind;
 
     @Transactional
     public JoinCheckResponse JoinCheck(Long mindId,User loginUser) { //작심에 참여하고 있는지 확인
@@ -45,53 +44,44 @@ public class JoinedMindService {
 
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
-        //유저 갯수 체크
-        List<JoinedMind> joinedMinds = user.getJoinedMinds();
-        validateJoinedMinds(joinedMinds, user);
+        List<JoinedMind> joinedMinds = getJoinedMinds(user);
 
         //첫 작심인 경우 -> 새로 작심 연결
         if(isFirstJoinedMind(mindId, joinedMinds)) {
             createJoinedMind(mindId, user);
             return;
         }
+
         //재작심인 경우 -> 유효성 확인 후 재 연결
         JoinedMind beforeJoinedMind = findVerifiedJoinedMind(mindId, joinedMinds); //예전 참여했던 작심 가져오기
-        makeReJoinedMind(beforeJoinedMind, user);
-
+        makeReJoinedMind(joinedMinds, beforeJoinedMind, user);
     }
 
-    private void validateJoinedMinds(List<JoinedMind> joinedMinds, User user) {
-        validateJoinedMindCount(joinedMinds, getCountMaxByRole(user)); //작심 개수가 초과하는지 확인
+    private List<JoinedMind> getJoinedMinds(User user) {
+        List<JoinedMind> joinedMinds = user.getJoinedMinds();
+        validateJoinedMind.validateJoinedMinds(joinedMinds, user);
+        return joinedMinds;
     }
 
-    private void validateReJoinedMind(JoinedMind joinedMind, User user) {
-        validateIsJoining(joinedMind); //이미 참여중이면, 에러 발생
-
+    private boolean isFirstJoinedMind(Long mindId, List<JoinedMind> joinedMinds) {
+        return joinedMinds.stream().noneMatch(joinedMind -> joinedMind.getJoinedMindId().equals(mindId));
     }
 
     @Transactional
-    public void makeReJoinedMind(JoinedMind beforeJoinedMind , User user) {
-        List<JoinedMind> joinedMinds = user.getJoinedMinds();
-
+    public void makeReJoinedMind(List<JoinedMind> joinedMinds, JoinedMind beforeJoinedMind, User user) {
+        //재작심하기 위해 해줘야하는 것
+        //(1) Joining 변경 (2) 해당 User의 JoinedMind로 변경
         beforeJoinedMind.updateIsJoining(JOIN);
         joinedMinds.add(beforeJoinedMind);
-        user.editJoinedMinds(joinedMinds);
+        user.updateJoinedMinds(joinedMinds);
         userRepository.save(user);
     }
 
     private JoinedMind findVerifiedJoinedMind(Long mindId, List<JoinedMind> joinedMinds) {
         return joinedMinds.stream()
-                .filter(joinedMind -> joinedMind.getJoinedMindId().equals(mindId))
+                .filter(joinedMind -> joinedMind.getJoinedMindId().equals(mindId) && joinedMind.getIsJoining().equals(NOT_JOIN))
                 .findFirst()
-                .orElseThrow(() -> new BadRequestException(INVALID_REQUEST));
-    }
-
-    private Mind findAlreadyMindByJoinedMinds(Long mindId, List<JoinedMind> joinedMinds) {
-        return joinedMinds.stream()
-                .filter(joinedMind -> joinedMind.getJoinedMindId().equals(mindId))
-                .findFirst()
-                .map(JoinedMind::getMind)
-                .orElseThrow(() -> new BadRequestException(INVALID_REQUEST));
+                .orElseThrow(() -> new BadRequestException(ALREADY_JOIN_MIND));
     }
 
     public JoinedMind createJoinedMind(Long mindId, User user) {
@@ -100,36 +90,6 @@ public class JoinedMindService {
         return joinedMindRepository.save(joinedMind);
     }
 
-    private boolean isFirstJoinedMind(Long mindId, List<JoinedMind> joinedMinds) {
-        return joinedMinds.stream()
-                .noneMatch(joinedMind -> joinedMind.getJoinedMindId().equals(mindId));
-    }
-
-    private void validateIsJoining(JoinedMind joinedMind) {
-        if(isJoined(joinedMind)) throw new BadRequestException(ALREADY_JOIN_MIND);
-    }
-
-    private boolean isJoined(JoinedMind joinedMind) {
-        return joinedMind.getIsJoining().equals(JOIN);
-    }
-
-    private int getCountMaxByRole(User user) {
-        // 권한에 따라 참여 가능한 작심 개수 조정
-        if(user.getRoles().contains("ROLE_ADMIN"))
-            return ADMIN_FULL_COUNT;
-        return FULL_COUNT;
-    }
-
-    //작심참여 갯수를 초과했는지 판단
-    private void validateJoinedMindCount(List<JoinedMind> joinedMinds, int maxCount) {
-        if(isJoinedMindCountMax(joinedMinds, maxCount)) throw new BadRequestException(INVALID_REQUEST);
-    }
-
-    private boolean isJoinedMindCountMax(List<JoinedMind> joinedMinds, int maxCount) {
-        return joinedMinds.stream()
-                .filter(this::isJoined)
-                .count() >= maxCount;
-    }
     @Transactional
     public void exitMindRelation(Long mindId,User user) {
         JoinedMind joinedMind = checkUserHaveJoinedMind(mindId, user);
@@ -137,7 +97,7 @@ public class JoinedMindService {
         joinedMinds.remove(joinedMind);
         joinedMind.updateIsJoining(NOT_JOIN);
         joinedMinds.add(joinedMind);
-        user.editJoinedMinds(joinedMinds);
+        user.updateJoinedMinds(joinedMinds);
         joinedMindRepository.save(joinedMind);
         userRepository.save(user);
     }
@@ -153,18 +113,6 @@ public class JoinedMindService {
     private Mind findVerifiedMind(Long mindId) {
         return mindRepository.findById(mindId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
-    }
-    private JoinedMind findVerifiedJoinedMind(Long joinedMindId) {
-        return joinedMindRepository.findById(joinedMindId)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_JOINED_MIND_ID));
-    }
-
-    private JoinedMind findVerifiedJoinedMind(Long mindId, User user) {
-        return user.getJoinedMinds()
-                .stream()
-                .filter(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId)
-                        && joinedMind.getIsJoining().equals(NOT_JOIN))
-                .findFirst().orElseThrow(() -> new BadRequestException(NOT_FOUND_MIND_ID));
     }
 
     public void updateKeepJoin(Long mindId, User user) {
