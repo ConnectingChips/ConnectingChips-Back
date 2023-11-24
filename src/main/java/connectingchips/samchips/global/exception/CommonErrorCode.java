@@ -22,7 +22,6 @@ public enum CommonErrorCode implements ErrorCode{
     NOT_FOUND_COMMENT_ID(HttpStatus.NOT_FOUND, "존재하지 않는 댓글 번호입니다."),
     NOT_FOUND_REPLY_ID(HttpStatus.NOT_FOUND,"존재하지 않는 답글 번호입니다."),
 
-
     // 409 CONFLICT 중복된 리소스
     ALREADY_JOIN_MEMBERSHIP(HttpStatus.CONFLICT, "이미 가입되어 있는 유저입니다."),
     ALREADY_JOIN_MIND(HttpStatus.CONFLICT, "이미 참여하고 있는 작심입니다."),
