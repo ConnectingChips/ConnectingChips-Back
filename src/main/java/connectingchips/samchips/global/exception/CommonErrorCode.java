@@ -25,6 +25,7 @@ public enum CommonErrorCode implements ErrorCode{
     // 409 CONFLICT 중복된 리소스
     ALREADY_JOIN_MEMBERSHIP(HttpStatus.CONFLICT, "이미 가입되어 있는 유저입니다."),
     ALREADY_JOIN_MIND(HttpStatus.CONFLICT, "이미 참여하고 있는 작심입니다."),
+    ALREADY_JOIN_COUNT_FULL(HttpStatus.CONFLICT, "이미 작심 초과 개수만큼 참여하고 있습니다."),
     ALREADY_WRITE_BOARD(HttpStatus.CONFLICT, "오늘 해당 작심 게시글을 작성했습니다");
 
     private final HttpStatus httpStatus;
