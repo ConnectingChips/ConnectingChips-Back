@@ -45,22 +45,41 @@ public class JoinedMindService {
 
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
-        Mind mind = findVerifiedMind(mindId); //작심을 찾아옴
+        //유저 갯수 체크
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
+        validateJoinedMinds(joinedMinds, user);
+
+        //첫 작심인 경우 -> 새로 작심 연결
         if(isFirstJoinedMind(mindId, joinedMinds)) {
-            createJoinedMind(mind, user);
+            createJoinedMind(mindId, user);
             return;
         }
-
-        JoinedMind beforeJoinedMind = findJoinedMindByJoinedMinds(mindId, joinedMinds); //예전 참여했던 작심 가져오기
-        validateIsJoining(beforeJoinedMind); //이미 참여중이면, 에러 발생
-
-        //작심 개수가 초과하는지 확인
-        validateJoinedMindCount(joinedMinds, getCountMaxByRole(user));
+        //재작심인 경우 -> 유효성 확인 후 재 연결
+        JoinedMind beforeJoinedMind = findVerifiedJoinedMind(mindId, joinedMinds); //예전 참여했던 작심 가져오기
+        makeReJoinedMind(beforeJoinedMind, user);
 
     }
 
-    private JoinedMind findJoinedMindByJoinedMinds(Long mindId, List<JoinedMind> joinedMinds) {
+    private void validateJoinedMinds(List<JoinedMind> joinedMinds, User user) {
+        validateJoinedMindCount(joinedMinds, getCountMaxByRole(user)); //작심 개수가 초과하는지 확인
+    }
+
+    private void validateReJoinedMind(JoinedMind joinedMind, User user) {
+        validateIsJoining(joinedMind); //이미 참여중이면, 에러 발생
+
+    }
+
+    @Transactional
+    public void makeReJoinedMind(JoinedMind beforeJoinedMind , User user) {
+        List<JoinedMind> joinedMinds = user.getJoinedMinds();
+
+        beforeJoinedMind.updateIsJoining(JOIN);
+        joinedMinds.add(beforeJoinedMind);
+        user.editJoinedMinds(joinedMinds);
+        userRepository.save(user);
+    }
+
+    private JoinedMind findVerifiedJoinedMind(Long mindId, List<JoinedMind> joinedMinds) {
         return joinedMinds.stream()
                 .filter(joinedMind -> joinedMind.getJoinedMindId().equals(mindId))
                 .findFirst()
@@ -75,7 +94,8 @@ public class JoinedMindService {
                 .orElseThrow(() -> new BadRequestException(INVALID_REQUEST));
     }
 
-    public JoinedMind createJoinedMind(Mind mind, User user) {
+    public JoinedMind createJoinedMind(Long mindId, User user) {
+        Mind mind = findVerifiedMind(mindId);
         JoinedMind joinedMind = JoinedMind.builder().mind(mind).user(user).build();
         return joinedMindRepository.save(joinedMind);
     }
@@ -109,16 +129,6 @@ public class JoinedMindService {
         return joinedMinds.stream()
                 .filter(this::isJoined)
                 .count() >= maxCount;
-    }
-
-    @Transactional
-    public void reMindRelation(Long joinedMindId, User user) {
-        List<JoinedMind> joinedMinds = user.getJoinedMinds();
-        JoinedMind verifiedJoinedMind = findVerifiedJoinedMind(joinedMindId);
-        verifiedJoinedMind.updateIsJoining(JOIN);
-        joinedMinds.add(verifiedJoinedMind);
-        user.editJoinedMinds(joinedMinds);
-        userRepository.save(user);
     }
     @Transactional
     public void exitMindRelation(Long mindId,User user) {
