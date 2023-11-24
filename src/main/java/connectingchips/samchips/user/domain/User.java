@@ -72,7 +72,7 @@ public class User extends Auditable {
         this.nickname = nickname;
     }
 
-    public void editJoinedMinds(List<JoinedMind> joinedMinds) {
+    public void updateJoinedMinds(List<JoinedMind> joinedMinds) {
         this.joinedMinds = joinedMinds;
     }
 }
