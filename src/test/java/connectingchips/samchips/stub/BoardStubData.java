@@ -3,8 +3,6 @@ package connectingchips.samchips.stub;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.mind.entity.Mind;
 import connectingchips.samchips.mind.entity.JoinedMind;
-import connectingchips.samchips.mind.entity.MindType;
-import connectingchips.samchips.user.domain.SocialType;
 import connectingchips.samchips.user.domain.User;
 
 import java.util.ArrayList;
@@ -16,12 +14,12 @@ public class BoardStubData {
     MindStubData mindStubData = new MindStubData();
 
     public Board createBoard() {
-        User user = userStubData.createUser();
+        User user = userStubData.createUser1();
         Mind mind = mindStubData.createMind();
         JoinedMind joinedMind = mindStubData.createJoinedMind(user, mind);
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
         joinedMinds.add(joinedMind);
-        user.editJoinedMinds(joinedMinds);
+        user.updateJoinedMinds(joinedMinds);
 
         return Board.builder()
                 .mind(mind)
