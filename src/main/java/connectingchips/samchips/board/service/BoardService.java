@@ -33,7 +33,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static connectingchips.samchips.global.exception.CommonErrorCode.*;
-import static connectingchips.samchips.mind.service.JoinedMindService.FULL_COUNT;
 
 
 @Service
@@ -41,6 +40,8 @@ import static connectingchips.samchips.mind.service.JoinedMindService.FULL_COUNT
 public class BoardService {
 
     public static final int JOINING = 1;
+    public static final int FULL_COUNT = 3;
+
     private final S3Uploader s3Uploader;
     private final BoardRepository boardRepository;
     private final MindRepository mindRepository;
