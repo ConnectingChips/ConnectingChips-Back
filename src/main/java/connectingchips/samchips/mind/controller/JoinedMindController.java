@@ -37,8 +37,7 @@ public class JoinedMindController {
     /* 유저를 작심에서 탈퇴 */
     @PutMapping("/{mind-id}/exit")
     @PreAuthorize("hasAnyRole('USER')")
-    public BasicResponse exitJoinedMind(@PathVariable("mind-id") Long mindId,
-                                  @LoginUser User loginUser){
+    public BasicResponse exitJoinedMind(@PathVariable("mind-id") Long mindId, @LoginUser User loginUser){
         joinedMindService.exitMindRelation(mindId,loginUser);
         return BasicResponse.of(HttpStatus.OK);
     }
@@ -46,8 +45,7 @@ public class JoinedMindController {
     /* 작심을 완료한 후 재작심 하기 */
     @PutMapping("/{mind-id}/remind")
     @PreAuthorize("hasAnyRole('USER')")
-    public BasicResponse updateJoinedMind(@PathVariable("mind-id") Long mindId,
-                                @LoginUser User loginUser){
+    public BasicResponse updateJoinedMind(@PathVariable("mind-id") Long mindId, @LoginUser User loginUser){
         joinedMindService.updateKeepJoin(mindId, loginUser);
         return BasicResponse.of(HttpStatus.OK);
     }
