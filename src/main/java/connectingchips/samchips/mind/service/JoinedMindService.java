@@ -113,7 +113,7 @@ public class JoinedMindService {
 
         if(!joinedMind.getKeepJoin()) throw new BadRequestException(INVALID_REQUEST);
 
-        joinedMind.setKeepJoin(false);
+        joinedMind.updateKeepJoin(false);
     }
     public void resetCountAndUpdateKeepJoin(){
         joinedMindRepositoryImpl.resetCountAndUpdateKeepJoin();
