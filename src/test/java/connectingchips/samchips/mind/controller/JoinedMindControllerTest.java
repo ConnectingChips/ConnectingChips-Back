@@ -39,7 +39,7 @@ public class JoinedMindControllerTest {
     @Test
     void 유저를_작심에_참여시키기() throws Exception {
         //given
-        User user = userStubData.createUser();
+        User user = userStubData.createUser1();
         Mind mind = mindStubData.createMind();
         JoinedMind joinedMind = mindStubData.createJoinedMind(user, mind);
 
@@ -68,7 +68,7 @@ public class JoinedMindControllerTest {
 //        }
 
         //given
-        User user = userStubData.createUser();
+        User user = userStubData.createUser1();
         Mind mind = mindStubData.createMind();
         JoinedMind joinedMind = mindStubData.createJoinedMind(user, mind);
 

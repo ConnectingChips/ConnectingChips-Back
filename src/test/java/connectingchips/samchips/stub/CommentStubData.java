@@ -20,7 +20,7 @@ public class CommentStubData {
     public Comment createComment() {
         return Comment.builder()
                 .board(boardStubData.createBoard())
-                .user(userStubData.createUser())
+                .user(userStubData.createUser1())
                 .content("댓글 테스트1")
                 .build();
     }
