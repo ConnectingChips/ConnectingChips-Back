@@ -60,6 +60,7 @@ class CommentControllerTest {
 //
 //    }
 
+    /*
     @Test
     void deleteComment() {
     }
@@ -70,5 +71,5 @@ class CommentControllerTest {
 
     @Test
     void deleteReply() {
-    }
+    }*/
 }

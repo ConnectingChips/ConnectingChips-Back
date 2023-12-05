@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(JoinedMindController.class)
 public class JoinedMindControllerTest {
-
+/*
     @Autowired
     private MockMvc mockMvc;
     private UserStubData userStubData;
@@ -40,7 +40,6 @@ public class JoinedMindControllerTest {
 
     @Test
     void 유저를_작심에_참여시키기() throws Exception {
-        /*
         //given
         User user = userStubData.createUser1();
         Mind mind = mindStubData.createMind();
@@ -57,12 +56,10 @@ public class JoinedMindControllerTest {
         //then
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated());
-        */
     }
 
     @Test
     void 유저를_작심에_탈퇴시키기() throws Exception {
-        /*
 //        {
 //            "accountId": "abcde123",
 //                "password": "abcde123",
@@ -87,6 +84,6 @@ public class JoinedMindControllerTest {
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated());
 
-         */
     }
+   */
 }
