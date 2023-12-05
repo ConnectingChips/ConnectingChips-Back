@@ -16,7 +16,7 @@ public class BoardStubData {
     MindStubData mindStubData = new MindStubData();
 
     public Board createBoard() {
-        User user = userStubData.createUser();
+        User user = userStubData.createUser1();
         Mind mind = mindStubData.createMind();
         JoinedMind joinedMind = mindStubData.createJoinedMind(user, mind);
         List<JoinedMind> joinedMinds = user.getJoinedMinds();

@@ -1,7 +1,7 @@
 package connectingchips.samchips.board.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import connectingchips.samchips.board.stub.UserStubData;
+import connectingchips.samchips.stub.UserStubData;
 import connectingchips.samchips.global.email.dto.EmailRequestDto;
 import connectingchips.samchips.user.controller.UserController;
 import connectingchips.samchips.user.domain.User;
