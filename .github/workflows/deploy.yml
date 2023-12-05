@@ -62,7 +62,6 @@ jobs:
         script: |
           sudo docker rm -f $(docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_REPO }}/chips
-          ls
-          chmod 777 ../deploy.sh
+          sudo chmod 777 ../deploy.sh
           ../deploy.sh
           docker image prune -f
