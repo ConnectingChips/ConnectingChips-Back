@@ -36,7 +36,8 @@ import static connectingchips.samchips.global.exception.CommonErrorCode.*;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private static final String REFRESH_TOKEN_KEY_PREFIX = "RT-";
+    private static final String REFRESH_TOKEN_KEY_PREFIX = "AT-";
+    private static final String ACCESS_TOKEN_KEY_PREFIX = "RT-";
     private static final String EMAIL_AUTH_KEY_PREFIX = "EmailAuth-";
 
     @Value("${spring.mail.auth-code-expiration-millis}")
@@ -55,6 +56,15 @@ public class AuthService {
     /* 자체 로그인 */
     @Transactional
     public AuthResponseDto.Token login(UserRequestDto.Login loginDto){
+        String accessTokenKey = ACCESS_TOKEN_KEY_PREFIX + loginDto.getAccountId();
+        String refreshTokenKey = REFRESH_TOKEN_KEY_PREFIX + loginDto.getAccountId();
+
+        // 중복 로그인을 위한 체크 - 해당 유저에게 발급된 엑세스 토큰이 존재하면 블랙리스트로 등록하여 강제 로그아웃
+        if(redisUtils.isExists(accessTokenKey)){
+            String accessToken = redisUtils.getData(accessTokenKey).get().toString();
+            setAccessTokenToBlackList(accessToken);
+        }
+
         // 입력한 accountId와 password로 UsernamePasswordAuthenticationToken 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getAccountId(), loginDto.getPassword());
@@ -66,7 +76,8 @@ public class AuthService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        redisUtils.setData(REFRESH_TOKEN_KEY_PREFIX + loginDto.getAccountId(), refreshToken, tokenProvider.refreshTokenExpirationMillis);
+        redisUtils.setData(accessTokenKey, accessToken, tokenProvider.accessTokenExpirationMillis);
+        redisUtils.setData(refreshTokenKey, refreshToken, tokenProvider.refreshTokenExpirationMillis);
 
         return new AuthResponseDto.Token(accessToken, refreshToken);
     }
@@ -165,10 +176,10 @@ public class AuthService {
         String accessToken = tokenProvider.resolveToken(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RestApiException(NOT_FOUND_USER));
-        Long expiredTime = tokenProvider.getExpiredTime(accessToken);
 
         // 현재 발급되어 있는 AccessToken을 사용하지 못하게 BlackList를 위해 Redis에 저장
-        redisUtils.setData(accessToken, "logout", expiredTime);
+        setAccessTokenToBlackList(accessToken);
+
         // 로그아웃 시, Redis의 RefreshToken 데이터 삭제
         redisUtils.deleteData(REFRESH_TOKEN_KEY_PREFIX + user.getAccountId());
     }
@@ -195,6 +206,8 @@ public class AuthService {
 
         // 리프레시 토큰에 담긴 값을 그대로 액세스 토큰 생성에 활용한다.
         String accessToken = tokenProvider.createAccessToken(authentication);
+
+        redisUtils.setData(ACCESS_TOKEN_KEY_PREFIX + getUser.getAccountId(), accessToken, tokenProvider.accessTokenExpirationMillis);
 
         return new AuthResponseDto.AccessToken(accessToken);
     }
@@ -253,6 +266,14 @@ public class AuthService {
         
         number.append("_" + LocalDateTime.now());
         return number.toString();
+    }
+
+    /* 현재 발급되어 있는 AccessToken을 사용하지 못하게 BlackList를 위해 Redis에 저장 */
+    private void setAccessTokenToBlackList(String accessToken){
+        Long expiredTime = tokenProvider.getExpiredTime(accessToken);
+
+        // 현재 발급되어 있는 AccessToken을 사용하지 못하게 BlackList를 위해 Redis에 저장
+        redisUtils.setData(accessToken, "logout", expiredTime);
     }
 
     /* 두 시간의 차이를 Millis로 반환 */

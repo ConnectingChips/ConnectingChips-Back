@@ -28,6 +28,8 @@ public class S3Uploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+    @Value("${cloud.aws.cloud-front.domain}")
+    private String cloudFrontDomain;
 
     public String uploadFile(MultipartFile multipartFile, String filePath) throws IOException {
         File uploadFile = convertMultipartFileToFile(multipartFile).orElseThrow(() -> new BadRequestException(NOT_FOUND_FILE));
@@ -65,7 +67,9 @@ public class S3Uploader {
 
     //파일 URL 반환
     public String getFileUrl(String fileName){
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+        // return amazonS3Client.getUrl(bucket, fileName).toString();
+        // 임시로 cloudfront 도메인으로 URL 변경
+        return "https://" + cloudFrontDomain + "/" + fileName;
     }
 
     //기존 확장자 명을 유지한 채, UUID 파일 생성
@@ -94,6 +98,8 @@ public class S3Uploader {
         listObjectsRequest.setBucketName(bucket);
         if(!prefix.isBlank()){
             listObjectsRequest.setPrefix(prefix);
+        }else{
+            return Collections.emptyList();
         }
         listObjectsRequest.setDelimiter("/");
 

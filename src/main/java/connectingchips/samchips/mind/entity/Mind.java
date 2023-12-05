@@ -1,7 +1,5 @@
 package connectingchips.samchips.mind.entity;
 
-import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
-import connectingchips.samchips.mind.mindtype.entity.MindType;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotNull;
@@ -51,7 +49,7 @@ public class Mind {
     private String exampleImage;
 
 
-    @OneToMany(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "mind", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @ManyToOne
@@ -60,7 +58,8 @@ public class Mind {
 
 
     @Builder
-    public Mind(String name, String introduce, String writeFormat, String introImage, String pageImage, String totalListImage, String myListImage, MindType mindType) {
+    public Mind(String name, String introduce, String writeFormat, String introImage, String pageImage, String totalListImage, String myListImage, MindType mindType,String exampleImage
+) {
         this.name = name;
         this.introduce = introduce;
         this.writeFormat = writeFormat;
@@ -69,5 +68,6 @@ public class Mind {
         this.totalListImage = totalListImage;
         this.myListImage = myListImage;
         this.mindType = mindType;
+        this.exampleImage = exampleImage;
     }
 }

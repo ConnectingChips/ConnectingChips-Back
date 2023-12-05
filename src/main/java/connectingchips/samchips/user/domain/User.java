@@ -1,7 +1,7 @@
 package connectingchips.samchips.user.domain;
 
 import connectingchips.samchips.global.audit.Auditable;
-import connectingchips.samchips.mind.joinedmind.entity.JoinedMind;
+import connectingchips.samchips.mind.entity.JoinedMind;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -44,7 +44,7 @@ public class User extends Auditable {
 
     private String roles;     // 권한
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<JoinedMind> joinedMinds = new ArrayList<>();
 
     @Builder
@@ -62,6 +62,10 @@ public class User extends Auditable {
 
     public void setPassword(String password){
         this.password = password;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void updateInfo(String nickname){
