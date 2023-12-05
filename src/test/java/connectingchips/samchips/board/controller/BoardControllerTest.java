@@ -5,6 +5,7 @@ import connectingchips.samchips.board.dto.board.BoardResponseDto;
 import connectingchips.samchips.board.entity.Board;
 import connectingchips.samchips.board.service.BoardService;
 
+import connectingchips.samchips.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,6 +36,8 @@ class BoardControllerTest {
 
     @MockBean
     private BoardService boardService;
+    @MockBean
+    private UserService userService;
 
     @BeforeEach
     void init() {
