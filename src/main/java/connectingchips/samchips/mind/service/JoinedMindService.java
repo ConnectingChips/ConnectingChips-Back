@@ -34,10 +34,12 @@ public class JoinedMindService {
 
     @Transactional
     public JoinCheckResponse JoinCheck(Long mindId,User loginUser) { //작심에 참여하고 있는지 확인
+        if(loginUser != null) loginUser = userRepository.findById(loginUser.getId()).get();
         return JoinCheckResponse.of(checkJoinedMind(mindId, loginUser));
     }
 
     private static boolean checkJoinedMind(Long mindId, User loginUser) {
+
         return loginUser.getJoinedMinds()
                 .stream()
                 .anyMatch(joinedMind -> Objects.equals(joinedMind.getMind().getMindId(), mindId) && joinedMind.getIsJoining() == JOIN);
