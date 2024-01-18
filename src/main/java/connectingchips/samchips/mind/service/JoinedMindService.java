@@ -128,6 +128,7 @@ public class JoinedMindService {
     }
     @Transactional
     public void exitMindRelation(Long mindId,User user) {
+        user = userRepository.findById(user.getId()).orElseThrow(() -> new BadRequestException(NOT_FOUND_USER));
         JoinedMind joinedMind = checkUserHaveJoinedMind(mindId, user);
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
         joinedMinds.remove(joinedMind);
