@@ -88,7 +88,7 @@ public class JoinedMindService {
 
     private boolean isFirstJoinedMind(Long mindId, List<JoinedMind> joinedMinds) {
         return joinedMinds.stream()
-                .noneMatch(joinedMind -> joinedMind.getJoinedMindId().equals(mindId));
+                .noneMatch(joinedMind -> joinedMind.getMind().getMindId().equals(mindId));
     }
 
     private void validateIsJoining(JoinedMind joinedMind) {
