@@ -63,12 +63,12 @@ public class JoinedMindService {
 
         //작심 개수가 초과하는지 확인
         validateJoinedMindCount(joinedMinds, getCountMaxByRole(user));
-
+        beforeJoinedMind.setIsJoining(JOIN);
     }
 
     private JoinedMind findJoinedMindByJoinedMinds(Long mindId, List<JoinedMind> joinedMinds) {
         return joinedMinds.stream()
-                .filter(joinedMind -> joinedMind.getJoinedMindId().equals(mindId))
+                .filter(joinedMind -> joinedMind.getMind().getMindId().equals(mindId))
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException(INVALID_REQUEST));
     }
