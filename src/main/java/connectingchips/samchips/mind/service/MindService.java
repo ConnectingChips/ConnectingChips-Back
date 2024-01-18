@@ -207,13 +207,16 @@ public class MindService {
 
     @Transactional
     public List<MyMindResponse> findMyJoinMindList(User loginUser) {
+        //항상 로그인 유저는 무조건 존재한다고 가정, 캐시데이터에는 JoinedMind에 대한 값이 저장되어 있지 않기 때문에
+        //UserRepository에서 실제 User의 전체값을 가져와 사용
+        User finalLoginUser = userRepository.findById(loginUser.getId()).get();
         return loginUser.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == CAN_JOIN)
                 .map(joinedMind ->
                         MyMindResponse.of(joinedMind.getMind(),
                                 joinedMind.getCount(),
-                                boardRepository.findBoardCountByUserAndMind(loginUser,joinedMind.getMind()),
+                                boardRepository.findBoardCountByUserAndMind(finalLoginUser,joinedMind.getMind()),
                                 joinedMind.getTodayWrite(),
                                 joinedMind.getKeepJoin()))
                 .toList();
@@ -221,10 +224,13 @@ public class MindService {
 
     @Transactional
     public List<MyJoinedMindResponse> findMyJoinedMindList(User loginUser) {
+        //항상 로그인 유저는 무조건 존재한다고 가정, 캐시데이터에는 JoinedMind에 대한 값이 저장되어 있지 않기 때문에
+        //UserRepository에서 실제 User의 전체값을 가져와 사용
+        User finalLoginUser = userRepository.findById(loginUser.getId()).get();
         return loginUser.getJoinedMinds()
                 .stream()
                 .filter(joinedMind -> joinedMind.getIsJoining() == NOT_JOIN)
-                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind,boardRepository.findBoardCountByUserAndMind(loginUser,joinedMind.getMind())))
+                .map(joinedMind -> MyJoinedMindResponse.of(joinedMind,boardRepository.findBoardCountByUserAndMind(finalLoginUser,joinedMind.getMind())))
                 .toList();
     }
 

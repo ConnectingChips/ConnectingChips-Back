@@ -45,6 +45,10 @@ public class JoinedMindService {
 
     @Transactional
     public void makeMindRelation(Long mindId, User user) {
+        //항상 로그인 유저는 무조건 존재한다고 가정
+        //LazyLoding이 일어날경우 캐시데이터에서는 에러발생하므로
+        // UserRepository에서 실제 User의 전체값을 가져와 사용
+        user = userRepository.findById(user.getId()).get();
         Mind mind = findVerifiedMind(mindId); //작심을 찾아옴
         List<JoinedMind> joinedMinds = user.getJoinedMinds();
         if(isFirstJoinedMind(mindId, joinedMinds)) {
